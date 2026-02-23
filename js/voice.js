@@ -200,14 +200,10 @@
              * WebRTC for lower latency.                                    */
             var _isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
 
-            /* Page-specific dynamic variables (e.g. greeting, client_count) */
-            var dynVars = window.VOICE_DYNAMIC_VARIABLES || undefined;
-
             _conv = await Conversation.startSession({
-                agentId          : AGENT_ID,
-                connectionType   : _isIOS ? 'websocket' : 'webrtc',
-                clientTools      : pageTools,
-                dynamicVariables : dynVars,
+                agentId        : AGENT_ID,
+                connectionType : _isIOS ? 'websocket' : 'webrtc',
+                clientTools    : pageTools,
 
                 onConnect: function () {
                     _connecting = false;
