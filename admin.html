@@ -1121,6 +1121,15 @@
         /* ── Admin page voice config — loaded before voice.js ── */
         window.VOICE_AGENT_ID = 'agent_9901kj4sd0qgfnhaz37dhgttgdr2';
 
+        /* Dynamic variables injected into the agent's first_message */
+        (function () {
+            var ukH = parseInt(new Date().toLocaleString('en-GB', { timeZone: 'Europe/London', hour: 'numeric', hour12: false }));
+            window.VOICE_DYNAMIC_VARIABLES = {
+                greeting     : ukH < 12 ? 'Good morning' : ukH < 17 ? 'Good afternoon' : 'Good evening',
+                client_count : String(crmData.length)
+            };
+        })();
+
         /* Fuzzy-match helper: finds first crmData row whose name includes query */
         function _findClientRow(name) {
             const q = name.toLowerCase();
