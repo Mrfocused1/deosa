@@ -11,8 +11,15 @@
 
     const AGENT_ID = window.VOICE_AGENT_ID || 'agent_2901kj45e7cnfszrrjfhfj4qdc8j';
 
-    let _conv   = null;
-    let _active = false;
+    let _conv        = null;
+    let _active      = false;
+    let _Conversation = null; /* pre-loaded SDK class */
+
+    /* Pre-load the ElevenLabs SDK immediately so it's cached and ready
+     * before the user even clicks the button — eliminates CDN latency. */
+    import('https://cdn.jsdelivr.net/npm/@elevenlabs/client/+esm')
+        .then(function (m) { _Conversation = m.Conversation; })
+        .catch(function () { /* will fall back to on-demand import in voiceStart */ });
 
     /* ── Inject one-time CSS for the connecting spin state ── */
     const _style = document.createElement('style');
@@ -84,9 +91,10 @@
         if (_active) return;
         setVoiceUI('connecting');
         try {
-            const { Conversation } = await import(
+            /* Use the pre-loaded class if available, otherwise import on demand */
+            const Conversation = _Conversation || (await import(
                 'https://cdn.jsdelivr.net/npm/@elevenlabs/client/+esm'
-            );
+            )).Conversation;
 
             /* Merge page-specific tools with universal tools */
             const pageTools = window.VOICE_CLIENT_TOOLS || {};
