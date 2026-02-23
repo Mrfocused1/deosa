@@ -1158,8 +1158,7 @@
                             callDate: r.call.callDate || 'Unknown',
                             invoiceStatus: r.billing.invoiceStatus,
                             textSent: r.comms.textSent
-                        })),
-                        callRecordingsLoaded: (window._elCalls || []).length
+                        }))
                     });
                 } catch(e) {
                     return JSON.stringify({ greeting: 'Hello', totalClients: 0, clients: [] });
