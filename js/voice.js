@@ -148,7 +148,7 @@
                 },
 
                 onDisconnect: function () {
-                    if (_active) voiceStop();
+                    if (_active) voiceCleanup();
                 },
 
                 onError: function (msg) {
@@ -181,13 +181,24 @@
         }
     }
 
-    /* ── End a session ── */
+    /* ── End a session (user-initiated) ── */
     async function voiceStop() {
         _active = false;
-        if (_conv) {
-            try { await _conv.endSession(); } catch (_) { /* ignore */ }
-            _conv = null;
+        var conv = _conv;
+        _conv = null; /* clear first to block re-entry */
+        if (conv) {
+            try { await conv.endSession(); } catch (_) { /* ignore */ }
         }
+        setVoiceUI('idle');
+    }
+
+    /* ── Clean up after a server-initiated disconnect ──
+     *  Does NOT call endSession() — the socket is already closed,
+     *  calling endSession() on it causes "WebSocket already CLOSING/CLOSED".
+     */
+    function voiceCleanup() {
+        _active = false;
+        _conv   = null;
         setVoiceUI('idle');
     }
 
