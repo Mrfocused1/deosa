@@ -11,17 +11,17 @@
 
     const AGENT_ID = window.VOICE_AGENT_ID || 'agent_2901kj45e7cnfszrrjfhfj4qdc8j';
 
-    let _conv        = null;
-    let _active      = false;
+    let _conv         = null;
+    let _active       = false;
     let _Conversation = null; /* pre-loaded SDK class */
 
     /* Pre-load the ElevenLabs SDK immediately so it's cached and ready
      * before the user even clicks the button — eliminates CDN latency. */
     import('https://cdn.jsdelivr.net/npm/@elevenlabs/client/+esm')
         .then(function (m) { _Conversation = m.Conversation; })
-        .catch(function () { /* will fall back to on-demand import in voiceStart */ });
+        .catch(function () { /* falls back to on-demand import in voiceStart */ });
 
-    /* ── Inject one-time CSS for the connecting spin state ── */
+    /* ── Inject CSS ── */
     const _style = document.createElement('style');
     _style.textContent = `
         @keyframes voice-connecting-spin {
@@ -29,8 +29,7 @@
             100% { transform: rotate(360deg); }
         }
         #ai-voice-btn.voice-connecting {
-            animation: voice-connecting-spin 1.2s linear infinite,
-                       none !important;
+            animation: voice-connecting-spin 1.2s linear infinite, none !important;
         }
         #ai-voice-btn.voice-error {
             border-color: rgba(239,68,68,0.85) !important;
@@ -38,6 +37,65 @@
         }
     `;
     document.head.appendChild(_style);
+
+    /* ── Phone ring tone (Web Audio API — no audio file needed) ────────
+     *  UK-style double-ring pattern: two short bursts then silence.
+     *  Plays on loop while connecting, stops the moment the agent speaks.
+     */
+    var _ringCtx   = null;
+    var _ringing   = false;
+    var _ringTimer = null;
+
+    function _startRing() {
+        if (_ringing) return;
+        _ringing = true;
+        try {
+            _ringCtx = new (window.AudioContext || window.webkitAudioContext)();
+            _scheduleRingCycle();
+        } catch (e) { /* AudioContext not available — silent fallback */ }
+    }
+
+    function _scheduleRingCycle() {
+        if (!_ringing || !_ringCtx) return;
+
+        var ctx = _ringCtx;
+        var t   = ctx.currentTime;
+
+        /* Two sine-wave bursts mixed at 400 Hz + 450 Hz (UK phone ring) */
+        [400, 450].forEach(function (freq) {
+            var osc  = ctx.createOscillator();
+            var gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.type = 'sine';
+            osc.frequency.value = freq;
+
+            gain.gain.setValueAtTime(0, t);
+            /* Burst 1: 0.0 – 0.4 s */
+            gain.gain.linearRampToValueAtTime(0.18, t + 0.02);
+            gain.gain.setValueAtTime(0.18, t + 0.38);
+            gain.gain.linearRampToValueAtTime(0, t + 0.40);
+            /* Burst 2: 0.6 – 1.0 s */
+            gain.gain.linearRampToValueAtTime(0.18, t + 0.62);
+            gain.gain.setValueAtTime(0.18, t + 0.98);
+            gain.gain.linearRampToValueAtTime(0, t + 1.00);
+
+            osc.start(t);
+            osc.stop(t + 1.0);
+        });
+
+        /* Repeat every 3 s (1 s sound + 2 s silence) */
+        _ringTimer = setTimeout(_scheduleRingCycle, 3000);
+    }
+
+    function _stopRing() {
+        _ringing = false;
+        clearTimeout(_ringTimer);
+        if (_ringCtx) {
+            try { _ringCtx.close(); } catch (e) {}
+            _ringCtx = null;
+        }
+    }
 
     /* ── UI state machine ── */
     function setVoiceUI(state) {
@@ -54,25 +112,34 @@
 
         switch (state) {
             case 'connecting':
+                _startRing();
                 btn.style.opacity = '0.6';
                 btn.classList.add('voice-connecting');
                 if (idleIcon) idleIcon.classList.add('hidden');
                 if (liveIcon) { liveIcon.classList.remove('hidden'); liveIcon.classList.add('flex'); }
                 break;
+
             case 'listening':
+                _stopRing();
                 btn.classList.add('ai-live-glow');
                 if (idleIcon) idleIcon.classList.add('hidden');
                 if (liveIcon) { liveIcon.classList.remove('hidden'); liveIcon.classList.add('flex'); }
                 break;
+
             case 'speaking':
+                _stopRing();
                 btn.classList.add('ai-live-glow');
                 if (idleIcon) idleIcon.classList.add('hidden');
                 if (liveIcon) { liveIcon.classList.remove('hidden'); liveIcon.classList.add('flex'); }
                 break;
+
             case 'error':
+                _stopRing();
                 btn.classList.add('voice-error');
                 break;
-            default:
+
+            default: /* idle */
+                _stopRing();
                 break;
         }
     }
@@ -91,12 +158,10 @@
         if (_active) return;
         setVoiceUI('connecting');
         try {
-            /* Use the pre-loaded class if available, otherwise import on demand */
             const Conversation = _Conversation || (await import(
                 'https://cdn.jsdelivr.net/npm/@elevenlabs/client/+esm'
             )).Conversation;
 
-            /* Merge page-specific tools with universal tools */
             const pageTools = window.VOICE_CLIENT_TOOLS || {};
 
             /* get_current_time — returns UK time + greeting word */
@@ -117,13 +182,9 @@
             if (!pageTools.navigate_to_menu) {
                 pageTools.navigate_to_menu = function () {
                     var onMenu = window.location.pathname.toLowerCase().includes('catering');
-                    if (onMenu) {
-                        return "You're already on our menu page — feel free to browse!";
-                    }
+                    if (onMenu) return "You're already on our menu page — feel free to browse!";
                     sessionStorage.setItem('deosa_voice_return', '1');
-                    setTimeout(function () {
-                        window.location.href = 'catering.html';
-                    }, 2600);
+                    setTimeout(function () { window.location.href = 'catering.html'; }, 2600);
                     return "I'm taking you to our menu page right now — I'll be right with you there.";
                 };
             }
@@ -132,9 +193,10 @@
                 agentId: AGENT_ID,
                 clientTools: pageTools,
 
-                /* dynamicVariables are injected into the agent's First message
-                 * and system prompt wherever {{greeting}} appears.
-                 * No override permissions needed — this is a first-class ElevenLabs feature. */
+                /* {{greeting}} is replaced in the ElevenLabs First message field.
+                 * Set First message to:
+                 *   {{greeting}}, this is Mary from De'Osa Catering and Events,
+                 *   how can I help you today?                                    */
                 dynamicVariables: {
                     greeting: _ukGreeting()
                 },
@@ -145,8 +207,6 @@
                 },
 
                 onDisconnect: function () {
-                    /* Server closed the socket — just clean up, do NOT call endSession()
-                     * or the SDK throws "WebSocket already CLOSING/CLOSED". */
                     if (_active) voiceCleanup();
                 },
 
@@ -202,7 +262,7 @@
         if (_active) { voiceStop(); } else { voiceStart(); }
     };
 
-    /* ── Helper: fire fn after page fully loads + optional delay ── */
+    /* ── Helper: fire fn after page fully loads ── */
     function afterLoad(delay, fn) {
         if (document.readyState === 'complete') {
             setTimeout(fn, delay);
@@ -213,13 +273,13 @@
         }
     }
 
-    /* ── Auto-start: user pressed Instant Quote on another page ── */
+    /* ── Auto-start: Instant Quote button on another page ── */
     if (sessionStorage.getItem('deosa_voice_autostart') === '1') {
         sessionStorage.removeItem('deosa_voice_autostart');
         afterLoad(600, voiceStart);
     }
 
-    /* ── Auto-reconnect: assistant navigated user here mid-conversation ── */
+    /* ── Auto-reconnect: assistant navigated user here ── */
     if (sessionStorage.getItem('deosa_voice_return') === '1') {
         sessionStorage.removeItem('deosa_voice_return');
         afterLoad(600, voiceStart);
