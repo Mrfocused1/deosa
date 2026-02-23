@@ -107,6 +107,17 @@
             0% { height: 6px; opacity: 0.5; }
             100% { height: 20px; opacity: 1; }
         }
+
+        /* Voice spotlight — warm golden pulse fired once when Elizabeth mentions a dish */
+        @keyframes menu-spotlight {
+            0%   { background-color: rgba(197, 160, 89, 0); }
+            18%  { background-color: rgba(197, 160, 89, 0.22); }
+            55%  { background-color: rgba(197, 160, 89, 0.12); }
+            100% { background-color: rgba(197, 160, 89, 0); }
+        }
+        .menu-item-spotlight {
+            animation: menu-spotlight 2.6s ease-out forwards;
+        }
     </style>
 </head>
 <body class="selection:bg-gold selection:text-white pb-32">
@@ -899,6 +910,62 @@
                 });
             });
         }
+
+        // --- VOICE SPOTLIGHT — scroll + golden glow when Elizabeth mentions a dish ---
+        (function () {
+            var _cooldown = false;
+
+            // Common English words that aren't food — filtered out before matching
+            var SKIP = new Set([
+                'that','this','with','your','from','have','just','been','will','here',
+                'like','also','them','they','into','more','some','take','make','sure',
+                'feel','free','each','then','when','what','which','about','great',
+                'added','removed','perfect','noted','wonderful','could','would','please',
+                'right','away','love','enjoy','choose','select','option','include',
+                'guest','event','price','order','menu','dish','food','item','course',
+                'service','package','invoice','email','phone','contact','name','time',
+                'start','well','want','need','help','hear','tell','know','going','send'
+            ]);
+
+            window.VOICE_ON_AGENT_RESPONSE = function (text) {
+                if (!text || _cooldown) return;
+
+                // Extract unique significant words from what Elizabeth said
+                var words = Array.from(new Set(
+                    text.toLowerCase()
+                        .replace(/[^a-z\s]/g, ' ')
+                        .split(/\s+/)
+                        .filter(function (w) { return w.length >= 4 && !SKIP.has(w); })
+                ));
+                if (!words.length) return;
+
+                // Score each visible menu row by how many speech words appear in its title
+                var best = null, bestScore = 0;
+                document.querySelectorAll('.menu-item-row').forEach(function (row) {
+                    if (row.style.display === 'none') return;
+                    var title = row.getAttribute('data-title') || '';
+                    var score = 0;
+                    words.forEach(function (w) { if (title.includes(w)) score++; });
+                    if (score > bestScore) { bestScore = score; best = row; }
+                });
+
+                if (!best || bestScore === 0) return;
+
+                _cooldown = true;
+
+                // Scroll the row to ~35% from the top of the viewport
+                var top = best.getBoundingClientRect().top + window.scrollY
+                          - Math.round(window.innerHeight * 0.35);
+                window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+
+                // Restart the CSS animation (remove → reflow → re-add)
+                best.classList.remove('menu-item-spotlight');
+                void best.offsetWidth;
+                best.classList.add('menu-item-spotlight');
+
+                setTimeout(function () { _cooldown = false; }, 1500);
+            };
+        })();
 
         document.addEventListener('DOMContentLoaded', init);
 

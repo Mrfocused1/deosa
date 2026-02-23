@@ -223,6 +223,15 @@
                 onModeChange: function (d) {
                     if (!_active) return;
                     setVoiceUI(d.mode === 'speaking' ? 'speaking' : 'listening');
+                },
+
+                /* Page-specific hook — catering.html uses this to spotlight
+                 * menu items as Elizabeth mentions them. */
+                onMessage: function (event) {
+                    if (event.source === 'agent' &&
+                        typeof window.VOICE_ON_AGENT_RESPONSE === 'function') {
+                        try { window.VOICE_ON_AGENT_RESPONSE(event.message); } catch (_) {}
+                    }
                 }
             });
 
