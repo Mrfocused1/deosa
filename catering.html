@@ -774,70 +774,95 @@
 
             // Add a dish to the cart
             add_menu_item: function(p) {
-                var name = p.name || p.item || '';
-                var price = parseFloat(p.base_price || p.price || 0);
-                if (typeof addToCart === 'function') addToCart(name, price);
-                return 'Added ' + name + ' to your selection.';
+                try {
+                    var name  = String(p.name || p.item || '');
+                    var price = parseFloat(p.base_price || p.price) || 0;
+                    if (typeof addToCart === 'function') addToCart(name, price);
+                    return 'Added ' + name + ' to your selection.';
+                } catch (e) {
+                    console.error('[Voice] add_menu_item:', e);
+                    return 'I could not add that item right now — please try again.';
+                }
             },
 
             // Remove a dish from the cart (fuzzy match on title)
             remove_menu_item: function(p) {
-                var query = (p.name || p.item || '').toLowerCase();
-                var match = cart.find(function(i) {
-                    return i.title.toLowerCase().includes(query) || query.includes(i.title.toLowerCase());
-                });
-                if (match) {
-                    removeFromCart(match.title);
-                    return 'Removed ' + match.title + ' from your selection.';
+                try {
+                    var query = String(p.name || p.item || '').toLowerCase();
+                    var match = cart.find(function(i) {
+                        return i.title.toLowerCase().includes(query) || query.includes(i.title.toLowerCase());
+                    });
+                    if (match) {
+                        removeFromCart(match.title);
+                        return 'Removed ' + match.title + ' from your selection.';
+                    }
+                    return '"' + String(p.name || p.item) + '" was not found in your selection.';
+                } catch (e) {
+                    console.error('[Voice] remove_menu_item:', e);
+                    return 'I could not remove that item right now — please try again.';
                 }
-                return '"' + (p.name || p.item) + '" was not found in your selection.';
             },
 
             // Change the guest count dropdown to the correct tier
             set_guest_count: function(p) {
-                var count = parseInt(p.count || p.guests || 0);
-                var tiers = [10, 20, 30, 50, 100, 200, 300];
-                var tier = tiers.find(function(t) { return count <= t; }) || 300;
-                var select = document.getElementById('guest-count');
-                if (select) {
-                    select.value = String(tier);
-                    select.dispatchEvent(new Event('change'));
+                try {
+                    var count  = parseInt(p.count || p.guests) || 0;
+                    var tiers  = [10, 20, 30, 50, 100, 200, 300];
+                    var tier   = tiers.find(function(t) { return count <= t; }) || 300;
+                    var select = document.getElementById('guest-count');
+                    if (select) {
+                        select.value = String(tier);
+                        select.dispatchEvent(new Event('change'));
+                    }
+                    return 'Guest count updated to ' + count + ' guests.';
+                } catch (e) {
+                    console.error('[Voice] set_guest_count:', e);
+                    return 'I could not update the guest count right now — please try again.';
                 }
-                return 'Guest count updated to ' + count + ' guests.';
             },
 
             // Set the venue dropdown to the closest match
             set_venue: function(p) {
-                var requested = (p.name || p.venue || '').toLowerCase();
-                var select = document.getElementById('venue-select');
-                if (!select) return 'Could not update venue.';
-                var options = Array.from(select.options);
-                var match = options.find(function(o) {
-                    if (!o.value) return false;
-                    var val = o.value.toLowerCase();
-                    return val.includes(requested) || requested.includes(val.split(' ')[0]);
-                });
-                if (match) {
-                    select.value = match.value;
-                    return 'Venue set to ' + match.value + '.';
+                try {
+                    var requested = String(p.name || p.venue || '').toLowerCase();
+                    var select    = document.getElementById('venue-select');
+                    if (!select) return 'Could not update venue.';
+                    var options = Array.from(select.options);
+                    var match = options.find(function(o) {
+                        if (!o.value) return false;
+                        var val = o.value.toLowerCase();
+                        return val.includes(requested) || requested.includes(val.split(' ')[0]);
+                    });
+                    if (match) {
+                        select.value = match.value;
+                        return 'Venue set to ' + match.value + '.';
+                    }
+                    return '"' + String(p.name || p.venue) + '" is not in our venue list. Please ask the client to confirm the venue name.';
+                } catch (e) {
+                    console.error('[Voice] set_venue:', e);
+                    return 'I could not update the venue right now — please try again.';
                 }
-                return '"' + (p.name || p.venue) + '" is not in our venue list. Please ask the client to confirm the venue name.';
             },
 
             // Enable or disable waiter service
             set_waiters: function(p) {
-                var wantWaiters = p.enabled === true || p.enabled === 'true';
-                if (wantWaiters && !waitersEnabled) {
-                    toggleWaiters();
-                    var count = waiterCountByGuest[currentGuestMultiplier] || 1;
-                    var cost = getWaiterCost();
-                    var costStr = cost === 0 ? 'included free' : '£' + cost.toLocaleString();
-                    return count + ' waiter' + (count !== 1 ? 's' : '') + ' added (' + costStr + ').';
-                } else if (!wantWaiters && waitersEnabled) {
-                    toggleWaiters();
-                    return 'Waiter service removed from your package.';
+                try {
+                    var wantWaiters = p.enabled === true || p.enabled === 'true';
+                    if (wantWaiters && !waitersEnabled) {
+                        toggleWaiters();
+                        var count   = waiterCountByGuest[currentGuestMultiplier] || 1;
+                        var cost    = getWaiterCost();
+                        var costStr = cost === 0 ? 'included free' : '£' + cost.toLocaleString();
+                        return count + ' waiter' + (count !== 1 ? 's' : '') + ' added (' + costStr + ').';
+                    } else if (!wantWaiters && waitersEnabled) {
+                        toggleWaiters();
+                        return 'Waiter service removed from your package.';
+                    }
+                    return wantWaiters ? 'Waiter service is already included.' : 'No waiter service selected.';
+                } catch (e) {
+                    console.error('[Voice] set_waiters:', e);
+                    return 'I could not update waiter service right now — please try again.';
                 }
-                return wantWaiters ? 'Waiter service is already included.' : 'No waiter service selected.';
             }
         };
 
