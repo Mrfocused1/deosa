@@ -13,6 +13,7 @@
 
     let _conv         = null;
     let _active       = false;
+    let _hasSpoken    = false; /* true once agent produces first audio */
     let _Conversation = null; /* pre-loaded SDK class */
 
     /* Pre-load the ElevenLabs SDK immediately so it's cached and ready
@@ -112,6 +113,8 @@
 
         switch (state) {
             case 'connecting':
+                /* Ring starts here and keeps going until the agent speaks */
+                _hasSpoken = false;
                 _startRing();
                 btn.style.opacity = '0.6';
                 btn.classList.add('voice-connecting');
@@ -120,14 +123,19 @@
                 break;
 
             case 'listening':
-                _stopRing();
+                /* WebSocket is connected but agent hasn't spoken yet —
+                 * keep the ring going so the user hears something. */
                 btn.classList.add('ai-live-glow');
                 if (idleIcon) idleIcon.classList.add('hidden');
                 if (liveIcon) { liveIcon.classList.remove('hidden'); liveIcon.classList.add('flex'); }
                 break;
 
             case 'speaking':
-                _stopRing();
+                /* Agent's voice starts — stop ring on first speech only */
+                if (!_hasSpoken) {
+                    _hasSpoken = true;
+                    _stopRing();
+                }
                 btn.classList.add('ai-live-glow');
                 if (idleIcon) idleIcon.classList.add('hidden');
                 if (liveIcon) { liveIcon.classList.remove('hidden'); liveIcon.classList.add('flex'); }
