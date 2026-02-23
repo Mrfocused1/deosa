@@ -76,12 +76,27 @@
         }
     }
 
+    /* ── Build a time-based greeting in UK time ── */
+    function _ukGreeting() {
+        var now    = new Date();
+        var ukTime = new Date(now.toLocaleString('en-GB', { timeZone: 'Europe/London' }));
+        var hour   = ukTime.getHours();
+        return hour >= 5  && hour < 12 ? 'Good morning' :
+               hour >= 12 && hour < 18 ? 'Good afternoon' : 'Good evening';
+    }
+
     /* ── Start a session ──
-     *  firstMessage (optional): overrides the agent's opening line,
-     *  used when auto-reconnecting after a page navigation mid-conversation.
+     *  firstMessage (optional): overrides the agent's opening line.
+     *  If omitted, a time-aware greeting is generated automatically.
      */
     async function voiceStart(firstMessage) {
         if (_active) return; /* guard against double-start */
+
+        /* Always use a dynamic greeting unless a specific handoff message was passed */
+        if (!firstMessage) {
+            firstMessage = _ukGreeting() + ", De'Osa Catering and Events, Mary speaking. How can I help you today?";
+        }
+
         setVoiceUI('connecting');
         try {
             const { Conversation } = await import(
@@ -150,12 +165,10 @@
                 }
             };
 
-            /* Override opening line only for mid-conversation reconnects */
-            if (firstMessage) {
-                sessionOpts.overrides = {
-                    agent: { firstMessage: firstMessage }
-                };
-            }
+            /* Always override the opening line so the greeting reflects real UK time */
+            sessionOpts.overrides = {
+                agent: { firstMessage: firstMessage }
+            };
 
             _conv = await Conversation.startSession(sessionOpts);
 
