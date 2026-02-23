@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Event | De'Osa Luxury Catering</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cream: '#FDFBF7',
+                        charcoal: '#1C1C1C',
+                        gold: '#C5A059',
+                        'gold-light': '#E8D3A2',
+                        sand: '#F4F1EA',
+                        success: '#2E5C3A',
+                    },
+                    fontFamily: {
+                        serif: ['"Cormorant Garamond"', 'serif'],
+                        sans: ['Montserrat', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+
+    <style>
+        :root {
+            --cream: #FDFBF7;
+            --charcoal: #1C1C1C;
+            --gold: #C5A059;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            background-color: var(--charcoal);
+            color: var(--cream);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 4px; }
+
+        /* Noise texture */
+        .noise::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.04'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .dash-card {
+            background: rgba(253,251,247,0.04);
+            border: 1px solid rgba(253,251,247,0.1);
+            border-radius: 0.75rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .timeline-line {
+            position: absolute;
+            left: 11px;
+            top: 24px;
+            bottom: 0;
+            width: 2px;
+            background: rgba(253,251,247,0.08);
+            z-index: 0;
+        }
+
+        .timeline-line-filled {
+            position: absolute;
+            left: 11px;
+            top: 24px;
+            height: 50%;
+            width: 2px;
+            background: var(--gold);
+            z-index: 1;
+        }
+
+        /* Invoice / drawer */
+        .drawer-open   { transform: translateX(0%); }
+        .drawer-closed { transform: translateX(100%); }
+
+        /* AI FAB */
+        .ai-live-glow { animation: pulse-glow 1.5s infinite alternate; }
+        @keyframes pulse-glow {
+            from { box-shadow: 0 0 10px 2px rgba(197,160,89,0.4); }
+            to   { box-shadow: 0 0 25px 8px rgba(197,160,89,0.8); }
+        }
+        .ai-bar { animation: sound-bounce 0.8s infinite ease-in-out alternate; }
+        .ai-bar:nth-child(1) { animation-delay: 0.1s; }
+        .ai-bar:nth-child(2) { animation-delay: 0.3s; }
+        .ai-bar:nth-child(3) { animation-delay: 0.0s; }
+        .ai-bar:nth-child(4) { animation-delay: 0.2s; }
+        @keyframes sound-bounce {
+            0%   { height: 6px;  opacity: 0.5; }
+            100% { height: 20px; opacity: 1; }
+        }
+
+        /* Edit Menu Bottom Sheet */
+        .menu-tab-btn {
+            color: rgba(253,251,247,0.3);
+            border-bottom: 2px solid transparent;
+            transition: color 0.2s ease, border-color 0.2s ease;
+        }
+        .menu-tab-btn:hover { color: rgba(253,251,247,0.6); }
+        .menu-tab-btn.active { color: #C5A059; border-bottom-color: #C5A059; }
+
+        .menu-item-row { transition: background 0.15s ease; }
+        .menu-item-row:hover { background: rgba(253,251,247,0.03); }
+        .menu-item-row:last-child { border-bottom: none; }
+
+        .menu-toggle-btn { transition: background 0.2s ease, border-color 0.2s ease; }
+    </style>
+</head>
+<body class="noise selection:bg-gold selection:text-charcoal pb-24">
+
+    <!-- Nav -->
+    <nav class="fixed top-0 w-full z-50 border-b border-cream/10 py-5 px-6 md:px-12 flex justify-between items-center" style="background:rgba(28,28,28,0.92);backdrop-filter:blur(12px);">
+        <div class="flex items-center gap-4">
+            <a href="index.html"><img src="images/logo-dark-bg.svg" alt="De'Osa" class="h-8 w-auto"></a>
+            <span class="hidden md:block text-cream/20">|</span>
+            <span class="hidden md:block font-sans text-xs tracking-[0.2em] uppercase font-medium text-cream/40">Client Portal</span>
+        </div>
+        <div class="flex items-center gap-4 md:gap-6">
+            <div class="hidden sm:flex items-center gap-3">
+                <p class="font-sans text-xs font-medium text-cream/60">Eleanor Vance</p>
+                <div class="w-8 h-8 rounded-full bg-gold flex items-center justify-center font-serif font-bold text-sm text-charcoal">EV</div>
+            </div>
+            <a href="login.html" class="font-sans text-xs font-bold tracking-widest uppercase text-cream/40 border border-cream/15 px-4 py-2 rounded-sm hover:border-gold/50 hover:text-gold transition-all">Sign Out</a>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <header class="pt-32 pb-14 relative overflow-hidden border-b border-cream/10">
+        <div class="absolute inset-0 opacity-20" style="background:radial-gradient(ellipse at 60% 0%, rgba(197,160,89,0.2) 0%, transparent 70%);"></div>
+        <div class="max-w-7xl mx-auto px-6 lg:px-12 relative z-10 flex flex-col md:flex-row justify-between items-center md:items-end gap-8">
+            <div class="text-center md:text-left dash-anim">
+                <p class="font-sans text-xs font-bold tracking-[0.3em] uppercase text-gold mb-4">Welcome Back</p>
+                <h1 class="font-serif text-5xl md:text-6xl text-cream mb-2">The Vance Wedding</h1>
+                <p class="font-sans text-sm text-cream/50 font-medium tracking-wide">Syon Park, London &bull; August 12, 2026</p>
+            </div>
+            <div class="text-center md:text-right dash-card p-6 min-w-[180px] dash-anim">
+                <p class="font-serif text-5xl text-gold mb-1">171</p>
+                <p class="font-sans text-xs font-bold tracking-[0.2em] uppercase text-cream/40">Days Until Your Event</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Dashboard Grid -->
+    <main class="max-w-7xl mx-auto px-6 lg:px-12 mt-10 grid grid-cols-1 lg:grid-cols-3 gap-6 relative z-10">
+
+        <!-- Left Column -->
+        <div class="lg:col-span-2 space-y-6">
+
+            <!-- Event Overview -->
+            <div class="dash-card p-8 dash-anim">
+                <div class="flex justify-between items-center mb-6 border-b border-cream/10 pb-4">
+                    <h2 class="font-serif text-2xl text-cream">Event Overview</h2>
+                    <span class="bg-green-500/15 text-green-400 border border-green-500/25 font-sans text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full">Confirmed</span>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 font-sans">
+                    <div>
+                        <p class="text-[10px] uppercase tracking-widest text-cream/35 font-bold mb-2">Date &amp; Time</p>
+                        <p class="text-sm font-medium text-cream/80">Wednesday, 12 August 2026<br>14:00 – 23:30</p>
+                    </div>
+                    <div>
+                        <p class="text-[10px] uppercase tracking-widest text-cream/35 font-bold mb-2">Venue</p>
+                        <p class="text-sm font-medium text-cream/80">Syon Park (The Garden Room)<br>Brentford, Middlesex</p>
+                    </div>
+                    <div>
+                        <p class="text-[10px] uppercase tracking-widest text-cream/35 font-bold mb-2">Guest Count</p>
+                        <p class="text-sm font-medium text-cream/80">150 Guests</p>
+                    </div>
+                    <div>
+                        <p class="text-[10px] uppercase tracking-widest text-cream/35 font-bold mb-2">Service Style</p>
+                        <p class="text-sm font-medium text-cream/80">Plated Multi-Course Dining</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Curated Menu -->
+            <div class="dash-card p-8 dash-anim">
+                <div class="flex justify-between items-center mb-6 border-b border-cream/10 pb-4">
+                    <h2 class="font-serif text-2xl text-cream">Your Curated Menu</h2>
+                    <button onclick="openMenuEdit()" class="font-sans text-xs font-bold uppercase tracking-widest text-gold hover:text-gold-light transition-colors">Edit Menu</button>
+                </div>
+                <div class="space-y-7" id="curated-menu-content">
+                    <div>
+                        <h3 class="font-sans text-[10px] uppercase tracking-widest text-gold/70 font-bold bg-gold/10 border border-gold/20 inline-block px-3 py-1 rounded-sm mb-4">Canapés (Arrival)</h3>
+                        <ul class="font-serif text-lg text-cream/80 space-y-2 list-inside list-disc marker:text-gold">
+                            <li>Jerk chicken skewer and plantain with sweet pepper</li>
+                            <li>Crispy Breaded King Prawns</li>
+                            <li>Fried Yam and Plantain Mix with Spicy Sauce</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="font-sans text-[10px] uppercase tracking-widest text-cream/40 font-bold bg-cream/5 border border-cream/10 inline-block px-3 py-1 rounded-sm mb-4">Starters</h3>
+                        <ul class="font-serif text-lg text-cream/80 space-y-2 list-inside list-disc marker:text-gold">
+                            <li>Spicy gizzard and diced Plantains</li>
+                            <li>Cooked prawns, on a bed of lettuce</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="font-sans text-[10px] uppercase tracking-widest text-cream/40 font-bold bg-cream/5 border border-cream/10 inline-block px-3 py-1 rounded-sm mb-4">Main Course</h3>
+                        <ul class="font-serif text-lg text-cream/80 space-y-2 list-inside list-disc marker:text-gold">
+                            <li>Smoky Party Jollof Rice with Roasted Lamb</li>
+                            <li>Egusi Soup with Pounded Yam &amp; Assorted Meat</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Event Manager -->
+            <div class="dash-card p-8 border-gold/20 flex flex-col sm:flex-row items-center gap-6 dash-anim" style="border-color:rgba(197,160,89,0.2);">
+                <div class="w-24 h-24 rounded-full border-2 border-gold shrink-0 flex items-center justify-center" style="background:rgba(197,160,89,0.08);">
+                    <img src="images/logo-dark-bg.svg" alt="De'Osa" class="w-16 h-auto">
+                </div>
+                <div class="text-center sm:text-left flex-1">
+                    <p class="font-sans text-[10px] font-bold uppercase tracking-widest text-gold mb-1">Your 24/7 Order Assistant</p>
+                    <h3 class="font-serif text-2xl text-cream">Mary</h3>
+                    <p class="font-sans text-xs text-cream/40 mt-1">Available 24/7</p>
+                </div>
+                <div class="flex flex-col gap-3 w-full sm:w-auto">
+                    <button class="px-6 py-2.5 bg-gold/20 border border-gold/40 text-gold font-sans text-xs font-bold uppercase tracking-widest rounded-sm hover:bg-gold hover:text-charcoal transition-all">Message</button>
+                    <button class="px-6 py-2.5 bg-cream/5 border border-cream/15 text-cream/60 font-sans text-xs font-bold uppercase tracking-widest rounded-sm hover:border-cream/30 hover:text-cream transition-all">Call</button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Right Column -->
+        <div class="space-y-6">
+
+            <!-- Financial Summary -->
+            <div class="dash-card p-8 dash-anim">
+                <h2 class="font-serif text-2xl text-cream mb-6 border-b border-cream/10 pb-4">Financial Summary</h2>
+
+                <div class="space-y-3 font-sans text-sm mb-6 border-b border-cream/10 pb-5">
+                    <div class="flex justify-between text-cream/50">
+                        <span>Catering (150 Guests)</span>
+                        <span>£13,500.00</span>
+                    </div>
+                    <div class="flex justify-between text-cream/50">
+                        <span>Staffing &amp; Service</span>
+                        <span>£2,250.00</span>
+                    </div>
+                    <div class="flex justify-between text-cream/50">
+                        <span>Tableware Rentals</span>
+                        <span>£1,100.00</span>
+                    </div>
+                    <div class="flex justify-between font-bold text-cream pt-2 border-t border-cream/10">
+                        <span>Total Estimated</span>
+                        <span>£16,850.00</span>
+                    </div>
+                </div>
+
+                <div class="bg-gold/8 p-4 rounded-lg mb-5 border border-gold/20">
+                    <div class="flex justify-between text-xs font-bold uppercase tracking-widest text-green-400 mb-2">
+                        <span>Deposit Paid</span>
+                        <span>– £4,212.50</span>
+                    </div>
+                    <div class="flex justify-between font-serif text-xl text-cream">
+                        <span>Balance Due</span>
+                        <span class="text-gold">£12,637.50</span>
+                    </div>
+                    <p class="text-[10px] text-cream/30 font-sans mt-2">Final balance due by 12 July 2026</p>
+                </div>
+
+                <div class="flex gap-3">
+                    <button class="flex-1 py-3 bg-gold/20 border border-gold/40 text-gold font-sans text-xs font-bold uppercase tracking-widest rounded-sm hover:bg-gold hover:text-charcoal transition-all">Make Payment</button>
+                    <button onclick="openInvoice('The Vance Wedding')" class="w-12 h-12 flex items-center justify-center bg-cream/5 border border-cream/15 text-cream/50 rounded-sm hover:border-gold/40 hover:text-gold transition-all group" title="View Invoice">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Planning Timeline -->
+            <div class="dash-card p-8 dash-anim">
+                <h2 class="font-serif text-2xl text-cream mb-6 border-b border-cream/10 pb-4">Planning Timeline</h2>
+
+                <div class="relative pl-8 space-y-8 font-sans">
+                    <div class="timeline-line"></div>
+                    <div class="timeline-line-filled"></div>
+
+                    <!-- Step 1 (Completed) -->
+                    <div class="relative z-10">
+                        <div class="absolute -left-[37px] w-6 h-6 rounded-full bg-gold border-4 border-charcoal flex items-center justify-center">
+                            <svg class="w-3 h-3 text-charcoal" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                        </div>
+                        <p class="text-[10px] uppercase tracking-widest text-gold font-bold mb-1">Jan 15, 2026</p>
+                        <h4 class="text-sm font-bold text-cream">Initial Consultation &amp; Deposit</h4>
+                        <p class="text-xs text-cream/35 mt-1">Date secured and initial brief finalized.</p>
+                    </div>
+
+                    <!-- Step 2 (Completed) -->
+                    <div class="relative z-10">
+                        <div class="absolute -left-[37px] w-6 h-6 rounded-full bg-gold border-4 border-charcoal flex items-center justify-center">
+                            <svg class="w-3 h-3 text-charcoal" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                        </div>
+                        <p class="text-[10px] uppercase tracking-widest text-gold font-bold mb-1">Feb 10, 2026</p>
+                        <h4 class="text-sm font-bold text-cream">Menu Proposal Approved</h4>
+                        <p class="text-xs text-cream/35 mt-1">Custom menu layout confirmed by client.</p>
+                    </div>
+
+                    <!-- Step 3 (Current) -->
+                    <div class="relative z-10">
+                        <div class="absolute -left-[37px] w-6 h-6 rounded-full bg-charcoal border-4 border-gold"></div>
+                        <p class="text-[10px] uppercase tracking-widest text-cream/35 font-bold mb-1">Coming Up (March)</p>
+                        <h4 class="text-sm font-bold text-cream">Private Menu Tasting</h4>
+                        <p class="text-xs text-cream/35 mt-1">Schedule your tasting to finalize flavors.</p>
+                        <button class="mt-3 text-[10px] font-bold uppercase tracking-widest text-gold border border-gold/50 px-3 py-1.5 rounded-sm hover:bg-gold hover:text-charcoal transition-all">Book Date</button>
+                    </div>
+
+                    <!-- Step 4 (Future) -->
+                    <div class="relative z-10 opacity-40">
+                        <div class="absolute -left-[37px] w-6 h-6 rounded-full bg-cream/10 border-4 border-charcoal"></div>
+                        <p class="text-[10px] uppercase tracking-widest text-cream/40 font-bold mb-1">July 12, 2026</p>
+                        <h4 class="text-sm font-bold text-cream">Final Headcount &amp; Balance</h4>
+                    </div>
+
+                    <!-- Step 5 (Future) -->
+                    <div class="relative z-10 opacity-40">
+                        <div class="absolute -left-[37px] w-6 h-6 rounded-full bg-cream/10 border-4 border-charcoal"></div>
+                        <p class="text-[10px] uppercase tracking-widest text-cream/40 font-bold mb-1">Aug 12, 2026</p>
+                        <h4 class="text-sm font-bold text-cream">Event Day</h4>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Invoice Overlay -->
+    <div id="invoice-overlay" class="fixed inset-0 bg-charcoal/70 z-40 hidden opacity-0 transition-opacity backdrop-blur-sm" onclick="closeInvoice()"></div>
+
+    <!-- Invoice Drawer -->
+    <div id="invoice-drawer" class="fixed top-0 right-0 h-full w-full max-w-lg z-50 drawer-closed transition-transform duration-300 flex flex-col border-l border-charcoal/10 overflow-y-auto" style="background:#FDFBF7;">
+
+        <!-- Drawer Header -->
+        <div class="p-6 border-b border-charcoal/10 flex justify-between items-center shrink-0">
+            <div>
+                <h3 class="font-serif text-2xl text-charcoal">Invoice</h3>
+                <p class="font-sans text-xs text-charcoal mt-1">#DOC-2026-001</p>
+            </div>
+            <button onclick="closeInvoice()" class="p-2 rounded-full text-charcoal hover:text-gold hover:bg-charcoal/5 transition-colors border border-charcoal/15">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+
+        <div class="p-6 space-y-7 flex-1">
+
+            <!-- Branding -->
+            <div class="flex justify-between items-start">
+                <div>
+                    <img src="images/logo-light.svg" alt="De'Osa" class="h-8 w-auto">
+                </div>
+                <div class="text-right font-sans text-xs text-charcoal">
+                    <p>Issued: 15 January 2026</p>
+                    <p class="mt-0.5">Due: 12 July 2026</p>
+                </div>
+            </div>
+
+            <!-- Bill To -->
+            <div class="p-5 rounded-lg" style="background:rgba(28,28,28,0.04);border:1px solid rgba(28,28,28,0.08);">
+                <p class="font-sans text-[10px] uppercase tracking-widest text-gold mb-3">Bill To</p>
+                <p class="font-serif text-lg text-charcoal">Eleanor Vance</p>
+                <p class="font-sans text-xs text-charcoal mt-1">eleanor.v@email.com</p>
+                <p class="font-sans text-xs text-charcoal">07912 345 678</p>
+            </div>
+
+            <!-- Event Details -->
+            <div class="p-5 rounded-lg" style="background:rgba(28,28,28,0.04);border:1px solid rgba(28,28,28,0.08);">
+                <p class="font-sans text-[10px] uppercase tracking-widest text-charcoal mb-3">Event Details</p>
+                <p class="font-serif text-lg text-charcoal" id="invoice-event-name">The Vance Wedding</p>
+                <p class="font-sans text-xs text-charcoal mt-1">Syon Park, The Garden Room · Brentford, Middlesex</p>
+                <p class="font-sans text-xs text-charcoal mt-0.5">12 August 2026 · 14:00–23:30 · 150 Guests</p>
+            </div>
+
+            <!-- Line Items -->
+            <div>
+                <p class="font-sans text-[10px] uppercase tracking-widest text-charcoal mb-3">Order Summary</p>
+                <div class="divide-y divide-charcoal/10">
+                    <div class="flex justify-between py-3 font-sans text-sm">
+                        <div>
+                            <p class="text-charcoal">Catering Service</p>
+                            <p class="text-charcoal text-xs mt-0.5">150 guests × £90 per person</p>
+                        </div>
+                        <span class="text-charcoal font-medium">£13,500.00</span>
+                    </div>
+                    <div class="flex justify-between py-3 font-sans text-sm">
+                        <div>
+                            <p class="text-charcoal">Staffing &amp; Service</p>
+                            <p class="text-charcoal text-xs mt-0.5">Event day staff &amp; coordination</p>
+                        </div>
+                        <span class="text-charcoal font-medium">£2,250.00</span>
+                    </div>
+                    <div class="flex justify-between py-3 font-sans text-sm">
+                        <div>
+                            <p class="text-charcoal">Tableware Rentals</p>
+                            <p class="text-charcoal text-xs mt-0.5">Full place settings &amp; serveware</p>
+                        </div>
+                        <span class="text-charcoal font-medium">£1,100.00</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Totals -->
+            <div class="p-5 rounded-lg space-y-3" style="background:rgba(28,28,28,0.04);border:1px solid rgba(28,28,28,0.08);">
+                <div class="flex justify-between font-sans text-sm text-charcoal">
+                    <span>Subtotal</span>
+                    <span>£16,850.00</span>
+                </div>
+                <div class="flex justify-between font-sans text-sm text-green-600">
+                    <span>Deposit Paid (25%)</span>
+                    <span>– £4,212.50</span>
+                </div>
+                <div class="flex justify-between pt-3 border-t border-charcoal/10">
+                    <span class="font-sans text-sm font-bold text-charcoal">Balance Due</span>
+                    <span class="font-serif text-xl text-gold">£12,637.50</span>
+                </div>
+                <p class="font-sans text-[10px] text-charcoal">Due by 12 July 2026 · Bank transfer or card accepted</p>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex gap-3 pb-6">
+                <button class="flex-1 py-3 bg-charcoal/5 border border-charcoal/15 text-charcoal rounded-lg font-sans text-[10px] font-bold uppercase tracking-widest hover:border-charcoal/30 transition-all">Download PDF</button>
+                <button class="flex-1 py-3 bg-gold/20 border border-gold/40 text-gold rounded-lg font-sans text-[10px] font-bold uppercase tracking-widest hover:bg-gold hover:text-charcoal transition-all">Make Payment</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Voice FAB -->
+    <button id="ai-voice-btn" onclick="toggleAIVoice()" class="fixed bottom-6 left-4 md:bottom-12 md:left-12 w-12 h-12 md:w-16 md:h-16 transition-all duration-500 bg-charcoal border-2 border-gold rounded-full shadow-2xl z-50 flex items-center justify-center group hover:scale-105">
+        <svg id="ai-idle-icon" class="w-6 h-6 md:w-7 md:h-7 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+        </svg>
+        <div id="ai-live-icon" class="hidden absolute inset-0 items-center justify-center gap-1 md:gap-1.5">
+            <div class="w-1 md:w-1.5 bg-gold rounded-full ai-bar"></div>
+            <div class="w-1 md:w-1.5 bg-gold rounded-full ai-bar"></div>
+            <div class="w-1 md:w-1.5 bg-gold rounded-full ai-bar"></div>
+            <div class="w-1 md:w-1.5 bg-gold rounded-full ai-bar"></div>
+        </div>
+        
+    </button>
+
+    <!-- Edit Menu Overlay -->
+    <div id="menu-edit-overlay" class="fixed inset-0 z-40 hidden opacity-0 transition-opacity duration-300 backdrop-blur-sm" style="background:rgba(28,28,28,0.75);" onclick="closeMenuEdit()"></div>
+
+    <!-- Edit Menu Bottom Sheet -->
+    <div id="menu-edit-sheet" class="fixed bottom-0 left-0 right-0 z-50 flex flex-col" style="background:#161616; border-top:1px solid rgba(197,160,89,0.2); border-radius:1rem 1rem 0 0; transform:translateY(100%); transition:transform 0.38s cubic-bezier(0.32,0.72,0,1); max-height:82vh;">
+
+        <!-- Drag Handle -->
+        <div class="flex justify-center pt-3 pb-1 shrink-0">
+            <div class="w-10 h-1 rounded-full" style="background:rgba(253,251,247,0.15);"></div>
+        </div>
+
+        <!-- Sheet Header -->
+        <div class="px-6 py-4 flex justify-between items-center shrink-0" style="border-bottom:1px solid rgba(253,251,247,0.08);">
+            <div>
+                <h3 class="font-serif text-2xl text-cream">Edit Your Menu</h3>
+                <p class="font-sans text-xs mt-0.5" style="color:rgba(253,251,247,0.35);">Toggle items to add or remove from your selection</p>
+            </div>
+            <button onclick="closeMenuEdit()" class="p-2 rounded-full text-cream/40 hover:text-gold hover:bg-cream/5 transition-colors border border-cream/10">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+
+        <!-- Course Tabs -->
+        <div class="flex shrink-0 overflow-x-auto" style="border-bottom:1px solid rgba(253,251,247,0.08);" id="menu-tab-bar">
+            <button class="menu-tab-btn active px-5 py-3 font-sans text-xs font-bold uppercase tracking-widest whitespace-nowrap" data-tab="Canapés">Canapés</button>
+            <button class="menu-tab-btn px-5 py-3 font-sans text-xs font-bold uppercase tracking-widest whitespace-nowrap" data-tab="Starters">Starters</button>
+            <button class="menu-tab-btn px-5 py-3 font-sans text-xs font-bold uppercase tracking-widest whitespace-nowrap" data-tab="Main Course">Main Course</button>
+            <button class="menu-tab-btn px-5 py-3 font-sans text-xs font-bold uppercase tracking-widest whitespace-nowrap" data-tab="Desserts">Desserts</button>
+        </div>
+
+        <!-- Items List (scrollable) -->
+        <div class="flex-1 overflow-y-auto px-6 py-2" id="menu-items-list"></div>
+
+        <!-- Footer -->
+        <div class="px-6 pt-3 pb-6 shrink-0" style="border-top:1px solid rgba(253,251,247,0.08);">
+            <div class="flex justify-between items-center mb-3">
+                <p id="menu-selection-count" class="font-sans text-xs" style="color:rgba(253,251,247,0.4);"></p>
+                <p class="font-sans text-[10px] uppercase tracking-widest" style="color:rgba(253,251,247,0.2);">Changes apply on save</p>
+            </div>
+            <button onclick="saveMenuChanges()" class="w-full py-3.5 bg-gold hover:bg-gold-light text-charcoal font-sans text-xs font-bold uppercase tracking-widest rounded-sm transition-colors">
+                Save Changes
+            </button>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            gsap.from('.dash-anim', {
+                y: 24,
+                opacity: 0,
+                duration: 0.9,
+                stagger: 0.12,
+                ease: 'power3.out',
+                delay: 0.15
+            });
+            gsap.from('.timeline-line-filled', {
+                height: 0,
+                duration: 1.5,
+                ease: 'power2.out',
+                delay: 0.8
+            });
+        });
+
+        /* Invoice drawer */
+        const invoiceOverlay = document.getElementById('invoice-overlay');
+        const invoiceDrawer  = document.getElementById('invoice-drawer');
+
+        window.openInvoice = function(eventName) {
+            if (eventName) document.getElementById('invoice-event-name').innerText = eventName;
+            invoiceOverlay.classList.remove('hidden');
+            setTimeout(() => {
+                invoiceOverlay.classList.remove('opacity-0');
+                invoiceDrawer.classList.remove('drawer-closed');
+                invoiceDrawer.classList.add('drawer-open');
+            }, 10);
+        };
+
+        window.closeInvoice = function() {
+            invoiceDrawer.classList.remove('drawer-open');
+            invoiceDrawer.classList.add('drawer-closed');
+            invoiceOverlay.classList.add('opacity-0');
+            setTimeout(() => invoiceOverlay.classList.add('hidden'), 300);
+        };
+
+    </script>
+    <script src="js/voice.js"></script>
+
+    <script>
+        /* ── Edit Menu Bottom Sheet ── */
+
+        const availableMenuItems = {
+            'Canapés': [
+                'Jerk chicken skewer and plantain with sweet pepper',
+                'Crispy Breaded King Prawns',
+                'Fried Yam and Plantain Mix with Spicy Sauce',
+                'Ackee and saltfish vol au vent',
+                'Spring Rolls Served with Sweet Chilli Sauce',
+                'Mini British Fish and Chips',
+                'Cooked prawns, on a bed of lettuce',
+                'Chicken wings drizzled with warm spicy barbecue sauce',
+                'Spicy gizzard and diced Plantains',
+                'Mini Burgers',
+                'Mini Mixed Meat Pies',
+                'Puff Puff Bites'
+            ],
+            'Starters': [
+                'Spicy gizzard and diced Plantains',
+                'Cooked prawns, on a bed of lettuce',
+                'Puff Puff',
+                'Moyin Moyin',
+                'Spicy Shish Kebab',
+                'Fried Plantain & Smoked Salmon Sticks',
+                'Assorted Meat or Fish pepper soup',
+                'Spring Rolls Served with sauce',
+                'Chicken wings drizzled with warm spicy barbecue sauce'
+            ],
+            'Main Course': [
+                'Smoky Party Jollof Rice with Roasted Lamb',
+                'Egusi Soup with Pounded Yam & Assorted Meat',
+                'Jollof, Fried, Coconut or White Rice (w/ Plantain & Meat/Fish)',
+                'Eforiro, Ewedu, Ogbono or Banga Soup',
+                'Roasted Potatoes (Served with Roasted Lamb, Chicken or Turkey)',
+                'Asaro (Yam Porridge) and Dodo',
+                'Jerk Chicken',
+                'Curry Goat',
+                'Oxtail',
+                'Brown Stew Chicken',
+                'Banku (Served with Okro Soup)',
+                'Fufu (Served with Groundnut Soup)'
+            ],
+            'Desserts': [
+                'Fresh tropical fruit salad',
+                'Banana cake and Ice cream',
+                'Chocolate Gateau',
+                'Apple Pie with ice cream',
+                'Rum Cake',
+                'Chocolate Cake'
+            ]
+        };
+
+        // Mirrors the currently displayed menu
+        const menuSelections = {
+            'Canapés':     new Set(['Jerk chicken skewer and plantain with sweet pepper', 'Crispy Breaded King Prawns', 'Fried Yam and Plantain Mix with Spicy Sauce']),
+            'Starters':    new Set(['Spicy gizzard and diced Plantains', 'Cooked prawns, on a bed of lettuce']),
+            'Main Course': new Set(['Smoky Party Jollof Rice with Roasted Lamb', 'Egusi Soup with Pounded Yam & Assorted Meat']),
+            'Desserts':    new Set()
+        };
+
+        let activeMenuTab = 'Canapés';
+
+        const menuEditOverlay = document.getElementById('menu-edit-overlay');
+        const menuEditSheet   = document.getElementById('menu-edit-sheet');
+
+        window.openMenuEdit = function() {
+            menuEditOverlay.classList.remove('hidden');
+            requestAnimationFrame(() => {
+                menuEditOverlay.classList.remove('opacity-0');
+                menuEditSheet.style.transform = 'translateY(0%)';
+            });
+            renderMenuItems(activeMenuTab);
+            updateSelectionCount();
+        };
+
+        window.closeMenuEdit = function() {
+            menuEditSheet.style.transform = 'translateY(100%)';
+            menuEditOverlay.classList.add('opacity-0');
+            setTimeout(() => menuEditOverlay.classList.add('hidden'), 380);
+        };
+
+        // Tab switching
+        document.getElementById('menu-tab-bar').addEventListener('click', e => {
+            const btn = e.target.closest('.menu-tab-btn');
+            if (!btn) return;
+            activeMenuTab = btn.dataset.tab;
+            document.querySelectorAll('.menu-tab-btn').forEach(b => b.classList.toggle('active', b === btn));
+            renderMenuItems(activeMenuTab);
+        });
+
+        function renderMenuItems(tab) {
+            const list    = document.getElementById('menu-items-list');
+            const items   = availableMenuItems[tab];
+            const selected = menuSelections[tab];
+
+            list.innerHTML = '';
+
+            items.forEach(item => {
+                const isSelected = selected.has(item);
+
+                const row = document.createElement('div');
+                row.className = 'menu-item-row flex items-center justify-between py-3.5 border-b cursor-pointer rounded-sm px-1 -mx-1';
+                row.style.borderColor = 'rgba(253,251,247,0.06)';
+
+                const nameSpan = document.createElement('span');
+                nameSpan.className = 'font-serif text-base pr-4 transition-colors';
+                nameSpan.style.color = isSelected ? 'rgba(253,251,247,0.9)' : 'rgba(253,251,247,0.4)';
+                nameSpan.textContent = item;
+
+                const toggleBtn = document.createElement('div');
+                toggleBtn.className = 'menu-toggle-btn shrink-0 w-7 h-7 rounded-full flex items-center justify-center';
+                if (isSelected) {
+                    toggleBtn.style.background = '#C5A059';
+                    toggleBtn.innerHTML = '<svg class="w-3.5 h-3.5" fill="none" stroke="#1C1C1C" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>';
+                } else {
+                    toggleBtn.style.border = '1px solid rgba(253,251,247,0.2)';
+                    toggleBtn.innerHTML = '<svg class="w-3.5 h-3.5" fill="none" stroke="rgba(197,160,89,0.6)" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 5v14M5 12h14"/></svg>';
+                }
+
+                row.appendChild(nameSpan);
+                row.appendChild(toggleBtn);
+
+                row.addEventListener('click', () => {
+                    if (selected.has(item)) {
+                        selected.delete(item);
+                    } else {
+                        selected.add(item);
+                    }
+                    renderMenuItems(tab);
+                    updateSelectionCount();
+                });
+
+                list.appendChild(row);
+            });
+        }
+
+        function updateSelectionCount() {
+            const total = Object.values(menuSelections).reduce((sum, s) => sum + s.size, 0);
+            document.getElementById('menu-selection-count').textContent =
+                `${total} item${total !== 1 ? 's' : ''} selected across all courses`;
+        }
+
+        window.saveMenuChanges = function() {
+            const content = document.getElementById('curated-menu-content');
+
+            // Course display config: key → badge label + style
+            const courses = [
+                { key: 'Canapés',     label: 'Canapés (Arrival)', gold: true  },
+                { key: 'Starters',    label: 'Starters',           gold: false },
+                { key: 'Main Course', label: 'Main Course',         gold: false },
+                { key: 'Desserts',    label: 'Desserts',            gold: false }
+            ];
+
+            const sections = courses
+                .filter(c => menuSelections[c.key].size > 0)
+                .map(c => {
+                    const badgeClass = c.gold
+                        ? 'text-gold/70 font-bold bg-gold/10 border border-gold/20'
+                        : 'text-cream/40 font-bold bg-cream/5 border border-cream/10';
+                    const items = [...menuSelections[c.key]]
+                        .map(item => `<li>${item}</li>`)
+                        .join('');
+                    return `
+                        <div>
+                            <h3 class="font-sans text-[10px] uppercase tracking-widest ${badgeClass} inline-block px-3 py-1 rounded-sm mb-4">${c.label}</h3>
+                            <ul class="font-serif text-lg text-cream/80 space-y-2 list-inside list-disc marker:text-gold">
+                                ${items}
+                            </ul>
+                        </div>`;
+                }).join('');
+
+            content.innerHTML = sections ||
+                `<p class="font-sans text-sm italic" style="color:rgba(253,251,247,0.35);">No items selected. Click Edit Menu to build your menu.</p>`;
+
+            closeMenuEdit();
+        };
+    </script>
+
+</body>
+</html>

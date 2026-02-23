@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <title>Welcome | De'Osa Catering & Events</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cream: '#FDFBF7',
+                        charcoal: '#1C1C1C',
+                        gold: '#C5A059',
+                    },
+                    fontFamily: {
+                        serif: ['"Cormorant Garamond"', 'serif'],
+                        sans: ['Montserrat', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #1C1C1C;
+            color: #FDFBF7;
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .img-texture::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.04'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .bg-reveal {
+            opacity: 0;
+            transform: scale(1.1);
+            transition: opacity 2s ease, transform 4s ease-out;
+        }
+        .bg-reveal.active {
+            opacity: 0.3;
+            transform: scale(1);
+        }
+
+        .btn-glow:hover {
+            box-shadow: 0 0 20px rgba(197, 160, 89, 0.4);
+            border-color: #C5A059;
+            background-color: rgba(197, 160, 89, 0.1);
+        }
+    </style>
+</head>
+<body class="relative h-screen w-screen flex flex-col items-center justify-center selection:bg-gold selection:text-white">
+
+    <!-- Cinematic Background -->
+    <div id="hero-bg" class="absolute inset-0 z-0 bg-reveal">
+        <img src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=80&w=2070&auto=format&fit=crop" class="w-full h-full object-cover grayscale opacity-50" alt="Luxury Event Setting">
+        <div class="absolute inset-0 bg-gradient-to-t from-charcoal via-charcoal/80 to-charcoal/30"></div>
+    </div>
+
+    <!-- Noise Overlay -->
+    <div class="absolute inset-0 img-texture z-0 pointer-events-none"></div>
+
+    <!-- Animation Container -->
+    <div id="animation-container" class="relative z-10 flex flex-col items-center justify-center w-full max-w-lg px-6">
+
+        <!-- SVG Cloche -->
+        <div class="w-32 h-32 md:w-40 md:h-40 relative mb-8">
+            <svg viewBox="0 0 100 100" class="w-full h-full text-gold overflow-visible">
+                <path id="path-base" d="M 15 75 L 85 75 C 90 75 90 80 85 80 L 15 80 C 10 80 10 75 15 75 Z" fill="none" stroke="currentColor" stroke-width="1.5" class="draw-path" />
+                <g id="dome-group">
+                    <path id="path-dome" d="M 20 70 C 20 30 80 30 80 70" fill="none" stroke="currentColor" stroke-width="2" class="draw-path" />
+                    <circle id="path-handle" cx="50" cy="26" r="4" fill="none" stroke="currentColor" stroke-width="2" class="draw-path" />
+                </g>
+                <g id="steam-group" stroke="currentColor" stroke-width="1" fill="none" class="opacity-0">
+                    <path d="M 40 65 C 38 55 45 45 40 35" class="steam-line" />
+                    <path d="M 50 68 C 53 58 47 48 50 38" class="steam-line" />
+                    <path d="M 60 65 C 58 55 65 45 60 35" class="steam-line" />
+                </g>
+            </svg>
+        </div>
+
+        <!-- Typography -->
+        <div class="text-center overflow-hidden h-32 flex flex-col items-center justify-center">
+            <img id="brand-name" src="images/logo-dark-bg.svg" class="h-16 md:h-24 w-auto opacity-0 translate-y-8" alt="De'Osa">
+            <p id="sub-title" class="font-sans text-xs md:text-sm font-bold tracking-[0.4em] uppercase text-gold mt-4 opacity-0 transform translate-y-4">Catering & Events</p>
+        </div>
+
+        <!-- Enter Button -->
+        <div class="mt-12 overflow-hidden h-16">
+            <a href="index.html" id="enter-btn" onclick="sessionStorage.setItem('deosa_from_welcome','true')" class="inline-block px-10 py-3 border border-cream/30 text-cream font-sans text-xs uppercase tracking-[0.2em] font-bold rounded-full transition-all duration-500 opacity-0 transform translate-y-full btn-glow z-20 relative">
+                Enter Experience
+            </a>
+        </div>
+
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // Prepare SVG paths for drawing
+            document.querySelectorAll('.draw-path').forEach(path => {
+                const length = path.getTotalLength();
+                gsap.set(path, { strokeDasharray: length, strokeDashoffset: length });
+            });
+
+            const tl = gsap.timeline({ defaults: { ease: "power2.inOut" } });
+
+            // Phase 1: Draw the Cloche
+            tl.to('#path-base', { strokeDashoffset: 0, duration: 1.2 })
+              .to('#path-dome', { strokeDashoffset: 0, duration: 1.5 }, "-=0.8")
+              .to('#path-handle', { strokeDashoffset: 0, duration: 0.8 }, "-=1.0");
+
+            // Phase 2: Lift Dome & Reveal Steam
+            tl.to('#dome-group', { y: -15, duration: 1.2, ease: "power3.inOut" }, "+=0.3")
+              .to('#steam-group', { opacity: 1, duration: 0.5 }, "-=0.8")
+              .fromTo('.steam-line',
+                { strokeDasharray: 50, strokeDashoffset: 50 },
+                { strokeDashoffset: 0, duration: 1.5, stagger: 0.2, ease: "power1.out" }, "-=0.8"
+              );
+
+            // Phase 3: Typography Reveal
+            tl.to('#brand-name', { y: 0, opacity: 1, duration: 1.2, ease: "power3.out" }, "-=0.5")
+              .to('#sub-title', { y: 0, opacity: 1, duration: 1, ease: "power3.out" }, "-=0.8");
+
+            // Phase 4: Background & Enter Button
+            tl.to('svg', { opacity: 0.3, scale: 0.9, duration: 1.5 }, "+=0.2")
+              .call(() => document.getElementById('hero-bg').classList.add('active'), [], "-=1.0")
+              .to('#enter-btn', { y: 0, opacity: 1, duration: 1, ease: "back.out(1.2)" }, "-=0.5");
+
+            // Auto-redirect 1 second after animation completes
+            tl.call(() => {
+                setTimeout(() => {
+                    sessionStorage.setItem('deosa_from_welcome', 'true');
+                    window.location.href = 'index.html';
+                }, 1000);
+            });
+
+            // Continuous steam drift
+            gsap.to('.steam-line', {
+                y: -5,
+                opacity: 0.5,
+                duration: 2,
+                yoyo: true,
+                repeat: -1,
+                ease: "sine.inOut",
+                stagger: 0.3,
+                delay: 4
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>De'Osa Catering & Events | Luxury African & Caribbean Wedding Catering</title>
+    <script>
+        if (sessionStorage.getItem('deosa_from_welcome')) {
+            sessionStorage.removeItem('deosa_from_welcome');
+        } else {
+            window.location.replace('welcome.html');
+        }
+    </script>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cream: '#FDFBF7',
+                        charcoal: '#1C1C1C',
+                        gold: '#C5A059',
+                        'gold-light': '#E8D3A2',
+                        rth: '#8B7355',
+                        sand: '#F4F1EA'
+                    },
+                    fontFamily: {
+                        serif: ['"Cormorant Garamond"', 'serif'],
+                        sans: ['Montserrat', 'sans-serif'],
+                    },
+                    spacing: {
+                        '18': '4.5rem',
+                        '112': '28rem',
+                        '128': '32rem',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom CSS for GSAP & UI -->
+    <style>
+        :root {
+            --cream: #FDFBF7;
+            --charcoal: #1C1C1C;
+            --gold: #C5A059;
+        }
+
+        body {
+            background-color: var(--cream);
+            color: var(--charcoal);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Utility Classes for Animation */
+        .clip-reveal { clip-path: inset(100% 0 0 0); }
+        .will-change-transform { will-change: transform; }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--cream); }
+        ::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 4px; }
+
+        /* Image Overlays */
+        .img-texture::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        /* SVG Line drawing */
+        .svg-line {
+            fill: none;
+            stroke: var(--gold);
+            stroke-width: 1;
+        }
+        .ai-live-glow { animation: pulse-glow 1.5s infinite alternate; }
+
+        /* Navbar scrolled state */
+        #navbar.navbar-scrolled {
+            background-color: rgba(28,28,28,0.92);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            mix-blend-mode: normal;
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+        }
+        @keyframes pulse-glow {
+            from { box-shadow: 0 0 10px 2px rgba(197,160,89,0.4); }
+            to   { box-shadow: 0 0 25px 8px rgba(197,160,89,0.8); }
+        }
+        .ai-bar { animation: sound-bounce 0.8s infinite ease-in-out alternate; }
+        .ai-bar:nth-child(1) { animation-delay: 0.1s; }
+        .ai-bar:nth-child(2) { animation-delay: 0.3s; }
+        .ai-bar:nth-child(3) { animation-delay: 0.0s; }
+        .ai-bar:nth-child(4) { animation-delay: 0.2s; }
+        @keyframes sound-bounce {
+            0%   { height: 6px;  opacity: 0.5; }
+            100% { height: 20px; opacity: 1; }
+        }
+
+        /* Venue marquee */
+        .venue-marquee {
+            display: flex;
+            width: max-content;
+            animation: venue-scroll 40s linear infinite;
+        }
+        .venue-marquee:hover { animation-play-state: paused; }
+        @keyframes venue-scroll {
+            from { transform: translateX(0); }
+            to   { transform: translateX(-50%); }
+        }
+        .venue-badge {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.1rem;
+            font-weight: 300;
+            letter-spacing: 0.08em;
+            color: rgba(253,251,247,0.85);
+            white-space: nowrap;
+            padding: 0.6rem 1.75rem;
+            border: 1px solid rgba(253,251,247,0.12);
+            background: rgba(253,251,247,0.04);
+            flex-shrink: 0;
+        }
+        .venue-dot {
+            color: #C5A059;
+            font-size: 0.5rem;
+            padding: 0 1.25rem;
+            flex-shrink: 0;
+            align-self: center;
+        }
+
+        /* ── Hero: illustrated decorations ── */
+        .hero-deco { will-change: transform, opacity; }
+
+        /* ── Hero: vertical card scroll columns ── */
+        .hero-card-col-1 {
+            animation: hero-scroll-up 56s linear infinite;
+            will-change: transform;
+        }
+        .hero-card-col-2 {
+            animation: hero-scroll-up 40s linear infinite;
+            animation-delay: -20s;
+            will-change: transform;
+        }
+        @keyframes hero-scroll-up {
+            from { transform: translateY(0); }
+            to   { transform: translateY(-50%); }
+        }
+        .hero-card {
+            box-shadow: 0 8px 32px rgba(28,28,28,0.10);
+            flex-shrink: 0;
+        }
+    </style>
+</head>
+<body class="selection:bg-gold selection:text-white">
+
+    <!-- Progress Indicator -->
+    <div id="progress-bar" class="fixed top-0 left-0 h-[2px] bg-gold z-50 origin-left scale-x-0 w-full will-change-transform"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-40 transition-all duration-500 py-6 px-8 flex justify-between items-center" id="navbar">
+        <a href="index.html"><img src="images/logo-dark-bg.svg" class="h-9 w-auto" alt="De'Osa"></a>
+        <div class="hidden md:flex gap-8 font-sans text-sm tracking-widest uppercase text-cream">
+            <a href="story.html" class="hover:text-gold transition-colors">Our Story</a>
+            <a href="catering.html" class="hover:text-gold transition-colors">Catering</a>
+            <a href="gallery.html" class="hover:text-gold transition-colors">Gallery</a>
+            <a href="contact.html" class="hover:text-gold transition-colors">Contact</a>
+            <a href="login.html" class="hover:text-gold transition-colors">Login</a>
+        </div>
+        <button id="mobile-menu-btn" onclick="toggleMobileMenu()" class="md:hidden font-sans text-sm tracking-widest uppercase text-cream">Menu</button>
+    </nav>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu" class="fixed inset-0 z-50 flex flex-col transition-all duration-500 opacity-0 pointer-events-none overflow-hidden" style="background-color:#1C1C1C;">
+        <!-- Noise texture -->
+        <div class="absolute inset-0 pointer-events-none" style="background-image:url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22n%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22 opacity=%220.06%22/%3E%3C/svg%3E');"></div>
+        <!-- Top gold accent line -->
+        <div class="absolute top-0 left-0 right-0 h-px" style="background:linear-gradient(to right,transparent,#C5A059,transparent);"></div>
+
+        <!-- Header -->
+        <div class="relative z-10 flex justify-between items-center px-6 py-6" style="border-bottom:1px solid rgba(253,251,247,0.06);">
+            <a href="index.html"><img src="images/logo-dark-bg.svg" class="h-9 w-auto" alt="De'Osa"></a>
+            <button onclick="toggleMobileMenu()" class="w-10 h-10 flex items-center justify-center rounded-sm transition-colors" style="border:1px solid rgba(253,251,247,0.12);color:rgba(253,251,247,0.5);">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+
+        <!-- Nav Links -->
+        <div class="relative z-10 flex flex-col px-6 pt-10 flex-1">
+            <p class="font-sans text-xs font-bold tracking-[0.3em] uppercase mb-8" style="color:#C5A059;">Navigation</p>
+
+            <a href="story.html" class="group flex items-center justify-between py-5" style="border-bottom:1px solid rgba(253,251,247,0.07);">
+                <span class="font-serif text-3xl transition-colors" style="color:rgba(253,251,247,0.9);">Our Story</span>
+                <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:rgba(253,251,247,0.2);"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"/></svg>
+            </a>
+            <a href="catering.html" class="group flex items-center justify-between py-5" style="border-bottom:1px solid rgba(253,251,247,0.07);">
+                <span class="font-serif text-3xl transition-colors" style="color:rgba(253,251,247,0.9);">Catering</span>
+                <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:rgba(253,251,247,0.2);"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"/></svg>
+            </a>
+            <a href="gallery.html" class="group flex items-center justify-between py-5" style="border-bottom:1px solid rgba(253,251,247,0.07);">
+                <span class="font-serif text-3xl transition-colors" style="color:rgba(253,251,247,0.9);">Gallery</span>
+                <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:rgba(253,251,247,0.2);"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"/></svg>
+            </a>
+            <a href="contact.html" class="group flex items-center justify-between py-5" style="border-bottom:1px solid rgba(253,251,247,0.07);">
+                <span class="font-serif text-3xl transition-colors" style="color:rgba(253,251,247,0.9);">Contact</span>
+                <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:rgba(253,251,247,0.2);"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"/></svg>
+            </a>
+            <a href="login.html" class="group flex items-center justify-between py-5">
+                <span class="font-serif text-3xl transition-colors" style="color:rgba(253,251,247,0.9);">Login</span>
+                <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:rgba(253,251,247,0.2);"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"/></svg>
+            </a>
+        </div>
+
+        <!-- Footer -->
+        <div class="relative z-10 px-6" style="padding-bottom: calc(2.5rem + env(safe-area-inset-bottom, 0px));">
+            <p class="font-sans text-xs tracking-widest uppercase" style="color:rgba(253,251,247,0.18);">Luxury African & Caribbean Catering · London</p>
+        </div>
+    </div>
+
+    <!-- SECTION 1: HERO -->
+    <section id="hero" class="relative h-screen w-full flex items-center overflow-hidden bg-[#1C1C1C]">
+
+        <!-- Noise texture (light) -->
+        <div class="absolute inset-0 pointer-events-none z-[1]" style="background-image:url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22n%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22 opacity=%220.04%22/%3E%3C/svg%3E');"></div>
+
+        <!-- ── ILLUSTRATED SVG DECORATIONS ── -->
+
+        <!-- Large Rose – top left -->
+        <div id="deco-rose-1" class="hero-deco absolute pointer-events-none select-none" style="top:3%;left:1%;z-index:3;">
+            <svg width="230" height="270" viewBox="0 0 230 270" fill="none" stroke="#C5A059" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.38;">
+                <path d="M115 48 C100 26 74 20 62 35 C52 48 62 68 82 78"/>
+                <path d="M115 48 C130 26 156 20 168 35 C178 48 168 68 148 78"/>
+                <path d="M115 48 C136 33 144 10 133 4 C121,-1 104 13 104 34"/>
+                <path d="M82 78 C62 84 50 104 60 118 C69 130 90 127 103 114"/>
+                <path d="M148 78 C168 84 180 104 170 118 C161 130 140 127 127 114"/>
+                <path d="M103 114 C95 133 102 153 115 153 C128 153 134 133 127 114"/>
+                <circle cx="115" cy="78" r="15"/>
+                <path d="M103 78 C103 66 109 58 115 58 C121 58 127 66 127 78"/>
+                <path d="M103 78 C103 90 109 97 115 97 C121 97 127 90 127 78"/>
+                <path d="M115 153 C112 178 108 198 102 222" stroke-width="1.8"/>
+                <path d="M108 185 C90 174 80 158 90 148 C98 162 104 174 108 185Z"/>
+                <path d="M104 207 C120 194 126 176 116 168 C110 182 106 195 104 207Z"/>
+                <path d="M107 170 C88 164 82 151 90 144"/>
+            </svg>
+        </div>
+
+        <!-- Smaller Rose – bottom left -->
+        <div id="deco-rose-2" class="hero-deco absolute pointer-events-none select-none" style="bottom:7%;left:3%;z-index:3;">
+            <svg width="155" height="185" viewBox="0 0 155 185" fill="none" stroke="#C5A059" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.24;">
+                <path d="M77 36 C65 18 45 13 35 25 C26 37 35 54 51 62"/>
+                <path d="M77 36 C89 18 109 13 119 25 C128 37 119 54 103 62"/>
+                <path d="M77 36 C93 24 98 5 88 0 C77,-4 64 9 64 28"/>
+                <path d="M51 62 C35 67 25 83 33 94 C41 104 59 101 69 89"/>
+                <path d="M103 62 C119 67 129 83 121 94 C113 104 95 101 85 89"/>
+                <path d="M69 89 C62 105 68 121 77 121 C86 121 91 105 85 89"/>
+                <circle cx="77" cy="62" r="11"/>
+                <path d="M77 121 C75 141 72 154 68 170" stroke-width="1.5"/>
+                <path d="M72 140 C57 131 51 118 59 110 C65 121 69 132 72 140Z"/>
+                <path d="M70 158 C82 148 87 134 79 127 C75 137 72 148 70 158Z"/>
+            </svg>
+        </div>
+
+        <!-- Fork & Knife -->
+        <div id="deco-cutlery" class="hero-deco absolute pointer-events-none select-none" style="top:8%;left:35%;z-index:3;">
+            <svg width="78" height="195" viewBox="0 0 78 195" fill="none" stroke="#C5A059" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.30;">
+                <line x1="14" y1="8"  x2="14" y2="52"/>
+                <line x1="21" y1="8"  x2="21" y2="52"/>
+                <line x1="28" y1="8"  x2="28" y2="52"/>
+                <path d="M14 52 Q21 66 28 52"/>
+                <line x1="21" y1="65" x2="21" y2="188"/>
+                <path d="M52 8 L62 8 Q67 30 62 54 L52 54 Z"/>
+                <line x1="57" y1="54" x2="57" y2="188"/>
+            </svg>
+        </div>
+
+        <!-- Botanical sprig – centre top -->
+        <div id="deco-sprig" class="hero-deco absolute pointer-events-none select-none hidden md:block" style="top:1%;left:28%;z-index:3;">
+            <svg width="95" height="128" viewBox="0 0 95 128" fill="none" stroke="#C5A059" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.20;">
+                <path d="M47 120 C46 95 45 65 44 20"/>
+                <path d="M44 88 C32 78 24 64 32 55 C39 67 42 78 44 88Z"/>
+                <path d="M45 66 C56 56 62 42 55 34 C48 46 46 57 45 66Z"/>
+                <path d="M44 48 C32 40 26 28 34 20 C41 31 43 41 44 48Z"/>
+                <circle cx="44" cy="18" r="4"/>
+                <circle cx="32" cy="53" r="3"/>
+            </svg>
+        </div>
+
+        <!-- ── TEXT CONTENT ── -->
+        <div class="absolute md:relative inset-0 md:inset-auto z-20 md:z-10 flex flex-col items-center justify-center md:items-start md:justify-center md:w-[56%] text-center md:text-left px-6 md:px-16 lg:px-24">
+            <p class="font-sans text-[0.6rem] md:text-xs font-bold tracking-[0.2em] md:tracking-[0.3em] uppercase mb-3 md:mb-6 text-gold hero-elem" style="opacity:0;">De'Osa Catering & Events</p>
+
+            <h1 class="font-serif text-[2.6rem] md:text-6xl lg:text-[5.5rem] leading-tight mb-5 md:mb-8 text-cream hero-title overflow-hidden">
+                <span class="block">African</span>
+                <span class="block italic text-gold">& Caribbean</span>
+                <span class="block">Wedding Catering</span>
+            </h1>
+
+            <svg class="w-28 md:w-32 h-4 mb-5 md:mb-8 mx-auto md:mx-0 hero-elem" viewBox="0 0 100 10" preserveAspectRatio="none" style="opacity:0;">
+                <path class="svg-line hero-line" d="M0,5 L100,5" />
+            </svg>
+
+            <p class="hidden md:block font-sans text-lg font-light tracking-wide mb-12 text-cream/55 max-w-md hero-elem" style="opacity:0;">Bespoke dining experiences across London & the Home Counties.</p>
+
+            <div class="hidden md:flex flex-row gap-4 justify-start hero-elem" style="opacity:0;">
+                <a href="contact.html" class="px-8 py-4 bg-gold text-white font-sans text-xs tracking-widest uppercase hover:bg-cream hover:text-charcoal transition-all duration-300">Enquire About Your Wedding</a>
+                <button onclick="toggleAIVoice()" class="px-8 py-4 bg-transparent text-gold font-sans text-xs tracking-widest uppercase hover:bg-gold hover:text-charcoal transition-all duration-300 border border-gold/60 hover:border-gold flex items-center gap-3">
+                    <span class="relative flex h-2 w-2">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-gold opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-gold"></span>
+                    </span>
+                    Instant Quote
+                </button>
+            </div>
+
+            <!-- Mobile CTA -->
+            <div class="md:hidden flex flex-col gap-3 mt-2 hero-elem" style="opacity:0;">
+                <a href="contact.html" class="px-10 py-4 bg-gold text-white font-sans text-xs tracking-widest uppercase text-center">Enquire Now</a>
+                <button onclick="toggleAIVoice()" class="px-10 py-4 bg-transparent text-gold font-sans text-xs tracking-widest uppercase border border-gold/60 flex items-center justify-center gap-3">
+                    <span class="relative flex h-2 w-2">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-gold opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-gold"></span>
+                    </span>
+                    Instant Quote
+                </button>
+            </div>
+        </div>
+
+        <!-- ── MOBILE: left card column (col-1) ── -->
+        <div class="flex md:hidden absolute left-0 top-0 h-full flex-col overflow-hidden z-[4] px-1.5" style="width:calc(50% - 7.5px);">
+            <div class="absolute inset-x-0 top-0 h-24 z-10 pointer-events-none" style="background:linear-gradient(to bottom,#1C1C1C,transparent);"></div>
+            <div class="absolute inset-x-0 bottom-0 h-24 z-10 pointer-events-none" style="background:linear-gradient(to top,#1C1C1C,transparent);"></div>
+            <div class="absolute inset-y-0 left-0 w-4 z-10 pointer-events-none" style="background:linear-gradient(to right,#1C1C1C,transparent);"></div>
+            <!-- Fade overlay to make images more subtle -->
+            <div class="absolute inset-0 z-[6] pointer-events-none" style="background:rgba(28,28,28,0.72);"></div>
+            <div class="hero-card-col-1 flex flex-col gap-2 w-full">
+                <div class="hero-card rounded-xl overflow-hidden" style="aspect-ratio:3/4;"><img src="images/food.jpeg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-xl overflow-hidden" style="aspect-ratio:3/4;"><img src="images/gallery-1.jpeg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-xl overflow-hidden" style="aspect-ratio:3/4;"><img src="images/ghanaian-traditions.png" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-xl overflow-hidden" style="aspect-ratio:3/4;"><img src="images/plated-multi-course.jpeg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-xl overflow-hidden" style="aspect-ratio:3/4;"><img src="images/gallery-3.png" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-xl overflow-hidden" style="aspect-ratio:3/4;"><img src="images/trusted-venues-bg.png" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-xl overflow-hidden" style="aspect-ratio:3/4;"><img src="https://deosacatering.co.uk/ehusteeg/2024/01/2bcaf191-9416-4642-aa9e-7aba1abdcb5d.jpg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-xl overflow-hidden" style="aspect-ratio:3/4;"><img src="https://deosacatering.co.uk/ehusteeg/2024/01/351f78d1-4eda-46e0-a3b4-11801f7b1c69-scaled.jpg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-xl overflow-hidden" style="aspect-ratio:3/4;"><img src="https://deosacatering.co.uk/ehusteeg/2024/01/efab0d9f-7fff-47c2-8a45-ef6ce4827759-scaled.jpg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-xl overflow-hidden" style="aspect-ratio:3/4;"><img src="https://deosacatering.co.uk/ehusteeg/2024/01/B1B0229D-5AC0-428C-800E-CC02A3BD78E4.jpg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-xl overflow-hidden" style="aspect-ratio:3/4;"><img src="https://deosacatering.co.uk/ehusteeg/2024/01/IMG_0578.jpg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-xl overflow-hidden" style="aspect-ratio:3/4;"><img src="https://deosacatering.co.uk/ehusteeg/2024/01/0E8E9151-BBE8-4D6C-98D8-89D90EF4CD20.jpg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-xl overflow-hidden" style="aspect-ratio:3/4;"><img src="images/food.jpeg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-xl overflow-hidden" style="aspect-ratio:3/4;"><img src="images/gallery-1.jpeg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-xl overflow-hidden" style="aspect-ratio:3/4;"><img src="images/ghanaian-traditions.png" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-xl overflow-hidden" style="aspect-ratio:3/4;"><img src="images/plated-multi-course.jpeg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-xl overflow-hidden" style="aspect-ratio:3/4;"><img src="images/gallery-3.png" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-xl overflow-hidden" style="aspect-ratio:3/4;"><img src="images/trusted-venues-bg.png" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-xl overflow-hidden" style="aspect-ratio:3/4;"><img src="https://deosacatering.co.uk/ehusteeg/2024/01/2bcaf191-9416-4642-aa9e-7aba1abdcb5d.jpg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-xl overflow-hidden" style="aspect-ratio:3/4;"><img src="https://deosacatering.co.uk/ehusteeg/2024/01/351f78d1-4eda-46e0-a3b4-11801f7b1c69-scaled.jpg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-xl overflow-hidden" style="aspect-ratio:3/4;"><img src="https://deosacatering.co.uk/ehusteeg/2024/01/efab0d9f-7fff-47c2-8a45-ef6ce4827759-scaled.jpg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-xl overflow-hidden" style="aspect-ratio:3/4;"><img src="https://deosacatering.co.uk/ehusteeg/2024/01/B1B0229D-5AC0-428C-800E-CC02A3BD78E4.jpg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-xl overflow-hidden" style="aspect-ratio:3/4;"><img src="https://deosacatering.co.uk/ehusteeg/2024/01/IMG_0578.jpg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-xl overflow-hidden" style="aspect-ratio:3/4;"><img src="https://deosacatering.co.uk/ehusteeg/2024/01/0E8E9151-BBE8-4D6C-98D8-89D90EF4CD20.jpg" class="w-full h-full object-cover" alt=""></div>
+            </div>
+        </div>
+
+        <!-- ── MOBILE: right card column (col-2) ── -->
+        <div class="flex md:hidden absolute right-0 top-0 h-full flex-col overflow-hidden z-[4] px-1.5" style="width:calc(50% - 7.5px);">
+            <div class="absolute inset-x-0 top-0 h-24 z-10 pointer-events-none" style="background:linear-gradient(to bottom,#1C1C1C,transparent);"></div>
+            <div class="absolute inset-x-0 bottom-0 h-24 z-10 pointer-events-none" style="background:linear-gradient(to top,#1C1C1C,transparent);"></div>
+            <div class="absolute inset-y-0 right-0 w-4 z-10 pointer-events-none" style="background:linear-gradient(to left,#1C1C1C,transparent);"></div>
+            <!-- Fade overlay to make images more subtle -->
+            <div class="absolute inset-0 z-[6] pointer-events-none" style="background:rgba(28,28,28,0.72);"></div>
+            <div class="hero-card-col-2 flex flex-col gap-2 w-full">
+                <div class="hero-card rounded-xl overflow-hidden" style="aspect-ratio:3/4;"><img src="images/food3.jpeg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-xl overflow-hidden" style="aspect-ratio:3/4;"><img src="images/gallery-4.png" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-xl overflow-hidden" style="aspect-ratio:3/4;"><img src="images/sierra-leone.jpeg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-xl overflow-hidden" style="aspect-ratio:3/4;"><img src="images/luxury-buffet-service.jpeg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-xl overflow-hidden" style="aspect-ratio:3/4;"><img src="images/starters-sweet-endings.jpeg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-xl overflow-hidden" style="aspect-ratio:3/4;"><img src="images/gallery-2.jpeg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-xl overflow-hidden" style="aspect-ratio:3/4;"><img src="https://deosacatering.co.uk/ehusteeg/2024/01/87e9fd67-0561-4dc7-b51c-d99058e33bad.jpg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-xl overflow-hidden" style="aspect-ratio:3/4;"><img src="https://deosacatering.co.uk/ehusteeg/2024/01/IMG_0575.jpg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-xl overflow-hidden" style="aspect-ratio:3/4;"><img src="https://deosacatering.co.uk/ehusteeg/2024/01/image7.jpeg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-xl overflow-hidden" style="aspect-ratio:3/4;"><img src="https://deosacatering.co.uk/ehusteeg/2024/01/image3.jpeg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-xl overflow-hidden" style="aspect-ratio:3/4;"><img src="https://deosacatering.co.uk/ehusteeg/2024/01/E62B69FF-A94B-4336-9D1D-206547CFC1E5.jpg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-xl overflow-hidden" style="aspect-ratio:3/4;"><img src="images/food3.jpeg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-xl overflow-hidden" style="aspect-ratio:3/4;"><img src="images/gallery-4.png" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-xl overflow-hidden" style="aspect-ratio:3/4;"><img src="images/sierra-leone.jpeg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-xl overflow-hidden" style="aspect-ratio:3/4;"><img src="images/luxury-buffet-service.jpeg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-xl overflow-hidden" style="aspect-ratio:3/4;"><img src="images/starters-sweet-endings.jpeg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-xl overflow-hidden" style="aspect-ratio:3/4;"><img src="images/gallery-2.jpeg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-xl overflow-hidden" style="aspect-ratio:3/4;"><img src="https://deosacatering.co.uk/ehusteeg/2024/01/87e9fd67-0561-4dc7-b51c-d99058e33bad.jpg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-xl overflow-hidden" style="aspect-ratio:3/4;"><img src="https://deosacatering.co.uk/ehusteeg/2024/01/IMG_0575.jpg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-xl overflow-hidden" style="aspect-ratio:3/4;"><img src="https://deosacatering.co.uk/ehusteeg/2024/01/image7.jpeg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-xl overflow-hidden" style="aspect-ratio:3/4;"><img src="https://deosacatering.co.uk/ehusteeg/2024/01/image3.jpeg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-xl overflow-hidden" style="aspect-ratio:3/4;"><img src="https://deosacatering.co.uk/ehusteeg/2024/01/E62B69FF-A94B-4336-9D1D-206547CFC1E5.jpg" class="w-full h-full object-cover" alt=""></div>
+            </div>
+        </div>
+
+        <!-- ── DESKTOP: both columns on right ── -->
+        <div class="hidden md:flex absolute right-0 top-0 h-full w-[46%] gap-3 overflow-hidden z-[4] px-3">
+            <div class="absolute inset-y-0 left-0 w-24 z-10 pointer-events-none" style="background:linear-gradient(to right,#1C1C1C,transparent);"></div>
+            <div class="absolute inset-x-0 top-0 h-28 z-10 pointer-events-none" style="background:linear-gradient(to bottom,#1C1C1C,transparent);"></div>
+            <div class="absolute inset-x-0 bottom-0 h-28 z-10 pointer-events-none" style="background:linear-gradient(to top,#1C1C1C,transparent);"></div>
+            <div class="hero-card-col-1 flex flex-col gap-3 w-1/2">
+                <div class="hero-card rounded-2xl overflow-hidden" style="aspect-ratio:3/4;"><img src="images/food.jpeg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-2xl overflow-hidden" style="aspect-ratio:3/4;"><img src="images/gallery-1.jpeg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-2xl overflow-hidden" style="aspect-ratio:3/4;"><img src="images/ghanaian-traditions.png" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-2xl overflow-hidden" style="aspect-ratio:3/4;"><img src="images/plated-multi-course.jpeg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-2xl overflow-hidden" style="aspect-ratio:3/4;"><img src="images/gallery-3.png" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-2xl overflow-hidden" style="aspect-ratio:3/4;"><img src="images/trusted-venues-bg.png" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-2xl overflow-hidden" style="aspect-ratio:3/4;"><img src="https://deosacatering.co.uk/ehusteeg/2024/01/2bcaf191-9416-4642-aa9e-7aba1abdcb5d.jpg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-2xl overflow-hidden" style="aspect-ratio:3/4;"><img src="https://deosacatering.co.uk/ehusteeg/2024/01/351f78d1-4eda-46e0-a3b4-11801f7b1c69-scaled.jpg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-2xl overflow-hidden" style="aspect-ratio:3/4;"><img src="https://deosacatering.co.uk/ehusteeg/2024/01/efab0d9f-7fff-47c2-8a45-ef6ce4827759-scaled.jpg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-2xl overflow-hidden" style="aspect-ratio:3/4;"><img src="https://deosacatering.co.uk/ehusteeg/2024/01/B1B0229D-5AC0-428C-800E-CC02A3BD78E4.jpg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-2xl overflow-hidden" style="aspect-ratio:3/4;"><img src="https://deosacatering.co.uk/ehusteeg/2024/01/IMG_0578.jpg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-2xl overflow-hidden" style="aspect-ratio:3/4;"><img src="https://deosacatering.co.uk/ehusteeg/2024/01/0E8E9151-BBE8-4D6C-98D8-89D90EF4CD20.jpg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-2xl overflow-hidden" style="aspect-ratio:3/4;"><img src="images/food.jpeg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-2xl overflow-hidden" style="aspect-ratio:3/4;"><img src="images/gallery-1.jpeg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-2xl overflow-hidden" style="aspect-ratio:3/4;"><img src="images/ghanaian-traditions.png" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-2xl overflow-hidden" style="aspect-ratio:3/4;"><img src="images/plated-multi-course.jpeg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-2xl overflow-hidden" style="aspect-ratio:3/4;"><img src="images/gallery-3.png" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-2xl overflow-hidden" style="aspect-ratio:3/4;"><img src="images/trusted-venues-bg.png" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-2xl overflow-hidden" style="aspect-ratio:3/4;"><img src="https://deosacatering.co.uk/ehusteeg/2024/01/2bcaf191-9416-4642-aa9e-7aba1abdcb5d.jpg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-2xl overflow-hidden" style="aspect-ratio:3/4;"><img src="https://deosacatering.co.uk/ehusteeg/2024/01/351f78d1-4eda-46e0-a3b4-11801f7b1c69-scaled.jpg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-2xl overflow-hidden" style="aspect-ratio:3/4;"><img src="https://deosacatering.co.uk/ehusteeg/2024/01/efab0d9f-7fff-47c2-8a45-ef6ce4827759-scaled.jpg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-2xl overflow-hidden" style="aspect-ratio:3/4;"><img src="https://deosacatering.co.uk/ehusteeg/2024/01/B1B0229D-5AC0-428C-800E-CC02A3BD78E4.jpg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-2xl overflow-hidden" style="aspect-ratio:3/4;"><img src="https://deosacatering.co.uk/ehusteeg/2024/01/IMG_0578.jpg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-2xl overflow-hidden" style="aspect-ratio:3/4;"><img src="https://deosacatering.co.uk/ehusteeg/2024/01/0E8E9151-BBE8-4D6C-98D8-89D90EF4CD20.jpg" class="w-full h-full object-cover" alt=""></div>
+            </div>
+            <div class="hero-card-col-2 flex flex-col gap-3 w-1/2">
+                <div class="hero-card rounded-2xl overflow-hidden" style="aspect-ratio:3/4;"><img src="images/food3.jpeg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-2xl overflow-hidden" style="aspect-ratio:3/4;"><img src="images/gallery-4.png" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-2xl overflow-hidden" style="aspect-ratio:3/4;"><img src="images/sierra-leone.jpeg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-2xl overflow-hidden" style="aspect-ratio:3/4;"><img src="images/luxury-buffet-service.jpeg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-2xl overflow-hidden" style="aspect-ratio:3/4;"><img src="images/starters-sweet-endings.jpeg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-2xl overflow-hidden" style="aspect-ratio:3/4;"><img src="images/gallery-2.jpeg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-2xl overflow-hidden" style="aspect-ratio:3/4;"><img src="https://deosacatering.co.uk/ehusteeg/2024/01/87e9fd67-0561-4dc7-b51c-d99058e33bad.jpg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-2xl overflow-hidden" style="aspect-ratio:3/4;"><img src="https://deosacatering.co.uk/ehusteeg/2024/01/IMG_0575.jpg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-2xl overflow-hidden" style="aspect-ratio:3/4;"><img src="https://deosacatering.co.uk/ehusteeg/2024/01/image7.jpeg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-2xl overflow-hidden" style="aspect-ratio:3/4;"><img src="https://deosacatering.co.uk/ehusteeg/2024/01/image3.jpeg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-2xl overflow-hidden" style="aspect-ratio:3/4;"><img src="https://deosacatering.co.uk/ehusteeg/2024/01/E62B69FF-A94B-4336-9D1D-206547CFC1E5.jpg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-2xl overflow-hidden" style="aspect-ratio:3/4;"><img src="images/food3.jpeg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-2xl overflow-hidden" style="aspect-ratio:3/4;"><img src="images/gallery-4.png" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-2xl overflow-hidden" style="aspect-ratio:3/4;"><img src="images/sierra-leone.jpeg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-2xl overflow-hidden" style="aspect-ratio:3/4;"><img src="images/luxury-buffet-service.jpeg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-2xl overflow-hidden" style="aspect-ratio:3/4;"><img src="images/starters-sweet-endings.jpeg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-2xl overflow-hidden" style="aspect-ratio:3/4;"><img src="images/gallery-2.jpeg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-2xl overflow-hidden" style="aspect-ratio:3/4;"><img src="https://deosacatering.co.uk/ehusteeg/2024/01/87e9fd67-0561-4dc7-b51c-d99058e33bad.jpg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-2xl overflow-hidden" style="aspect-ratio:3/4;"><img src="https://deosacatering.co.uk/ehusteeg/2024/01/IMG_0575.jpg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-2xl overflow-hidden" style="aspect-ratio:3/4;"><img src="https://deosacatering.co.uk/ehusteeg/2024/01/image7.jpeg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-2xl overflow-hidden" style="aspect-ratio:3/4;"><img src="https://deosacatering.co.uk/ehusteeg/2024/01/image3.jpeg" class="w-full h-full object-cover" alt=""></div>
+                <div class="hero-card rounded-2xl overflow-hidden" style="aspect-ratio:3/4;"><img src="https://deosacatering.co.uk/ehusteeg/2024/01/E62B69FF-A94B-4336-9D1D-206547CFC1E5.jpg" class="w-full h-full object-cover" alt=""></div>
+            </div>
+        </div>
+
+        <p class="hidden md:block absolute bottom-8 left-24 font-sans text-xs tracking-widest uppercase text-cream/30 z-10 whitespace-nowrap">Multi-award-winning international catering team</p>
+    </section>
+
+    <!-- SECTION 2: OUR STORY (Pinned Scroll Chapter) -->
+    <section id="story" class="relative h-auto md:h-screen bg-cream flex items-center py-20 overflow-hidden">
+        <div class="container mx-auto px-6 lg:px-12 flex flex-col md:flex-row items-center justify-between h-full gap-12">
+            <!-- Left Text -->
+            <div class="w-full md:w-1/2 flex flex-col justify-center pr-0 md:pr-12">
+                <h2 class="font-serif text-4xl md:text-6xl text-charcoal mb-6 story-title">A Legacy Rooted in Culture, Served with Excellence</h2>
+                <svg class="w-24 h-4 mb-8" viewBox="0 0 100 10">
+                    <path class="svg-line draw-on-scroll" d="M0,5 L100,5" />
+                </svg>
+                <p class="font-sans text-lg text-charcoal/80 font-light leading-relaxed mb-8 story-text">
+                    What began as a passionate pursuit of authentic flavor has blossomed into a multi-award-winning business. We bring the vibrant, deeply rooted heritage of African and Caribbean cuisine to London's most prestigious luxury weddings, serving each dish with elegance, heart, and unparalleled attention to detail.
+                </p>
+                <div class="flex gap-12 story-stats">
+                    <div>
+                        <span class="block font-serif text-5xl text-gold mb-2"><span id="count-clients">0</span>+</span>
+                        <span class="font-sans text-xs tracking-widest uppercase text-charcoal/60">Couples Served</span>
+                    </div>
+                    <div>
+                        <span class="block font-serif text-5xl text-gold mb-2"><span id="count-guests">0</span>k+</span>
+                        <span class="font-sans text-xs tracking-widest uppercase text-charcoal/60">Guests Delighted</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Images Crossfade (Pinned visual) -->
+            <div class="w-full md:w-1/2 h-full relative img-texture overflow-hidden hidden md:block story-img-container">
+                <img src="images/food.jpeg" class="absolute inset-0 w-full h-full object-cover story-img img-1" alt="Fine Dining Prep" />
+                <img src="images/food3.jpeg" class="absolute inset-0 w-full h-full object-cover story-img img-2 opacity-0" alt="Beautiful Presentation" />
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 3: MEET MARY -->
+    <section id="experience" class="py-16 md:py-32 bg-sand relative z-10">
+        <div class="container mx-auto px-6 lg:px-12 text-center max-w-4xl mb-10 md:mb-24">
+            <p class="font-sans text-[0.6rem] tracking-[0.3em] uppercase text-gold/70 mb-4 fade-up">Powered by AI · Available 24/7</p>
+            <h2 class="font-serif text-5xl md:text-6xl text-charcoal mb-6 fade-up">Meet Mary, Your Personal<br class="hidden md:block"><span class="italic">Wedding Consultant</span></h2>
+            <svg class="w-24 h-4 mx-auto mb-8" viewBox="0 0 100 10">
+                <path class="svg-line draw-on-scroll mx-auto" d="M0,5 L100,5" />
+            </svg>
+            <p class="font-sans text-lg text-charcoal/80 font-light fade-up">Skip the emails and waiting. Speak to Mary and receive a fully itemised quote — built live as you talk — sent straight to your phone before the call ends.</p>
+        </div>
+
+        <div class="container mx-auto px-6 lg:px-12 grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Card 1 -->
+            <div class="bg-cream p-12 text-center shadow-sm hover:shadow-xl transition-shadow duration-500 exp-card border border-gold/10 group cursor-pointer">
+                <div class="w-12 h-12 rounded-full border border-gold flex items-center justify-center mx-auto mb-8 group-hover:bg-gold group-hover:text-charcoal transition-colors duration-500">
+                    <span class="font-serif italic text-xl">1</span>
+                </div>
+                <h3 class="font-serif text-2xl mb-4 text-charcoal">Press the Button</h3>
+                <p class="font-sans text-sm font-light text-charcoal/70 leading-relaxed">Hit the pulsing gold button anywhere on the site. Mary answers instantly — no hold music, no wait times, any time of day or night.</p>
+            </div>
+            <!-- Card 2 -->
+            <div class="bg-cream p-12 text-center shadow-sm hover:shadow-xl transition-shadow duration-500 exp-card border border-gold/10 group cursor-pointer">
+                <div class="w-12 h-12 rounded-full border border-gold flex items-center justify-center mx-auto mb-8 group-hover:bg-gold group-hover:text-charcoal transition-colors duration-500">
+                    <span class="font-serif italic text-xl">2</span>
+                </div>
+                <h3 class="font-serif text-2xl mb-4 text-charcoal">Build Your Menu</h3>
+                <p class="font-sans text-sm font-light text-charcoal/70 leading-relaxed">Tell Mary your guest count, venue, and the dishes you want. She builds your order live on screen as you speak — adding and adjusting in real time.</p>
+            </div>
+            <!-- Card 3 -->
+            <div class="bg-cream p-12 text-center shadow-sm hover:shadow-xl transition-shadow duration-500 exp-card border border-gold/10 group cursor-pointer">
+                <div class="w-12 h-12 rounded-full border border-gold flex items-center justify-center mx-auto mb-8 group-hover:bg-gold group-hover:text-charcoal transition-colors duration-500">
+                    <span class="font-serif italic text-xl">3</span>
+                </div>
+                <h3 class="font-serif text-2xl mb-4 text-charcoal">Receive Your Quote</h3>
+                <p class="font-sans text-sm font-light text-charcoal/70 leading-relaxed">Before the call ends, Mary takes your details and sends a full itemised invoice to your phone and email — instantly, no waiting.</p>
+            </div>
+        </div>
+
+        <!-- CTA -->
+        <div class="text-center mt-16 md:mt-20">
+            <button onclick="toggleAIVoice()" class="inline-flex items-center gap-4 px-10 py-5 bg-charcoal text-cream font-sans text-xs tracking-widest uppercase hover:bg-gold hover:text-charcoal transition-all duration-300 group">
+                <span class="relative flex h-2 w-2">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-gold opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-gold"></span>
+                </span>
+                Get Your Instant Quote
+                <svg class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+            </button>
+            <p class="font-sans text-[0.6rem] tracking-widest uppercase text-charcoal/30 mt-4">Free · No commitment · Available right now</p>
+        </div>
+    </section>
+
+    <!-- SECTION 4: SERVICE STYLES (Horizontal Scroll — all screens) -->
+    <section id="styles-container" class="bg-charcoal text-cream overflow-hidden">
+        <div id="styles-pin" class="h-screen flex items-center">
+            <div id="styles-scroll" class="flex w-[400vw] h-full">
+
+                <!-- Intro Panel -->
+                <div class="w-[100vw] h-full flex flex-col items-center justify-center px-6 md:px-12 shrink-0">
+                    <p class="font-sans tracking-[0.2em] text-gold uppercase text-sm mb-4">Service Styles</p>
+                    <h2 class="font-serif text-5xl md:text-8xl text-center">Dining Formats</h2>
+                    <p class="font-sans text-base md:text-lg font-light mt-6 md:mt-8 max-w-lg text-center text-cream/70">Scroll to explore our beautifully curated service styles, tailored to the atmosphere of your celebration.</p>
+                </div>
+
+                <!-- Panel 1 -->
+                <div class="w-[100vw] h-full flex items-center justify-center px-6 md:px-12 shrink-0 relative panel">
+                    <img src="images/plated-multi-course.jpeg" class="absolute inset-0 w-full h-full object-cover opacity-40 img-texture" alt="Plated Multi-Course" />
+                    <div class="relative z-10 flex flex-col items-center text-center max-w-2xl bg-charcoal/80 p-8 md:p-16 border border-gold/30 backdrop-blur-sm">
+                        <h3 class="font-serif text-3xl md:text-5xl mb-4 md:mb-6 text-gold">Plated Multi-Course</h3>
+                        <p class="font-sans font-light text-sm md:text-lg mb-4 md:mb-6 leading-relaxed">The pinnacle of formal dining. Guests are seated to enjoy an elegantly paced, multi-course journey, with each dish beautifully plated and served to the table.</p>
+                        <span class="font-sans text-xs tracking-widest uppercase border-b border-gold pb-1">Ideal for: Black Tie & Formal Weddings</span>
+                    </div>
+                </div>
+
+                <!-- Panel 2 -->
+                <div class="w-[100vw] h-full flex items-center justify-center px-6 md:px-12 shrink-0 relative panel">
+                    <img src="images/luxury-buffet-service.jpeg" class="absolute inset-0 w-full h-full object-cover opacity-40 img-texture" alt="Luxury Buffet" />
+                    <div class="relative z-10 flex flex-col items-center text-center max-w-2xl bg-charcoal/80 p-8 md:p-16 border border-gold/30 backdrop-blur-sm">
+                        <h3 class="font-serif text-3xl md:text-5xl mb-4 md:mb-6 text-gold">Luxury Buffet Service</h3>
+                        <p class="font-sans font-light text-sm md:text-lg mb-4 md:mb-6 leading-relaxed">A grand, visually stunning spread. Perfect for offering guests a wider variety of rich cultural dishes, presented with opulent, high-end styling stations.</p>
+                        <span class="font-sans text-xs tracking-widest uppercase border-b border-gold pb-1">Ideal for: Large Scale & Vibrant Celebrations</span>
+                    </div>
+                </div>
+
+                <!-- Panel 3 -->
+                <div class="w-[100vw] h-full flex items-center justify-center px-6 md:px-12 shrink-0 relative panel">
+                    <img src="images/family-style-dining.jpeg" class="absolute inset-0 w-full h-full object-cover opacity-40 img-texture" alt="Family Style" />
+                    <div class="relative z-10 flex flex-col items-center text-center max-w-2xl bg-charcoal/80 p-8 md:p-16 border border-gold/30 backdrop-blur-sm">
+                        <h3 class="font-serif text-3xl md:text-5xl mb-4 md:mb-6 text-gold">Family Style Dining</h3>
+                        <p class="font-sans font-light text-sm md:text-lg mb-4 md:mb-6 leading-relaxed">Warm, communal, and elegant. Beautiful sharing platters are placed in the center of guest tables, encouraging interaction while maintaining a luxurious feel.</p>
+                        <span class="font-sans text-xs tracking-widest uppercase border-b border-gold pb-1">Ideal for: Intimate & Warm Gatherings</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 5: CUISINE HERITAGE (Pinned Immersive) -->
+    <section id="cuisine" class="relative bg-cream h-[375vh]">
+        <div class="sticky top-0 h-screen w-full flex flex-col md:flex-row items-center overflow-hidden pt-20">
+            <!-- Left Text -->
+            <div class="w-full md:w-1/2 p-8 md:p-20 z-10 flex flex-col justify-center h-auto md:h-full bg-cream relative">
+                <p class="font-sans text-xs tracking-[0.2em] uppercase text-gold mb-4">Our Menus</p>
+                <h2 class="font-serif text-5xl md:text-6xl text-charcoal mb-6 md:mb-12">African & Caribbean Cuisine, Elevated</h2>
+
+                <div class="relative h-48 md:h-64 w-full">
+                    <!-- Nigerian -->
+                    <div class="absolute inset-0 cuisine-text opacity-100 transition-opacity duration-500" id="cuis-1">
+                        <h3 class="font-serif text-3xl text-gold mb-4">Nigerian Heritage</h3>
+                        <svg class="w-16 h-2 mb-6" viewBox="0 0 100 10"><path class="svg-line" d="M0,5 L100,5" /></svg>
+                        <ul class="font-sans font-light text-charcoal/80 space-y-3">
+                            <li>Smoky Party Jollof Rice</li>
+                            <li>Rich Egusi, Okra & Banga Soups</li>
+                            <li>Pounded Yam & Sweet Asaro</li>
+                        </ul>
+                    </div>
+                    <!-- Ghanaian -->
+                    <div class="absolute inset-0 cuisine-text opacity-0 transition-opacity duration-500" id="cuis-2">
+                        <h3 class="font-serif text-3xl text-gold mb-4">Ghanaian Traditions</h3>
+                        <svg class="w-16 h-2 mb-6" viewBox="0 0 100 10"><path class="svg-line" d="M0,5 L100,5" /></svg>
+                        <ul class="font-sans font-light text-charcoal/80 space-y-3">
+                            <li>Traditional Banku & Okro</li>
+                            <li>Aromatic Waakye</li>
+                            <li>Spiced Kelewele</li>
+                        </ul>
+                    </div>
+                    <!-- Sierra Leonean -->
+                    <div class="absolute inset-0 cuisine-text opacity-0 transition-opacity duration-500" id="cuis-3">
+                        <h3 class="font-serif text-3xl text-gold mb-4">Sierra Leonean Flavors</h3>
+                        <svg class="w-16 h-2 mb-6" viewBox="0 0 100 10"><path class="svg-line" d="M0,5 L100,5" /></svg>
+                        <ul class="font-sans font-light text-charcoal/80 space-y-3">
+                            <li>Savory Fried Rice</li>
+                            <li>Hearty Groundnut Stew</li>
+                            <li>Delicate Cassava Leaves</li>
+                        </ul>
+                    </div>
+                    <!-- Caribbean -->
+                    <div class="absolute inset-0 cuisine-text opacity-0 transition-opacity duration-500" id="cuis-4">
+                        <h3 class="font-serif text-3xl text-gold mb-4">Caribbean Cuisine</h3>
+                        <svg class="w-16 h-2 mb-6" viewBox="0 0 100 10"><path class="svg-line" d="M0,5 L100,5" /></svg>
+                        <ul class="font-sans font-light text-charcoal/80 space-y-3">
+                            <li>Slow-cooked Oxtail & Jerk Chicken</li>
+                            <li>Ackee & Saltfish with Rice and Peas</li>
+                            <li>Curry Goat & Stew Shrimp</li>
+                        </ul>
+                    </div>
+                    <!-- Desserts -->
+                    <div class="absolute inset-0 cuisine-text opacity-0 transition-opacity duration-500" id="cuis-5">
+                        <h3 class="font-serif text-3xl text-gold mb-4">Starters & Sweet Endings</h3>
+                        <svg class="w-16 h-2 mb-6" viewBox="0 0 100 10"><path class="svg-line" d="M0,5 L100,5" /></svg>
+                        <ul class="font-sans font-light text-charcoal/80 space-y-3">
+                            <li>Golden Puff Puff & Moyin Moyin</li>
+                            <li>Tropical Fruit Medleys</li>
+                            <li>Warm Banana Cake & Vanilla Bean Ice Cream</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Image -->
+            <div class="w-full md:w-1/2 h-[45vh] md:h-full relative img-texture">
+                <img src="images/nigerian-heritage.png" class="absolute inset-0 w-full h-full object-cover cuisine-img transition-opacity duration-700 opacity-100" id="img-1" alt="Nigerian Dish" />
+                <img src="images/ghanaian-traditions.png" class="absolute inset-0 w-full h-full object-cover cuisine-img transition-opacity duration-700 opacity-0" id="img-2" alt="Ghanaian Dish" />
+                <img src="images/sierra-leone.jpeg" class="absolute inset-0 w-full h-full object-cover cuisine-img transition-opacity duration-700 opacity-0" id="img-3" alt="Sierra Leonean Dish" />
+                <img src="https://deosacatering.co.uk/ehusteeg/2024/01/ca3bc7fb-aba6-489e-bc33-4949733afce5.jpg" class="absolute inset-0 w-full h-full object-cover cuisine-img transition-opacity duration-700 opacity-0" id="img-4" alt="Caribbean Cuisine" />
+                <img src="images/starters-sweet-endings.jpeg" class="absolute inset-0 w-full h-full object-cover cuisine-img transition-opacity duration-700 opacity-0" id="img-5" alt="Desserts" />
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 6: VENUES & SCALE -->
+    <section class="py-16 md:py-28 bg-charcoal text-cream relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10 pointer-events-none" style="background-image: url('images/trusted-venues-bg.png'); background-size: cover; background-position: center;"></div>
+
+        <div class="relative z-10 text-center px-6 mb-10 md:mb-14">
+            <h2 class="font-serif text-4xl md:text-5xl mb-6">Trusted by Iconic London Venues</h2>
+            <svg class="w-24 h-4 mx-auto" viewBox="0 0 100 10">
+                <path class="svg-line draw-on-scroll" d="M0,5 L100,5" />
+            </svg>
+        </div>
+
+        <!-- Marquee -->
+        <div class="relative overflow-hidden">
+            <div class="pointer-events-none absolute left-0 top-0 bottom-0 w-16 md:w-32 z-10" style="background: linear-gradient(to right, #1C1C1C, transparent);"></div>
+            <div class="pointer-events-none absolute right-0 top-0 bottom-0 w-16 md:w-32 z-10" style="background: linear-gradient(to left, #1C1C1C, transparent);"></div>
+
+            <div class="venue-marquee flex items-center">
+                <!-- Set 1 -->
+                <span class="venue-badge">Battersea Arts Centre</span><span class="venue-dot">✦</span>
+                <span class="venue-badge">Chelsea Harbour Hotel</span><span class="venue-dot">✦</span>
+                <span class="venue-badge">De Vere Grand Connaught Rooms</span><span class="venue-dot">✦</span>
+                <span class="venue-badge">Shoreditch Town Hall</span><span class="venue-dot">✦</span>
+                <span class="venue-badge">Syon Park, The Garden Room</span><span class="venue-dot">✦</span>
+                <span class="venue-badge">The Waldorf Hilton</span><span class="venue-dot">✦</span>
+                <span class="venue-badge">Royal Garden Hotel</span><span class="venue-dot">✦</span>
+                <span class="venue-badge">Meridian Grand</span><span class="venue-dot">✦</span>
+                <span class="venue-badge">Porchester Hall</span><span class="venue-dot">✦</span>
+                <span class="venue-badge">Hylands House</span><span class="venue-dot">✦</span>
+                <span class="venue-badge">Grand Sapphire Croydon</span><span class="venue-dot">✦</span>
+                <span class="venue-badge">Plaisterers Hall</span><span class="venue-dot">✦</span>
+                <!-- Set 2 (duplicate for seamless loop) -->
+                <span class="venue-badge">Battersea Arts Centre</span><span class="venue-dot">✦</span>
+                <span class="venue-badge">Chelsea Harbour Hotel</span><span class="venue-dot">✦</span>
+                <span class="venue-badge">De Vere Grand Connaught Rooms</span><span class="venue-dot">✦</span>
+                <span class="venue-badge">Shoreditch Town Hall</span><span class="venue-dot">✦</span>
+                <span class="venue-badge">Syon Park, The Garden Room</span><span class="venue-dot">✦</span>
+                <span class="venue-badge">The Waldorf Hilton</span><span class="venue-dot">✦</span>
+                <span class="venue-badge">Royal Garden Hotel</span><span class="venue-dot">✦</span>
+                <span class="venue-badge">Meridian Grand</span><span class="venue-dot">✦</span>
+                <span class="venue-badge">Porchester Hall</span><span class="venue-dot">✦</span>
+                <span class="venue-badge">Hylands House</span><span class="venue-dot">✦</span>
+                <span class="venue-badge">Grand Sapphire Croydon</span><span class="venue-dot">✦</span>
+                <span class="venue-badge">Plaisterers Hall</span><span class="venue-dot">✦</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 7: TESTIMONIALS -->
+    <section class="py-16 md:py-32 bg-sand">
+        <div class="container mx-auto px-6 lg:px-12">
+            <div class="text-center mb-10 md:mb-20">
+                <h2 class="font-serif text-5xl text-charcoal mb-6">What Our Couples Say</h2>
+                <svg class="w-24 h-4 mx-auto" viewBox="0 0 100 10">
+                    <path class="svg-line draw-on-scroll mx-auto" d="M0,5 L100,5" />
+                </svg>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 testimonial-grid">
+                <!-- Testimonial 1 -->
+                <div class="bg-cream p-10 border border-gold/20 shadow-sm test-card hover:-translate-y-2 transition-transform duration-500">
+                    <div class="flex text-gold mb-4">★★★★★</div>
+                    <p class="font-sans font-light italic text-charcoal/80 mb-6 leading-relaxed">"The food was nothing short of spectacular. Our guests are still talking about the Jollof and the exquisite presentation. De'Osa elevated our wedding entirely."</p>
+                    <p class="font-serif text-lg text-charcoal">— Sarah & Michael, Syon Park</p>
+                </div>
+                <!-- Testimonial 2 -->
+                <div class="bg-cream p-10 border border-gold/20 shadow-sm test-card hover:-translate-y-2 transition-transform duration-500">
+                    <div class="flex text-gold mb-4">★★★★★</div>
+                    <p class="font-sans font-light italic text-charcoal/80 mb-6 leading-relaxed">"Professionalism at its peak. From the initial private tasting to the seamless service on the day, we felt completely cared for. Highly recommended."</p>
+                    <p class="font-serif text-lg text-charcoal">— David & Chloe, Chelsea Harbour</p>
+                </div>
+                <!-- Testimonial 3 -->
+                <div class="bg-cream p-10 border border-gold/20 shadow-sm test-card hover:-translate-y-2 transition-transform duration-500 md:col-span-2 lg:col-span-1">
+                    <div class="flex text-gold mb-4">★★★★★</div>
+                    <p class="font-sans font-light italic text-charcoal/80 mb-6 leading-relaxed">"They understood our vision for a luxury cultural blend. The fusion of elegant fine-dining aesthetics with hearty, authentic flavors was masterful."</p>
+                    <p class="font-serif text-lg text-charcoal">— Amina & James, Shoreditch</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 8: SOCIAL GALLERY -->
+    <section class="py-20 bg-cream">
+        <div class="container mx-auto px-6 mb-12 text-center">
+            <p class="font-sans text-xs tracking-[0.2em] uppercase text-gold mb-4">Follow The Experience</p>
+            <h2 class="font-serif text-4xl text-charcoal">@DeOsaCatering</h2>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-4 w-full gap-1">
+            <div class="aspect-square overflow-hidden group gal-img relative">
+                <img src="images/gallery-1.jpeg" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Gallery">
+                <div class="absolute inset-0 bg-charcoal/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            </div>
+            <div class="aspect-square overflow-hidden group gal-img relative">
+                <img src="images/gallery-2.jpeg" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Gallery">
+                <div class="absolute inset-0 bg-charcoal/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            </div>
+            <div class="aspect-square overflow-hidden group gal-img relative">
+                <img src="images/gallery-3.png" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Gallery">
+                <div class="absolute inset-0 bg-charcoal/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            </div>
+            <div class="aspect-square overflow-hidden group gal-img relative">
+                <img src="images/gallery-4.png" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Gallery">
+                <div class="absolute inset-0 bg-charcoal/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 9: CONTACT & ENQUIRY -->
+    <section id="contact" class="py-16 md:py-32 bg-charcoal text-cream relative">
+        <div class="container mx-auto px-6 lg:px-12">
+            <div class="flex flex-col lg:flex-row gap-16">
+
+                <!-- Info -->
+                <div class="w-full lg:w-1/3">
+                    <h2 class="font-serif text-5xl mb-6 text-gold">Begin Your Journey</h2>
+                    <p class="font-sans font-light text-cream/70 mb-12">We limit our bookings to ensure every event receives our bespoke, undivided attention. Connect with us to secure your date.</p>
+
+                    <div class="space-y-8 font-sans font-light text-sm">
+                        <div>
+                            <h4 class="uppercase tracking-widest text-gold mb-2 text-xs font-medium">Headquarters</h4>
+                            <p>Redbridge Gardens,<br>SE5 7HB, London, UK</p>
+                        </div>
+                        <div>
+                            <h4 class="uppercase tracking-widest text-gold mb-2 text-xs font-medium">Contact</h4>
+                            <p>Phone: 020 3488 4180</p>
+                            <p>Mobiles: 07914 714911 / 07872 993433</p>
+                            <p class="mt-2">Email: info@deosacatering.co.uk</p>
+                        </div>
+                        <div>
+                            <h4 class="uppercase tracking-widest text-gold mb-2 text-xs font-medium">Hours</h4>
+                            <p>Mon–Fri: 9am – 8pm</p>
+                            <p>Sat: 9am – 7pm</p>
+                            <p>Sun: Closed</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form -->
+                <div class="w-full lg:w-2/3 bg-cream p-10 md:p-16 text-charcoal">
+                    <h3 class="font-serif text-3xl mb-8">Enquiry Form</h3>
+                    <form id="enquiry-form" class="space-y-6 form-reveal">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block font-sans text-xs uppercase tracking-widest text-charcoal/60 mb-2">Name</label>
+                                <input type="text" class="w-full bg-transparent border-b border-charcoal/20 py-2 focus:outline-none focus:border-gold transition-colors font-serif text-xl" required>
+                            </div>
+                            <div>
+                                <label class="block font-sans text-xs uppercase tracking-widest text-charcoal/60 mb-2">Email</label>
+                                <input type="email" class="w-full bg-transparent border-b border-charcoal/20 py-2 focus:outline-none focus:border-gold transition-colors font-serif text-xl" required>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block font-sans text-xs uppercase tracking-widest text-charcoal/60 mb-2">Event Date</label>
+                                <input type="date" class="w-full bg-transparent border-b border-charcoal/20 py-2 focus:outline-none focus:border-gold transition-colors font-sans text-sm" required>
+                            </div>
+                            <div>
+                                <label class="block font-sans text-xs uppercase tracking-widest text-charcoal/60 mb-2">Venue (if known)</label>
+                                <input type="text" class="w-full bg-transparent border-b border-charcoal/20 py-2 focus:outline-none focus:border-gold transition-colors font-serif text-xl">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block font-sans text-xs uppercase tracking-widest text-charcoal/60 mb-2">Estimated Guest Count</label>
+                                <input type="number" class="w-full bg-transparent border-b border-charcoal/20 py-2 focus:outline-none focus:border-gold transition-colors font-serif text-xl">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block font-sans text-xs uppercase tracking-widest text-charcoal/60 mb-2">Event Details & Vision</label>
+                            <textarea rows="4" class="w-full bg-transparent border-b border-charcoal/20 py-2 focus:outline-none focus:border-gold transition-colors font-serif text-xl resize-none"></textarea>
+                        </div>
+                        <button type="submit" class="w-full py-4 bg-charcoal text-cream font-sans uppercase tracking-widest text-sm hover:bg-gold transition-colors duration-300 mt-8 relative overflow-hidden group">
+                            <span class="relative z-10">Send Enquiry</span>
+                            <div class="absolute inset-0 bg-gold scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-500 ease-out z-0"></div>
+                        </button>
+                        <p id="success-msg" class="hidden font-serif italic text-gold text-center mt-4 opacity-0 transition-opacity">Thank you. Your bespoke dining journey begins now. We will be in touch shortly.</p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-charcoal text-cream pb-12 pt-6 border-t border-gold/20">
+        <div class="max-w-7xl mx-auto px-6 lg:px-12 text-center flex flex-col items-center">
+            <img src="images/logo-dark-bg.svg" class="h-12 w-auto mb-6" alt="De'Osa">
+            <div class="flex gap-6 mb-8 font-sans text-xs uppercase tracking-widest font-bold">
+                <a href="#" class="hover:text-gold transition-colors">Instagram</a>
+                <a href="#" class="hover:text-gold transition-colors">Facebook</a>
+                <a href="#" class="hover:text-gold transition-colors">Pinterest</a>
+            </div>
+            <p class="font-sans text-[10px] tracking-widest uppercase text-cream/40">© 2026 De'Osa Catering & Events. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- GSAP & ScrollTrigger -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <script>
+        // Check for Reduced Motion Preference
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        // Register GSAP Plugins
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Ensure DOM is loaded before animating
+        document.addEventListener("DOMContentLoaded", (event) => {
+
+            if (prefersReducedMotion) {
+                gsap.set('.hero-img-wrap', {clipPath: 'inset(0% 0 0 0)'});
+                gsap.set('.hero-title span', {y: 0, opacity: 1});
+                gsap.set('.hero-elem', {opacity: 1});
+                gsap.set('.draw-on-scroll', {strokeDasharray: 'none'});
+                return;
+            }
+
+            // --- PROGRESS BAR ---
+            gsap.to("#progress-bar", {
+                scaleX: 1,
+                ease: "none",
+                scrollTrigger: {
+                    trigger: "body",
+                    start: "top top",
+                    end: "bottom bottom",
+                    scrub: 0.3
+                }
+            });
+
+            // --- NAVBAR ---
+            ScrollTrigger.create({
+                start: 'top -80',
+                end: 99999,
+                toggleClass: {className: 'navbar-scrolled', targets: '#navbar'}
+            });
+
+            // --- HERO TIMELINE ---
+            // Set initial decoration state before animating in
+            gsap.set('.hero-deco', { scale: 0.55, rotation: 16, opacity: 0 });
+
+            const heroTl = gsap.timeline({ delay: 0.15 });
+
+            heroTl
+            .from('.hero-title span', {
+                y: 80,
+                opacity: 0,
+                duration: 1.1,
+                stagger: 0.15,
+                ease: 'power3.out'
+            })
+            .fromTo('.hero-line',
+                { strokeDasharray: 100, strokeDashoffset: 100 },
+                { strokeDashoffset: 0, duration: 0.9, ease: 'power2.inOut' }, "-=0.6"
+            )
+            .to('.hero-elem', {
+                opacity: 1,
+                duration: 0.8,
+                stagger: 0.1,
+                ease: 'power2.out'
+            }, "-=0.4")
+            .to('.hero-deco', {
+                scale: 1,
+                rotation: 0,
+                opacity: 1,
+                stagger: 0.1,
+                duration: 1.4,
+                ease: 'back.out(1.2)'
+            }, "-=0.7");
+
+            // --- HERO DECORATION PARALLAX ---
+            gsap.to('#deco-rose-1',  { y: -110, ease: 'none', scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: 1.5 } });
+            gsap.to('#deco-rose-2',  { y:  -65, ease: 'none', scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: 1.5 } });
+            gsap.to('#deco-cutlery', { y:  -90, ease: 'none', scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: 1.5 } });
+            gsap.to('#deco-sprig',   { y: -135, ease: 'none', scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: 1.5 } });
+
+            // --- HERO DECORATION EXIT (fade out as hero scrolls away) ---
+            gsap.to('.hero-deco', {
+                opacity: 0,
+                ease: 'none',
+                scrollTrigger: { trigger: '#hero', start: '38% top', end: 'bottom top', scrub: 1 }
+            });
+
+            // --- SVG LINE DRAWING ---
+            const svgLines = document.querySelectorAll('.draw-on-scroll');
+            svgLines.forEach(line => {
+                const length = line.getTotalLength();
+                gsap.set(line, { strokeDasharray: length, strokeDashoffset: length });
+                gsap.to(line, {
+                    strokeDashoffset: 0,
+                    ease: "power2.inOut",
+                    scrollTrigger: {
+                        trigger: line,
+                        start: "top 85%",
+                        duration: 1.5
+                    }
+                });
+            });
+
+            // --- COUNTERS (all screen sizes) ---
+            const counterClients = { val: 0 };
+            const counterGuests = { val: 0 };
+
+            gsap.to(counterClients, {
+                val: 450,
+                duration: 2,
+                scrollTrigger: { trigger: "#story", start: "top center" },
+                onUpdate: () => document.getElementById("count-clients").innerText = Math.floor(counterClients.val)
+            });
+            gsap.to(counterGuests, {
+                val: 12,
+                duration: 2.5,
+                scrollTrigger: { trigger: "#story", start: "top center" },
+                onUpdate: () => document.getElementById("count-guests").innerText = Math.floor(counterGuests.val)
+            });
+
+            // --- FADE UPS ---
+            gsap.utils.toArray('.fade-up').forEach(elem => {
+                gsap.from(elem, {
+                    y: 50, duration: 1, ease: 'power3.out',
+                    scrollTrigger: { trigger: elem, start: "top 85%" }
+                });
+            });
+
+            // --- DESKTOP ONLY: story pin + horizontal scroll ---
+            let mm = gsap.matchMedia();
+            mm.add("(min-width: 768px)", () => {
+                // Story pinned crossfade
+                const storyTl = gsap.timeline({
+                    scrollTrigger: {
+                        trigger: "#story",
+                        start: "top top",
+                        end: "+=100%",
+                        pin: true,
+                        scrub: 1
+                    }
+                });
+                storyTl.to('.img-1', { opacity: 0, duration: 1 })
+                       .to('.img-2', { opacity: 1, duration: 1 }, "<");
+
+            });
+
+            // --- HORIZONTAL SCROLL (all screen sizes) ---
+            const stylesScroll = document.querySelector("#styles-scroll");
+            gsap.to(stylesScroll, {
+                x: () => -(stylesScroll.offsetWidth - window.innerWidth),
+                ease: "none",
+                scrollTrigger: {
+                    trigger: "#styles-container",
+                    pin: true,
+                    anticipatePin: 1,
+                    scrub: 1,
+                    end: () => "+=" + (stylesScroll.offsetWidth - window.innerWidth),
+                    invalidateOnRefresh: true
+                }
+            });
+
+            // --- CUISINE HERITAGE (all screen sizes) ---
+            const cuisineSections = 5;
+            const cuisineStep = 1 / cuisineSections;
+
+            gsap.to({}, {
+                scrollTrigger: {
+                    trigger: "#cuisine",
+                    start: "top top",
+                    end: "bottom bottom",
+                    scrub: true,
+                    onUpdate: (self) => {
+                        const progress = self.progress;
+                        let currentIndex = Math.floor(progress / cuisineStep);
+                        if (currentIndex >= cuisineSections) currentIndex = cuisineSections - 1;
+
+                        for(let i = 1; i <= cuisineSections; i++) {
+                            const isActive = (i - 1 === currentIndex);
+                            document.getElementById(`cuis-${i}`).style.opacity = isActive ? 1 : 0;
+                            document.getElementById(`img-${i}`).style.opacity = isActive ? 1 : 0;
+
+                            if(isActive) {
+                                document.getElementById(`img-${i}`).style.transform = `scale(${1 + (progress % cuisineStep) * 0.2})`;
+                            }
+                        }
+                    }
+                }
+            });
+
+
+            // --- TESTIMONIALS ---
+            gsap.from('.test-card', {
+                y: 50, duration: 1, stagger: 0.2, ease: 'power3.out',
+                scrollTrigger: { trigger: ".testimonial-grid", start: "top 80%" }
+            });
+
+            // --- GALLERY ---
+            gsap.from('.gal-img', {
+                scale: 0.95, duration: 1, stagger: 0.1, ease: 'power2.out',
+                scrollTrigger: { trigger: ".gal-img", start: "top 90%" }
+            });
+
+            // --- FORM ---
+            gsap.from('.form-reveal', {
+                y: 50, duration: 1, ease: 'power3.out',
+                scrollTrigger: { trigger: "#contact", start: "top 70%" }
+            });
+        });
+
+        // Mobile Menu
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            const isOpen = !menu.classList.contains('pointer-events-none');
+            menu.classList.toggle('opacity-0', isOpen);
+            menu.classList.toggle('pointer-events-none', isOpen);
+        }
+
+        // Form Submit
+        document.getElementById('enquiry-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const btn = this.querySelector('button');
+            btn.innerHTML = 'Sending...';
+            setTimeout(() => {
+                btn.style.display = 'none';
+                const msg = document.getElementById('success-msg');
+                msg.classList.remove('hidden');
+                setTimeout(() => msg.style.opacity = 1, 50);
+            }, 1500);
+        });
+    </script>
+
+    <!-- AI Voice FAB -->
+    <button id="ai-voice-btn" onclick="toggleAIVoice()" class="fixed bottom-6 left-4 md:bottom-12 md:left-12 w-12 h-12 md:w-16 md:h-16 transition-all duration-500 bg-charcoal border-2 border-gold rounded-full shadow-2xl z-50 flex items-center justify-center group hover:scale-105">
+        <svg id="ai-idle-icon" class="w-6 h-6 md:w-7 md:h-7 text-gold transition-opacity duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+        </svg>
+        <div id="ai-live-icon" class="hidden absolute inset-0 items-center justify-center gap-1 md:gap-1.5">
+            <div class="w-1 md:w-1.5 bg-gold rounded-full ai-bar"></div>
+            <div class="w-1 md:w-1.5 bg-gold rounded-full ai-bar"></div>
+            <div class="w-1 md:w-1.5 bg-gold rounded-full ai-bar"></div>
+            <div class="w-1 md:w-1.5 bg-gold rounded-full ai-bar"></div>
+        </div>
+        
+    </button>
+    <script src="js/voice.js"></script>
+</body>
+</html>
