@@ -591,7 +591,7 @@
                 order: { details: "Wedding — 150 Guests — Plated Multi-Course", venue: "Syon Park", date: "12 Aug 2026" },
                 call: { time: "12m 45s", outcome: "Booking Confirmed", hasRecording: true, callDate: "Today, 14:22" },
                 comms: { textSent: true, textTime: "Today, 14:30" },
-                billing: { invoiceStatus: "Paid" }
+                billing: { invoiceStatus: "Paid", subtotal: "£16,850.00", depositLabel: "Deposit Paid (25%)", deposit: "– £4,212.50", balance: "£12,637.50", terms: "Due by 12 July 2026 · Bank transfer or card accepted" }
             },
             {
                 id: 2,
@@ -599,7 +599,7 @@
                 order: { details: "Corporate Gala — 300 Guests — Buffet", venue: "Battersea Arts Centre", date: "05 Nov 2026" },
                 call: { time: "08m 12s", outcome: "Quote Requested", hasRecording: true, callDate: "Yesterday, 09:08" },
                 comms: { textSent: true, textTime: "Yesterday, 09:15" },
-                billing: { invoiceStatus: "Sent" }
+                billing: { invoiceStatus: "Sent", subtotal: "£28,500.00", depositLabel: "Deposit Paid (25%)", deposit: "– £7,125.00", balance: "£21,375.00", terms: "Due by 20 October 2026 · Bank transfer or card accepted" }
             },
             {
                 id: 3,
@@ -607,7 +607,7 @@
                 order: { details: "Wedding — 80 Guests — Family Style", venue: "Chelsea Harbour Hotel", date: "22 Sep 2026" },
                 call: { time: "25m 00s", outcome: "Tasting Scheduled", hasRecording: true, callDate: "Mon 20 Feb, 11:35" },
                 comms: { textSent: false, textTime: "" },
-                billing: { invoiceStatus: "To Be Sent" }
+                billing: { invoiceStatus: "To Be Sent", subtotal: "£10,150.00", depositLabel: "Deposit Paid (25%)", deposit: "– £2,537.50", balance: "£7,612.50", terms: "Due by 22 August 2026 · Bank transfer or card accepted" }
             },
             {
                 id: 4,
@@ -615,7 +615,7 @@
                 order: { details: "Private Party — 30 Guests — Canapés & Drinks", venue: "Private Residence", date: "15 Jul 2026" },
                 call: { time: "04m 30s", outcome: "Information Sent", hasRecording: true, callDate: "Today, 10:00" },
                 comms: { textSent: true, textTime: "Today, 10:00" },
-                billing: { invoiceStatus: "To Be Sent" }
+                billing: { invoiceStatus: "To Be Sent", subtotal: "£3,400.00", depositLabel: "Deposit Paid (25%)", deposit: "– £850.00", balance: "£2,550.00", terms: "Due by 1 July 2026 · Bank transfer or card accepted" }
             },
             {
                 id: 5,
@@ -623,7 +623,7 @@
                 order: { details: "Wedding — 200 Guests — Plated Multi-Course", venue: "The Willows", date: "10 Oct 2026" },
                 call: { time: "18m 20s", outcome: "Booking Confirmed", hasRecording: true, callDate: "Fri 21 Feb, 16:45" },
                 comms: { textSent: true, textTime: "Mon, 16:45" },
-                billing: { invoiceStatus: "Paid" }
+                billing: { invoiceStatus: "Paid", subtotal: "£24,700.00", depositLabel: "Deposit Paid (25%)", deposit: "– £6,175.00", balance: "£18,525.00", terms: "Due by 10 September 2026 · Bank transfer or card accepted" }
             }
         ];
 
@@ -956,12 +956,17 @@
         const invoiceDrawer  = document.getElementById('invoice-drawer');
 
         window.openInvoice = function(row) {
-            document.getElementById('inv-name').innerText  = row.customer.name;
-            document.getElementById('inv-email').innerText = row.customer.email;
-            document.getElementById('inv-phone').innerText = row.customer.phone;
-            document.getElementById('inv-event').innerText = row.order.details;
-            document.getElementById('inv-venue').innerText = row.order.venue + ' · ' + row.order.date;
-            document.getElementById('invoice-ref').innerText = '#DOC-2026-00' + row.id;
+            document.getElementById('inv-name').innerText         = row.customer.name;
+            document.getElementById('inv-email').innerText        = row.customer.email;
+            document.getElementById('inv-phone').innerText        = row.customer.phone;
+            document.getElementById('inv-event').innerText        = row.order.details;
+            document.getElementById('inv-venue').innerText        = row.order.venue + ' · ' + row.order.date;
+            document.getElementById('invoice-ref').innerText      = '#DOC-2026-00' + row.id;
+            document.getElementById('inv-subtotal').innerText     = row.billing.subtotal     || '—';
+            document.getElementById('inv-deposit-label').innerText= row.billing.depositLabel || 'Deposit Paid';
+            document.getElementById('inv-deposit').innerText      = row.billing.deposit      || '—';
+            document.getElementById('inv-balance').innerText      = row.billing.balance      || '—';
+            document.getElementById('inv-terms').innerText        = row.billing.terms        || '';
             invoiceOverlay.classList.remove('hidden');
             setTimeout(() => {
                 invoiceOverlay.classList.remove('opacity-0');
@@ -1223,13 +1228,16 @@
                 openInvoice(row);
                 return JSON.stringify({
                     success: true,
-                    client: row.customer.name,
-                    invoiceRef: '#DOC-2026-00' + row.id,
+                    ref: '#DOC-2026-00' + row.id,
                     name: row.customer.name,
                     email: row.customer.email,
                     phone: row.customer.phone,
                     event: row.order.details,
                     venue: row.order.venue + ' · ' + row.order.date,
+                    subtotal: row.billing.subtotal,
+                    deposit: row.billing.deposit,
+                    balance: row.billing.balance,
+                    terms: row.billing.terms,
                     invoiceStatus: row.billing.invoiceStatus,
                     callOutcome: row.call.outcome
                 });
@@ -1304,35 +1312,7 @@
                 return JSON.stringify({ success: true, type, contentLength: content.length });
             },
 
-            /* ── 14. read_open_invoice ── */
-            read_open_invoice: function() {
-                const ids = {
-                    ref: 'invoice-ref', name: 'inv-name', email: 'inv-email',
-                    phone: 'inv-phone', event: 'inv-event', venue: 'inv-venue',
-                    issued: 'inv-issued', due: 'inv-due', subtotal: 'inv-subtotal',
-                    'deposit-label': 'inv-deposit-label', deposit: 'inv-deposit',
-                    balance: 'inv-balance', terms: 'inv-terms'
-                };
-                const result = {};
-                Object.entries(ids).forEach(([key, id]) => {
-                    const el = document.getElementById(id);
-                    result[key] = el ? el.textContent.trim() : '';
-                });
-                const lineItems = [];
-                document.querySelectorAll('#inv-items > div').forEach(function(item) {
-                    const ps = item.querySelectorAll('p');
-                    const price = item.querySelector('span');
-                    lineItems.push({
-                        name: ps[0] ? ps[0].textContent.trim() : '',
-                        detail: ps[1] ? ps[1].textContent.trim() : '',
-                        amount: price ? price.textContent.trim() : ''
-                    });
-                });
-                result.lineItems = lineItems;
-                return JSON.stringify({ success: true, invoice: result });
-            },
-
-            /* ── 15. update_invoice_line_items ── */
+            /* ── 14. update_invoice_line_items ── */
             update_invoice_line_items: function({ items }) {
                 const container = document.getElementById('inv-items');
                 if (!container) return JSON.stringify({ success: false, error: 'Invoice items container not found' });
@@ -1348,7 +1328,7 @@
                 return JSON.stringify({ success: true, itemCount: items.length });
             },
 
-            /* ── 16. update_invoice_status ── */
+            /* ── 15. update_invoice_status ── */
             update_invoice_status: function({ client_name, status }) {
                 const row = _findClientRow(client_name);
                 if (!row) return JSON.stringify({ success: false, error: 'No client found matching "' + client_name + '"' });
@@ -1359,7 +1339,7 @@
                 return JSON.stringify({ success: true, client: row.customer.name, status });
             },
 
-            /* ── 17. update_call_outcome ── */
+            /* ── 16. update_call_outcome ── */
             update_call_outcome: function({ client_name, outcome }) {
                 const row = _findClientRow(client_name);
                 if (!row) return JSON.stringify({ success: false, error: 'No client found matching "' + client_name + '"' });
@@ -1368,7 +1348,7 @@
                 return JSON.stringify({ success: true, client: row.customer.name, outcome });
             },
 
-            /* ── 18. search_clients ── */
+            /* ── 17. search_clients ── */
             search_clients: function({ query }) {
                 const input = document.getElementById('global-search');
                 input.value = query;
@@ -1376,7 +1356,7 @@
                 return JSON.stringify({ success: true, query });
             },
 
-            /* ── 19. filter_table ── */
+            /* ── 18. filter_table ── */
             filter_table: function({ date, outcome, invoice, sort } = {}) {
                 if (date    !== undefined) document.getElementById('filter-date').value    = date;
                 if (outcome !== undefined) document.getElementById('filter-outcome').value = outcome;
@@ -1386,7 +1366,7 @@
                 return JSON.stringify({ success: true, filters: { date, outcome, invoice, sort } });
             },
 
-            /* ── 20. scroll_to_client ── */
+            /* ── 19. scroll_to_client ── */
             scroll_to_client: function({ client_name }) {
                 const q = client_name.toLowerCase();
                 const rows = document.querySelectorAll('#crm-table-body tr');
