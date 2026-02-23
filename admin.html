@@ -1212,7 +1212,14 @@
                 });
                 const convId = elCall ? elCall.conversation_id : null;
                 openTranscript(row.customer.name, convId, row.customer.email, row.customer.phone);
-                return JSON.stringify({ success: true, client: row.customer.name, hasRecording: !!convId });
+                return JSON.stringify({
+                    success: true,
+                    client: row.customer.name,
+                    callDate: row.call.callDate || 'Unknown',
+                    callDuration: row.call.time,
+                    callOutcome: row.call.outcome,
+                    hasRecording: !!convId
+                });
             },
 
             /* ── 5. close_media_drawer ── */
@@ -1254,7 +1261,12 @@
                 const row = _findClientRow(client_name);
                 if (!row) return JSON.stringify({ success: false, error: 'No client found matching "' + client_name + '"' });
                 openCommsSheet('text', row.customer.name, row.comms.textTime || '');
-                return JSON.stringify({ success: true, client: row.customer.name });
+                return JSON.stringify({
+                    success: true,
+                    client: row.customer.name,
+                    textSent: row.comms.textSent,
+                    textTime: row.comms.textTime || 'Not sent'
+                });
             },
 
             /* ── 9. open_client_email ── */
@@ -1262,7 +1274,12 @@
                 const row = _findClientRow(client_name);
                 if (!row) return JSON.stringify({ success: false, error: 'No client found matching "' + client_name + '"' });
                 openCommsSheet('email', row.customer.name, row.comms.textTime || '');
-                return JSON.stringify({ success: true, client: row.customer.name });
+                return JSON.stringify({
+                    success: true,
+                    client: row.customer.name,
+                    textSent: row.comms.textSent,
+                    textTime: row.comms.textTime || 'Not sent'
+                });
             },
 
             /* ── 10. close_comms_sheet ── */
