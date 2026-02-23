@@ -194,9 +194,15 @@
                 };
             }
 
+            /* iOS Safari triggers an "Advanced Privacy" warning for WebRTC
+             * because WebRTC exposes the device's local IP address. Using
+             * WebSocket on iOS avoids the prompt entirely. Desktop keeps
+             * WebRTC for lower latency.                                    */
+            var _isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+
             _conv = await Conversation.startSession({
                 agentId        : AGENT_ID,
-                connectionType : 'webrtc',   /* WebRTC > WebSocket for reliability */
+                connectionType : _isIOS ? 'websocket' : 'webrtc',
                 clientTools    : pageTools,
 
                 onConnect: function () {
