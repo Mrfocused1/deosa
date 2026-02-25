@@ -617,7 +617,7 @@
                 </summary>
                 <div class="pb-2">
                     ${activeItems.map(item => {
-                        const checked = ev.order.some(o => o.itemId === item.id);
+                        const checked = ev.order.some(o => Number(o.itemId) === Number(item.id));
                         return `
                         <div class="menu-item-row" onclick="toggleMenuItem(${item.id}, '${course.replace(/'/g,"\\'")}', ${item.price})">
                             <input type="checkbox" ${checked ? 'checked' : ''} id="item-${item.id}" onclick="event.stopPropagation(); toggleMenuItem(${item.id}, '${course.replace(/'/g,"\\'")}', ${item.price})">
@@ -632,17 +632,17 @@
     }
 
     function toggleMenuItem(itemId, course, unitPrice) {
-        const idx = ev.order.findIndex(o => o.itemId === itemId);
+        const idx = ev.order.findIndex(o => Number(o.itemId) === Number(itemId));
         if (idx > -1) {
             ev.order.splice(idx, 1);
         } else {
             const items = catalogue[course] || [];
             const item  = items.find(i => i.id === itemId);
-            ev.order.push({ itemId, course, name: item ? item.name : '', qty: 1, unitPrice });
+            ev.order.push({ itemId: Number(itemId), course, name: item ? item.name : '', qty: 1, unitPrice });
         }
         renderMenuCourses();
         updateFinancials();
-        scheduleSave();
+        commitSave(); // save immediately — don't debounce checkbox toggles
     }
 
     /* ════════ ADD-ONS ════════ */
@@ -680,7 +680,7 @@
         const toggle = document.getElementById('addon-toggle-' + addonId);
         if (toggle) toggle.classList.toggle('on', ev.addOnIds.includes(addonId));
         updateFinancials();
-        scheduleSave();
+        commitSave(); // save immediately — don't debounce toggle changes
     }
 
     /* ════════ FINANCIALS ════════ */
@@ -793,6 +793,11 @@
         try { localStorage.setItem('ec_events', JSON.stringify(filtered)); } catch(e) {}
         window.location.replace('event-calendar.html');
     }
+
+    /* ════════ FLUSH SAVE ON NAVIGATE AWAY ════════ */
+    window.addEventListener('pagehide', () => {
+        if (saveTimer) { clearTimeout(saveTimer); commitSave(); }
+    });
 
     /* ════════ CROSS-TAB SYNC ════════ */
     window.addEventListener('storage', e => {
