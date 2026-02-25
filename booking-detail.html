@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="images/logo-light.svg">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Detail | De'Osa CRM</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cream: '#FDFBF7', charcoal: '#1C1C1C', gold: '#C5A059', 'gold-light': '#E8D3A2', sand: '#F4F1EA'
+                    },
+                    fontFamily: {
+                        serif: ['"Cormorant Garamond"', 'serif'],
+                        sans:  ['Montserrat', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root { --cream:#FDFBF7; --charcoal:#1C1C1C; --gold:#C5A059; }
+        * { box-sizing:border-box; }
+        body { background-color:var(--charcoal); color:var(--cream); overflow-x:hidden; -webkit-font-smoothing:antialiased; }
+        * { scrollbar-width:none; } ::-webkit-scrollbar { display:none; }
+
+        .noise::before { content:""; position:fixed; inset:0; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E"); pointer-events:none; z-index:0; }
+
+        .nav-active   { background:rgba(197,160,89,0.12); color:var(--gold); border:1px solid rgba(197,160,89,0.25); }
+        .nav-inactive { color:rgba(253,251,247,0.45); border:1px solid transparent; }
+        .nav-inactive:hover { color:rgba(253,251,247,0.85); background:rgba(253,251,247,0.05); }
+
+        .dash-card { background:rgba(253,251,247,0.04); border:1px solid rgba(253,251,247,0.1); border-radius:.75rem; }
+
+        /* Status badges */
+        .badge { display:inline-flex; align-items:center; padding:.2rem .65rem; border-radius:9999px; font-size:.6rem; font-weight:700; text-transform:uppercase; letter-spacing:.08em; font-family:'Montserrat',sans-serif; cursor:pointer; }
+        .badge-confirmed { background:rgba(197,160,89,0.2);  color:#E8D3A2; border:1px solid rgba(197,160,89,0.4); }
+        .badge-pending   { background:rgba(245,158,11,0.15); color:#FCD34D; border:1px solid rgba(245,158,11,0.35); }
+        .badge-enquiry   { background:rgba(96,165,250,0.15); color:#93C5FD; border:1px solid rgba(96,165,250,0.3); }
+        .badge-cancelled { background:rgba(248,113,113,0.1);color:#FCA5A5; border:1px solid rgba(248,113,113,0.25); }
+
+        /* Form fields */
+        .field-input { width:100%; background:rgba(253,251,247,0.05); border:1px solid rgba(253,251,247,0.1); border-radius:.375rem; padding:.55rem .85rem; font-family:'Montserrat',sans-serif; font-size:.8rem; color:var(--cream); outline:none; transition:border-color .2s; }
+        .field-input:focus { border-color:var(--gold); }
+        .field-input option { background:#1a1a1a; color:var(--cream); }
+        .field-label { display:block; font-family:'Montserrat',sans-serif; font-size:.6rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:rgba(253,251,247,0.35); margin-bottom:.3rem; }
+
+        /* Inline editable title */
+        #ev-title-input { background:transparent; border:none; border-bottom:2px solid transparent; outline:none; font-family:'"Cormorant Garamond"',serif; font-size:1.75rem; color:var(--cream); width:100%; transition:border-color .2s; padding:0; line-height:1.2; }
+        #ev-title-input:hover { border-bottom-color:rgba(253,251,247,0.2); }
+        #ev-title-input:focus { border-bottom-color:var(--gold); }
+
+        /* Toast */
+        #toast { position:fixed; bottom:2rem; left:50%; transform:translateX(-50%) translateY(4rem); background:rgba(197,160,89,0.95); color:#1C1C1C; padding:.65rem 1.5rem; border-radius:.5rem; font-family:'Montserrat',sans-serif; font-size:.75rem; font-weight:600; z-index:200; transition:transform .3s; pointer-events:none; white-space:nowrap; }
+        #toast.show { transform:translateX(-50%) translateY(0); }
+
+        /* Course accordion */
+        .course-section summary { list-style:none; cursor:pointer; display:flex; align-items:center; justify-content:space-between; padding:.75rem 1rem; border-radius:.375rem; transition:background .15s; }
+        .course-section summary:hover { background:rgba(253,251,247,0.04); }
+        .course-section summary::-webkit-details-marker { display:none; }
+        .course-section[open] summary .chevron { transform:rotate(180deg); }
+        .chevron { transition:transform .2s; flex-shrink:0; }
+
+        /* Menu item rows */
+        .menu-item-row { display:flex; align-items:center; gap:.75rem; padding:.55rem .75rem; border-radius:.375rem; transition:background .15s; cursor:pointer; }
+        .menu-item-row:hover { background:rgba(253,251,247,0.04); }
+        .menu-item-row input[type=checkbox] { accent-color:var(--gold); width:1rem; height:1rem; flex-shrink:0; cursor:pointer; }
+
+        /* Add-on toggle rows */
+        .addon-row { display:flex; align-items:center; gap:.75rem; padding:.65rem .75rem; border-bottom:1px solid rgba(253,251,247,0.06); }
+        .addon-row:last-child { border-bottom:none; }
+        .toggle { width:2.25rem; height:1.25rem; background:rgba(253,251,247,0.15); border-radius:9999px; position:relative; cursor:pointer; transition:background .2s; flex-shrink:0; }
+        .toggle::after { content:""; position:absolute; left:.2rem; top:.2rem; width:.85rem; height:.85rem; background:#fff; border-radius:50%; transition:transform .2s; }
+        .toggle.on { background:var(--gold); }
+        .toggle.on::after { transform:translateX(1rem); }
+
+        /* Financial rows */
+        .fin-row { display:flex; justify-content:space-between; align-items:center; padding:.4rem 0; border-bottom:1px solid rgba(253,251,247,0.06); }
+        .fin-row:last-child { border-bottom:none; }
+        .fin-total { display:flex; justify-content:space-between; align-items:center; padding:.6rem 0; border-top:2px solid rgba(197,160,89,0.3); margin-top:.4rem; }
+
+        /* Status dropdown */
+        #status-dropdown { position:absolute; top:100%; left:0; margin-top:.35rem; background:#1a1a1a; border:1px solid rgba(253,251,247,0.12); border-radius:.5rem; overflow:hidden; z-index:50; min-width:140px; box-shadow:0 8px 32px rgba(0,0,0,.5); }
+        #status-dropdown button { display:block; width:100%; text-align:left; padding:.55rem 1rem; font-family:'Montserrat',sans-serif; font-size:.65rem; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:rgba(253,251,247,0.7); transition:background .15s; }
+        #status-dropdown button:hover { background:rgba(253,251,247,0.07); }
+
+        /* ─── Light Mode ─── */
+        html[data-theme="light"] body         { background:#F0EDE6; color:#1C1C1C; }
+        html[data-theme="light"] aside        { background:#FDFBF7!important; border-right-color:rgba(28,28,28,.1)!important; }
+        html[data-theme="light"] main         { background:#F0EDE6; }
+        html[data-theme="light"] main > header { border-bottom-color:rgba(28,28,28,.1)!important; }
+        html[data-theme="light"] .nav-inactive { color:rgba(28,28,28,.5)!important; }
+        html[data-theme="light"] .nav-inactive:hover { color:rgba(28,28,28,.85)!important; background:rgba(28,28,28,.05)!important; }
+        html[data-theme="light"] .nav-active  { background:rgba(197,160,89,.12)!important; color:#C5A059!important; border-color:rgba(197,160,89,.25)!important; }
+        html[data-theme="light"] .dash-card   { background:rgba(253,251,247,.85)!important; border-color:rgba(28,28,28,.09)!important; }
+        html[data-theme="light"] .text-cream  { color:#1C1C1C!important; }
+        html[data-theme="light"] .text-cream\/80  { color:rgba(28,28,28,.8)!important; }
+        html[data-theme="light"] .text-cream\/60  { color:rgba(28,28,28,.6)!important; }
+        html[data-theme="light"] .text-cream\/40  { color:rgba(28,28,28,.4)!important; }
+        html[data-theme="light"] .text-cream\/35  { color:rgba(28,28,28,.35)!important; }
+        html[data-theme="light"] .text-cream\/30  { color:rgba(28,28,28,.3)!important; }
+        html[data-theme="light"] .border-cream\/10 { border-color:rgba(28,28,28,.1)!important; }
+        html[data-theme="light"] .field-input { background:rgba(28,28,28,.04)!important; border-color:rgba(28,28,28,.12)!important; color:#1C1C1C!important; }
+        html[data-theme="light"] .field-input:focus { border-color:#C5A059!important; }
+        html[data-theme="light"] .field-input option { background:#FDFBF7!important; color:#1C1C1C!important; }
+        html[data-theme="light"] .field-label { color:rgba(28,28,28,.4)!important; }
+        html[data-theme="light"] #ev-title-input { color:#1C1C1C!important; }
+        html[data-theme="light"] #status-dropdown { background:#FDFBF7!important; border-color:rgba(28,28,28,.12)!important; }
+        html[data-theme="light"] #status-dropdown button { color:rgba(28,28,28,.7)!important; }
+        html[data-theme="light"] #mobile-menu { background:#FDFBF7!important; }
+        html[data-theme="light"] .menu-item-row:hover { background:rgba(28,28,28,.03)!important; }
+        html[data-theme="light"] .fin-row { border-color:rgba(28,28,28,.07)!important; }
+        html[data-theme="light"] .addon-row { border-color:rgba(28,28,28,.07)!important; }
+    </style>
+</head>
+<body class="noise selection:bg-gold selection:text-charcoal flex h-screen overflow-hidden">
+
+    <!-- Sidebar -->
+    <aside class="w-64 flex-col hidden md:flex shrink-0 z-20 border-r border-cream/10 relative" style="background:var(--charcoal);">
+        <div class="p-8 border-b border-cream/10">
+            <a href="index.html"><img id="sidebar-logo" src="images/logo-dark-bg.svg" alt="De'Osa" class="h-8 w-auto"></a>
+            <p class="font-sans text-[10px] tracking-[0.25em] uppercase text-cream/40 mt-3">Staff Dashboard</p>
+        </div>
+        <nav class="flex-1 px-4 py-8 space-y-1 font-sans text-xs font-medium">
+            <a href="admin.html" class="flex items-center gap-4 px-4 py-3 rounded-lg nav-inactive transition-all">
+                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                <span class="tracking-widest uppercase text-[10px]">Home</span>
+            </a>
+            <a href="admin.html" class="flex items-center gap-4 px-4 py-3 rounded-lg nav-inactive transition-all">
+                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                <span class="tracking-widest uppercase text-[10px]">Call CRM</span>
+            </a>
+            <a href="menus-pricing.html" class="flex items-center gap-4 px-4 py-3 rounded-lg nav-inactive transition-all">
+                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                <span class="tracking-widest uppercase text-[10px]">Menus & Pricing</span>
+            </a>
+            <a href="event-calendar.html" class="flex items-center gap-4 px-4 py-3 rounded-lg nav-active transition-all">
+                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                <span class="tracking-widest uppercase text-[10px]">Event Calendar</span>
+            </a>
+            <a href="#" class="flex items-center gap-4 px-4 py-3 rounded-lg nav-inactive transition-all">
+                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                <span class="tracking-widest uppercase text-[10px]">Settings</span>
+            </a>
+        </nav>
+        <div class="p-5 border-t border-cream/10 flex items-center gap-3">
+            <div class="w-9 h-9 rounded-full bg-gold flex items-center justify-center text-charcoal font-serif text-lg shrink-0">D</div>
+            <div>
+                <p class="font-sans text-xs font-semibold text-cream">De'Osa Admin</p>
+                <p class="font-sans text-[10px] text-cream/40 tracking-widest uppercase">Director</p>
+            </div>
+            <a href="login.html" class="ml-auto text-cream/30 hover:text-gold transition-colors" title="Sign out">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="fixed inset-0 z-50 flex flex-col justify-center items-center gap-6 transition-all duration-500 opacity-0 pointer-events-none" style="background:#111111;">
+        <button onclick="toggleMobileMenu()" class="absolute top-6 right-6 font-sans text-xs font-bold tracking-widest uppercase text-cream/50 hover:text-gold transition-colors border border-cream/10 px-4 py-2 rounded-full">Close</button>
+        <img id="mobile-logo" src="images/logo-dark-bg.svg" alt="De'Osa" class="h-10 w-auto">
+        <a href="admin.html" onclick="toggleMobileMenu()" class="w-full flex items-center gap-4 px-6 py-4 rounded-xl nav-inactive transition-all justify-center">
+            <span class="font-sans text-xs font-bold tracking-widest uppercase">Call CRM</span>
+        </a>
+        <a href="menus-pricing.html" onclick="toggleMobileMenu()" class="w-full flex items-center gap-4 px-6 py-4 rounded-xl nav-inactive transition-all justify-center">
+            <span class="font-sans text-xs font-bold tracking-widests uppercase">Menus & Pricing</span>
+        </a>
+        <a href="event-calendar.html" onclick="toggleMobileMenu()" class="w-full flex items-center gap-4 px-6 py-4 rounded-xl nav-active transition-all justify-center">
+            <span class="font-sans text-xs font-bold tracking-widest uppercase">Event Calendar</span>
+        </a>
+    </div>
+
+    <!-- Main -->
+    <main class="flex-1 flex flex-col h-screen overflow-hidden relative z-10">
+
+        <!-- Topbar -->
+        <header class="border-b border-cream/10 h-16 md:h-20 flex items-center justify-between px-5 md:px-8 shrink-0 gap-3">
+            <div class="flex items-center gap-3">
+                <button onclick="toggleMobileMenu()" class="text-cream/60 hover:text-gold transition-colors p-1 md:hidden">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                </button>
+                <a href="event-calendar.html" class="flex items-center gap-1.5 text-cream/40 hover:text-gold transition-colors font-sans text-xs font-semibold tracking-widest uppercase">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                    Calendar
+                </a>
+            </div>
+            <div class="flex items-center gap-3 ml-auto">
+                <button id="theme-toggle" onclick="toggleTheme()" class="p-2 text-cream/40 hover:text-gold transition-colors">
+                    <svg id="theme-icon-moon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+                    <svg id="theme-icon-sun" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m8.66-9h-1M4.34 12h-1m15.07-6.07-.71.71M6.34 17.66l-.71.71m12.73 0-.71-.71M6.34 6.34l-.71-.71M12 5a7 7 0 100 14A7 7 0 0012 5z"/></svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- Scrollable content -->
+        <div class="flex-1 overflow-y-auto px-5 md:px-8 py-6 md:py-8">
+
+            <!-- Page header: title + status -->
+            <div class="flex flex-wrap items-start gap-3 mb-6 md:mb-8">
+                <div class="flex-1 min-w-0">
+                    <input id="ev-title-input" type="text" placeholder="Event Title" autocomplete="off" oninput="scheduleSave()">
+                </div>
+                <div class="relative shrink-0 pt-1" id="status-wrap">
+                    <span id="status-badge" class="badge badge-confirmed" onclick="toggleStatusDropdown()">confirmed</span>
+                    <div id="status-dropdown" class="hidden">
+                        <button onclick="setStatus('confirmed')">Confirmed</button>
+                        <button onclick="setStatus('pending')">Pending</button>
+                        <button onclick="setStatus('enquiry')">Enquiry</button>
+                        <button onclick="setStatus('cancelled')">Cancelled</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Two-column grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+                <!-- ── LEFT COLUMN ── -->
+                <div class="lg:col-span-2 space-y-5">
+
+                    <!-- Event Details card -->
+                    <div class="dash-card p-5 md:p-6">
+                        <h3 class="font-serif text-xl text-cream mb-4">Event Details</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="field-label">Date</label>
+                                <input id="f-date" type="date" class="field-input" oninput="scheduleSave()">
+                            </div>
+                            <div>
+                                <label class="field-label">Time</label>
+                                <input id="f-time" type="time" class="field-input" oninput="scheduleSave()">
+                            </div>
+                            <div class="sm:col-span-2">
+                                <label class="field-label">Venue</label>
+                                <input id="f-venue" type="text" placeholder="Venue name" class="field-input" oninput="scheduleSave()">
+                            </div>
+                            <div>
+                                <label class="field-label">Guests</label>
+                                <input id="f-guests" type="number" min="1" placeholder="0" class="field-input" oninput="updateFinancials(); scheduleSave()">
+                            </div>
+                            <div>
+                                <label class="field-label">Event Type</label>
+                                <select id="f-type" class="field-input" onchange="scheduleSave()">
+                                    <option value="Wedding">Wedding</option>
+                                    <option value="Birthday">Birthday</option>
+                                    <option value="Corporate">Corporate</option>
+                                    <option value="Anniversary">Anniversary</option>
+                                    <option value="Private Dining">Private Dining</option>
+                                    <option value="Gala">Gala</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div class="sm:col-span-2">
+                                <label class="field-label">Service Style</label>
+                                <select id="f-service" class="field-input" onchange="updateFinancials(); scheduleSave()">
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Menu Selection card -->
+                    <div class="dash-card p-5 md:p-6">
+                        <h3 class="font-serif text-xl text-cream mb-1">Menu Selection</h3>
+                        <p class="font-sans text-xs text-cream/35 mb-4">Select dishes for this booking — prices are per person</p>
+                        <div id="menu-courses"></div>
+                    </div>
+
+                    <!-- Add-ons card -->
+                    <div class="dash-card p-5 md:p-6">
+                        <h3 class="font-serif text-xl text-cream mb-1">Add-Ons &amp; Extras</h3>
+                        <p class="font-sans text-xs text-cream/35 mb-4">Toggle extras to include in this booking</p>
+                        <div id="addons-list"></div>
+                    </div>
+
+                    <!-- Notes card -->
+                    <div class="dash-card p-5 md:p-6">
+                        <label class="field-label mb-2">Notes</label>
+                        <textarea id="f-notes" rows="4" placeholder="Internal notes, dietary requirements, special requests..." class="field-input resize-none" oninput="scheduleSave()"></textarea>
+                    </div>
+
+                </div>
+
+                <!-- ── RIGHT COLUMN ── -->
+                <div class="space-y-5">
+
+                    <!-- Client card -->
+                    <div class="dash-card p-5 md:p-6">
+                        <h3 class="font-serif text-xl text-cream mb-4">Client</h3>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="field-label">Name</label>
+                                <input id="f-client" type="text" placeholder="Full name" class="field-input" oninput="scheduleSave()">
+                            </div>
+                            <div>
+                                <label class="field-label">Email</label>
+                                <input id="f-email" type="email" placeholder="email@example.com" class="field-input" oninput="scheduleSave()">
+                            </div>
+                            <div>
+                                <label class="field-label">Phone</label>
+                                <input id="f-phone" type="tel" placeholder="+44 7700 000000" class="field-input" oninput="scheduleSave()">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Financial Summary card -->
+                    <div class="dash-card p-5 md:p-6">
+                        <h3 class="font-serif text-xl text-cream mb-4">Financial Summary</h3>
+                        <div class="space-y-0">
+                            <div class="fin-row">
+                                <span class="font-sans text-xs text-cream/50">Service Base</span>
+                                <span id="fin-service" class="font-sans text-xs font-semibold text-cream/80">£0</span>
+                            </div>
+                            <div class="fin-row">
+                                <span class="font-sans text-xs text-cream/50">Menu Total</span>
+                                <span id="fin-menu" class="font-sans text-xs font-semibold text-cream/80">£0</span>
+                            </div>
+                            <div class="fin-row">
+                                <span class="font-sans text-xs text-cream/50">Add-Ons</span>
+                                <span id="fin-addons" class="font-sans text-xs font-semibold text-cream/80">£0</span>
+                            </div>
+                            <div class="fin-total">
+                                <span class="font-sans text-xs font-bold uppercase tracking-widest text-cream/70">Grand Total</span>
+                                <span id="fin-total" class="font-serif text-2xl text-gold">£0</span>
+                            </div>
+                            <div class="pt-3 space-y-2 border-t border-cream/08 mt-1">
+                                <div class="flex justify-between">
+                                    <span class="font-sans text-xs text-cream/40">Deposit (25%)</span>
+                                    <span id="fin-deposit" class="font-sans text-xs text-cream/60">£0</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="font-sans text-xs text-cream/40">Balance Due</span>
+                                    <span id="fin-balance" class="font-sans text-xs text-cream/60">£0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions card -->
+                    <div class="dash-card p-5 md:p-6 space-y-3">
+                        <h3 class="font-serif text-xl text-cream mb-1">Quick Actions</h3>
+                        <button onclick="setStatus('confirmed'); commitSave();" class="w-full py-2.5 bg-gold text-charcoal font-sans text-[10px] font-bold uppercase tracking-widest rounded-sm hover:bg-gold-light transition-colors">
+                            Mark Confirmed
+                        </button>
+                        <button onclick="requestDeposit()" class="w-full py-2.5 border border-cream/15 text-cream/60 font-sans text-[10px] font-bold uppercase tracking-widest rounded-sm hover:border-gold/40 hover:text-gold transition-all">
+                            Request Deposit
+                        </button>
+                        <button onclick="duplicateBooking()" class="w-full py-2.5 border border-cream/15 text-cream/60 font-sans text-[10px] font-bold uppercase tracking-widest rounded-sm hover:border-gold/40 hover:text-gold transition-all">
+                            Duplicate Booking
+                        </button>
+                        <button onclick="deleteBooking()" class="w-full py-2.5 border border-red-500/20 text-red-400/70 font-sans text-[10px] font-bold uppercase tracking-widest rounded-sm hover:border-red-500/40 hover:text-red-400 transition-all">
+                            Delete Booking
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Toast -->
+    <div id="toast"></div>
+
+    <script>
+    /* ════════ DEFAULTS ════════ */
+    const DEFAULT_STYLES = [
+        { id:1, style:'Canapés & Drinks Only',   rate:45,  minGuests:20, active:true },
+        { id:2, style:'Buffet Service',           rate:65,  minGuests:30, active:true },
+        { id:3, style:'Family Style',             rate:75,  minGuests:20, active:true },
+        { id:4, style:'Plated Multi-Course',      rate:90,  minGuests:50, active:true },
+        { id:5, style:'Fine Dining',              rate:120, minGuests:20, active:true },
+    ];
+    const DEFAULT_ADDONS = [
+        { id:1, name:'Staffing & Service',  desc:'Full event day staff team and coordination', price:2250, unit:'per event',  active:true },
+        { id:2, name:'Tableware & Rentals', desc:'Full place settings, serveware and linen',   price:1100, unit:'per event',  active:true },
+        { id:3, name:'Equipment Hire',      desc:'Chafing dishes, food stations and warmers',  price:650,  unit:'per event',  active:true },
+        { id:4, name:'Travel & Logistics',  desc:'Applicable beyond a 20-mile radius',         price:2.5,  unit:'per mile',   active:true },
+        { id:5, name:'Additional Staff',    desc:'Per person beyond the standard team',         price:150,  unit:'per person', active:true },
+    ];
+    const DEFAULT_CATALOGUE = {
+        'Canapés': [
+            { id:101, name:'Jerk chicken skewer and plantain with sweet pepper',            price:4  },
+            { id:102, name:'Crispy Breaded King Prawns',                                    price:4  },
+            { id:103, name:'Fried Yam and Plantain Mix with Spicy Sauce',                  price:4  },
+            { id:104, name:'Ackee and saltfish vol au vent',                                price:4  },
+            { id:105, name:'Spring Rolls with Sweet Chilli Sauce',                         price:4  },
+            { id:106, name:'Mini British Fish and Chips',                                  price:4  },
+            { id:107, name:'Chicken wings with warm spicy barbecue sauce',                 price:4  },
+            { id:108, name:'Spicy gizzard and diced Plantains',                            price:4  },
+            { id:109, name:'Crispy-fried chicken in butter mayo',                          price:4  },
+            { id:110, name:'Mini Burgers',                                                 price:4  },
+            { id:111, name:'Mini Mixed Meat Pies',                                         price:4  },
+            { id:112, name:'Mini Mixed Patties',                                           price:4  },
+            { id:113, name:'Puff Puff Bites',                                              price:4  },
+            { id:114, name:'Cooked prawns on a bed of lettuce',                            price:4  },
+        ],
+        'Starters': [
+            { id:201, name:'Puff Puff',                                                    price:8  },
+            { id:202, name:'Moyin Moyin',                                                  price:8  },
+            { id:203, name:'Spicy gizzard',                                                price:8  },
+            { id:204, name:'Spicy Shish Kebab',                                            price:8  },
+            { id:205, name:'Fried Plantain & Smoked Salmon Sticks',                        price:8  },
+            { id:206, name:'Assorted Meat or Fish Pepper Soup',                            price:8  },
+            { id:207, name:'Spring Rolls with sauce',                                      price:8  },
+            { id:208, name:'Fermented oil bean seed (Ugba)',                               price:8  },
+            { id:209, name:'Crispy Breaded King Prawns',                                   price:8  },
+            { id:210, name:'Cooked prawns on a bed of lettuce',                            price:8  },
+            { id:211, name:'Chicken wings with warm spicy barbecue sauce',                 price:8  },
+        ],
+        'Nigerian Mains': [
+            { id:301, name:'Jollof, Fried, Coconut or White Rice (with Plantain & Meat/Fish)', price:22 },
+            { id:302, name:'Egusi, Eforiro, Ewedu, Ogbono, Edikaikong or Banga Soup',          price:22 },
+            { id:303, name:'Semolina, Pounded Yam, Garri, Amala or Ground Rice',               price:22 },
+            { id:304, name:'Roasted Potatoes with Roasted Lamb, Chicken or Turkey',             price:22 },
+            { id:305, name:'Boiled Yam and Tomato Omelette',                                    price:22 },
+            { id:306, name:'Dodo (Fried Plantain) with Omelette',                               price:22 },
+            { id:307, name:'Asaro (Yam Porridge) and Dodo',                                     price:22 },
+        ],
+        'Ghanaian Mains': [
+            { id:401, name:'Banku with Okro Soup',                                         price:22 },
+            { id:402, name:'Kelewele (Spiced diced fried soft plantain)',                  price:22 },
+            { id:403, name:'Fufu with Groundnut Soup',                                     price:22 },
+            { id:404, name:'Ghanaian-style Jollof Rice',                                   price:22 },
+            { id:405, name:'Kenkey (Fermented corn balls)',                                 price:22 },
+            { id:406, name:'Omo Tuo (Mashed rice balls with Sauce)',                       price:22 },
+            { id:407, name:'Waakye (Rice and beans with Stew)',                            price:22 },
+            { id:408, name:"Yam 'Ampesi' with De'Osa Sauce",                              price:22 },
+            { id:409, name:'Shito Chicken Stew / Chicken Curry',                          price:22 },
+            { id:410, name:'Goat Curry / Beef Stew / Beef Curry',                         price:22 },
+            { id:411, name:'Fish Stew / Fish Curry (Croaker, Red Snapper or Tilapia)',    price:22 },
+        ],
+        'Sierra Leonean Mains': [
+            { id:501, name:'Jollof Rice & stew with choice of meat',                      price:22 },
+            { id:502, name:'Boneless chicken fried rice / Seafood fried rice',            price:22 },
+            { id:503, name:'Rice Sticks with choice of seafood, chicken or meat',         price:22 },
+            { id:504, name:'Groundnut stew with steamed rice',                            price:22 },
+            { id:505, name:'Cassava leaves with meat/fish in palm oil',                   price:22 },
+            { id:506, name:'Crain Crain with choice of meat/fish',                        price:22 },
+            { id:507, name:'Potato leaves with choice of meat/fish',                      price:22 },
+            { id:508, name:"Red palm oil stew with 'check rice'",                         price:22 },
+            { id:509, name:'Fufu with choice of soup (Palm oil or Crain Crain)',          price:22 },
+        ],
+        'Caribbean': [
+            { id:601, name:'Jerk Chicken',                                                price:20 },
+            { id:602, name:'Jerk Chicken Wings',                                          price:20 },
+            { id:603, name:'Jerk Pork',                                                   price:20 },
+            { id:604, name:'Curried Chicken',                                             price:20 },
+            { id:605, name:'Brown Stew Chicken',                                          price:20 },
+            { id:606, name:'Oxtail',                                                      price:20 },
+            { id:607, name:'Pepper Steak',                                                price:20 },
+            { id:608, name:'Curry Goat',                                                  price:20 },
+            { id:609, name:'Stew Shrimp',                                                 price:20 },
+            { id:610, name:'Brown Stew Fish',                                             price:20 },
+            { id:611, name:'Escovitch Fish',                                              price:20 },
+            { id:612, name:'Curry Shrimp',                                                price:20 },
+            { id:613, name:'Callaloo',                                                    price:24 },
+            { id:614, name:'Ackee & Cod Fish with Steamed Veg, Rice and Peas or White Rice', price:24 },
+        ],
+        'Sides': [
+            { id:701, name:'Plantains',                                                   price:5  },
+            { id:702, name:'Fried Dumpling',                                              price:5  },
+            { id:703, name:'Wings',                                                       price:5  },
+        ],
+        'Desserts': [
+            { id:801, name:'Fresh tropical fruit salad',                                  price:7  },
+            { id:802, name:'Banana cake and ice cream',                                   price:7  },
+            { id:803, name:'Chocolate Gateau',                                            price:7  },
+            { id:804, name:'Apple Pie with ice cream',                                    price:7  },
+            { id:805, name:'Rum Cake',                                                    price:7  },
+            { id:806, name:'Banana Cake',                                                 price:7  },
+            { id:807, name:'Chocolate Cake',                                              price:7  },
+            { id:808, name:'Ice Creams',                                                  price:7  },
+        ],
+    };
+
+    /* ════════ LOAD CATALOGUE FROM localStorage ════════ */
+    function loadData(key, fallback) {
+        try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; } catch(e) { return fallback; }
+    }
+
+    const serviceStyles  = loadData('mp_serviceStyles', DEFAULT_STYLES);
+    const addOns         = loadData('mp_addOns',        DEFAULT_ADDONS);
+    const rawCatalogue   = loadData('mp_menuCatalogue', DEFAULT_CATALOGUE);
+
+    // Merge: keep prices from mp_menuCatalogue, fall back to DEFAULT_CATALOGUE prices
+    const catalogue = {};
+    Object.keys(DEFAULT_CATALOGUE).forEach(course => {
+        const saved = rawCatalogue[course] || [];
+        catalogue[course] = DEFAULT_CATALOGUE[course].map(def => {
+            const sv = saved.find(s => s.id === def.id);
+            return { ...def, price: sv ? (sv.price || def.price) : def.price, active: sv ? sv.active : def.active };
+        });
+        // Add any extra items from saved catalogue that aren't in defaults
+        saved.forEach(sv => {
+            if (!catalogue[course].find(i => i.id === sv.id)) catalogue[course].push(sv);
+        });
+    });
+    // Also add extra courses from saved catalogue
+    Object.keys(rawCatalogue).forEach(course => {
+        if (!catalogue[course]) catalogue[course] = rawCatalogue[course];
+    });
+
+    /* ════════ LOAD EVENTS ════════ */
+    let events = loadData('ec_events', []);
+
+    /* ════════ GET EVENT ID FROM URL ════════ */
+    const urlParams = new URLSearchParams(window.location.search);
+    const evId = parseInt(urlParams.get('id'));
+    if (!evId || isNaN(evId)) {
+        window.location.href = 'event-calendar.html';
+    }
+
+    let ev = events.find(e => e.id === evId);
+    if (!ev) {
+        window.location.href = 'event-calendar.html';
+    }
+
+    /* ════════ NORMALISE EVENT (v1 → v2) ════════ */
+    function normaliseEvent(e) {
+        return Object.assign({
+            email: '', phone: '', order: [], addOnIds: [], packageId: null
+        }, e);
+    }
+    ev = normaliseEvent(ev);
+
+    /* ════════ STATE ════════ */
+    let saveTimer = null;
+    let currentStatus = ev.status || 'confirmed';
+
+    /* ════════ POPULATE FORM ════════ */
+    function populateForm() {
+        document.getElementById('ev-title-input').value = ev.title || '';
+        document.getElementById('f-date').value    = ev.date || '';
+        document.getElementById('f-time').value    = ev.time || '';
+        document.getElementById('f-venue').value   = ev.venue || '';
+        document.getElementById('f-guests').value  = ev.guests || '';
+        document.getElementById('f-type').value    = ev.type || 'Wedding';
+        document.getElementById('f-client').value  = ev.client || '';
+        document.getElementById('f-email').value   = ev.email || '';
+        document.getElementById('f-phone').value   = ev.phone || '';
+        document.getElementById('f-notes').value   = ev.notes || '';
+
+        // Populate service style dropdown
+        const sel = document.getElementById('f-service');
+        sel.innerHTML = '';
+        serviceStyles.filter(s => s.active).forEach(s => {
+            const opt = document.createElement('option');
+            opt.value = s.style;
+            opt.textContent = s.style + ' — £' + s.rate + 'pp';
+            sel.appendChild(opt);
+        });
+        sel.value = ev.service || (serviceStyles[0] ? serviceStyles[0].style : '');
+
+        // Status badge
+        setStatusBadge(currentStatus);
+    }
+
+    /* ════════ STATUS ════════ */
+    function setStatusBadge(status) {
+        const badge = document.getElementById('status-badge');
+        badge.className = 'badge badge-' + status;
+        badge.textContent = status;
+        currentStatus = status;
+    }
+
+    function setStatus(status) {
+        setStatusBadge(status);
+        document.getElementById('status-dropdown').classList.add('hidden');
+        scheduleSave();
+    }
+
+    function toggleStatusDropdown() {
+        document.getElementById('status-dropdown').classList.toggle('hidden');
+    }
+
+    // Close dropdown on outside click
+    document.addEventListener('click', e => {
+        const wrap = document.getElementById('status-wrap');
+        if (!wrap.contains(e.target)) {
+            document.getElementById('status-dropdown').classList.add('hidden');
+        }
+    });
+
+    /* ════════ MENU COURSES ════════ */
+    function renderMenuCourses() {
+        const container = document.getElementById('menu-courses');
+        container.innerHTML = '';
+
+        Object.entries(catalogue).forEach(([course, items]) => {
+            const activeItems = items.filter(i => i.active !== false);
+            if (!activeItems.length) return;
+
+            const selectedInCourse = ev.order.filter(o => o.course === course);
+            const countLabel = selectedInCourse.length > 0 ? ` <span class="font-sans text-[10px] text-gold ml-1">${selectedInCourse.length} selected</span>` : '';
+
+            const details = document.createElement('details');
+            details.className = 'course-section border-b border-cream/08 last:border-b-0';
+            if (selectedInCourse.length > 0) details.open = true;
+
+            details.innerHTML = `
+                <summary>
+                    <span class="font-sans text-xs font-bold uppercase tracking-widest text-cream/70">${course}${countLabel}</span>
+                    <svg class="chevron w-4 h-4 text-cream/30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                </summary>
+                <div class="pb-2">
+                    ${activeItems.map(item => {
+                        const checked = ev.order.some(o => o.itemId === item.id);
+                        return `
+                        <div class="menu-item-row" onclick="toggleMenuItem(${item.id}, '${course.replace(/'/g,"\\'")}', ${item.price})">
+                            <input type="checkbox" ${checked ? 'checked' : ''} id="item-${item.id}" onclick="event.stopPropagation(); toggleMenuItem(${item.id}, '${course.replace(/'/g,"\\'")}', ${item.price})">
+                            <label for="item-${item.id}" class="flex-1 font-sans text-xs text-cream/70 cursor-pointer">${item.name}</label>
+                            <span class="font-sans text-xs text-gold/70 shrink-0">£${item.price}pp</span>
+                        </div>`;
+                    }).join('')}
+                </div>`;
+
+            container.appendChild(details);
+        });
+    }
+
+    function toggleMenuItem(itemId, course, unitPrice) {
+        const idx = ev.order.findIndex(o => o.itemId === itemId);
+        if (idx > -1) {
+            ev.order.splice(idx, 1);
+        } else {
+            // Find item name
+            const items = catalogue[course] || [];
+            const item  = items.find(i => i.id === itemId);
+            ev.order.push({ itemId, course, name: item ? item.name : '', qty: 1, unitPrice });
+        }
+        // Update checkbox state
+        const cb = document.getElementById('item-' + itemId);
+        if (cb) cb.checked = ev.order.some(o => o.itemId === itemId);
+        // Update course header count
+        renderMenuCourses();
+        updateFinancials();
+        scheduleSave();
+    }
+
+    /* ════════ ADD-ONS ════════ */
+    function renderAddOns() {
+        const container = document.getElementById('addons-list');
+        container.innerHTML = '';
+        addOns.filter(a => a.active !== false).forEach(a => {
+            const on = ev.addOnIds.includes(a.id);
+            const priceLabel = a.unit === 'per mile'
+                ? `£${a.price}/mile`
+                : a.unit === 'per person'
+                    ? `£${a.price}pp`
+                    : `£${a.price.toLocaleString()}`;
+
+            const row = document.createElement('div');
+            row.className = 'addon-row';
+            row.innerHTML = `
+                <div class="toggle ${on ? 'on' : ''}" id="addon-toggle-${a.id}" onclick="toggleAddon(${a.id})"></div>
+                <div class="flex-1 min-w-0">
+                    <p class="font-sans text-xs font-semibold text-cream/75">${a.name}</p>
+                    <p class="font-sans text-[10px] text-cream/35 mt-0.5">${a.desc}</p>
+                </div>
+                <span class="font-sans text-xs text-gold/70 shrink-0">${priceLabel}</span>`;
+            container.appendChild(row);
+        });
+    }
+
+    function toggleAddon(addonId) {
+        const idx = ev.addOnIds.indexOf(addonId);
+        if (idx > -1) {
+            ev.addOnIds.splice(idx, 1);
+        } else {
+            ev.addOnIds.push(addonId);
+        }
+        const toggle = document.getElementById('addon-toggle-' + addonId);
+        if (toggle) toggle.classList.toggle('on', ev.addOnIds.includes(addonId));
+        updateFinancials();
+        scheduleSave();
+    }
+
+    /* ════════ FINANCIALS ════════ */
+    function updateFinancials() {
+        const guests  = parseInt(document.getElementById('f-guests').value) || 0;
+        const selStyle = document.getElementById('f-service').value;
+        const styleObj = serviceStyles.find(s => s.style === selStyle);
+        const rate     = styleObj ? styleObj.rate : 0;
+
+        const serviceBase = rate * guests;
+
+        const menuTotal = ev.order.reduce((sum, o) => sum + (o.unitPrice * guests), 0);
+
+        let addonsTotal = 0;
+        ev.addOnIds.forEach(id => {
+            const a = addOns.find(a => a.id === id);
+            if (!a) return;
+            if (a.unit === 'per event')  addonsTotal += a.price;
+            else if (a.unit === 'per person') addonsTotal += a.price * guests;
+            // per mile excluded from auto-total
+        });
+
+        const grandTotal = serviceBase + menuTotal + addonsTotal;
+        const deposit    = grandTotal * 0.25;
+        const balance    = grandTotal - deposit;
+
+        document.getElementById('fin-service').textContent = '£' + serviceBase.toLocaleString();
+        document.getElementById('fin-menu').textContent    = '£' + menuTotal.toLocaleString();
+        document.getElementById('fin-addons').textContent  = '£' + addonsTotal.toLocaleString();
+        document.getElementById('fin-total').textContent   = '£' + grandTotal.toLocaleString();
+        document.getElementById('fin-deposit').textContent = '£' + Math.round(deposit).toLocaleString();
+        document.getElementById('fin-balance').textContent = '£' + Math.round(balance).toLocaleString();
+
+        return grandTotal;
+    }
+
+    /* ════════ SAVE ════════ */
+    function scheduleSave() {
+        clearTimeout(saveTimer);
+        saveTimer = setTimeout(commitSave, 400);
+    }
+
+    function commitSave() {
+        const grandTotal = updateFinancials();
+
+        // Snapshot all field values into ev
+        ev.title   = document.getElementById('ev-title-input').value.trim();
+        ev.date    = document.getElementById('f-date').value;
+        ev.time    = document.getElementById('f-time').value;
+        ev.venue   = document.getElementById('f-venue').value.trim();
+        ev.guests  = parseInt(document.getElementById('f-guests').value) || 0;
+        ev.type    = document.getElementById('f-type').value;
+        ev.service = document.getElementById('f-service').value;
+        ev.client  = document.getElementById('f-client').value.trim();
+        ev.email   = document.getElementById('f-email').value.trim();
+        ev.phone   = document.getElementById('f-phone').value.trim();
+        ev.notes   = document.getElementById('f-notes').value.trim();
+        ev.status  = currentStatus;
+        ev.value   = grandTotal;
+
+        // Find-replace (or push) in events array
+        const allEvents = loadData('ec_events', []);
+        const idx = allEvents.findIndex(e => e.id === ev.id);
+        if (idx > -1) {
+            allEvents[idx] = ev;
+        } else {
+            allEvents.push(ev);
+        }
+        try { localStorage.setItem('ec_events', JSON.stringify(allEvents)); } catch(e) {}
+
+        showToast('Saved');
+    }
+
+    /* ════════ QUICK ACTIONS ════════ */
+    function requestDeposit() {
+        const deposit = Math.round(updateFinancials() * 0.25);
+        showToast('Deposit request: £' + deposit.toLocaleString() + ' (25%)');
+    }
+
+    function duplicateBooking() {
+        const allEvents = loadData('ec_events', []);
+        const copy = JSON.parse(JSON.stringify(ev));
+        copy.id    = Date.now();
+        copy.title = copy.title + ' (Copy)';
+        copy.status = 'enquiry';
+        allEvents.push(copy);
+        try { localStorage.setItem('ec_events', JSON.stringify(allEvents)); } catch(e) {}
+        showToast('Booking duplicated — redirecting…');
+        setTimeout(() => { window.location.href = 'booking-detail.html?id=' + copy.id; }, 1200);
+    }
+
+    function deleteBooking() {
+        if (!confirm('Delete this booking? This cannot be undone.')) return;
+        const allEvents = loadData('ec_events', []);
+        const filtered  = allEvents.filter(e => e.id !== ev.id);
+        try { localStorage.setItem('ec_events', JSON.stringify(filtered)); } catch(e) {}
+        window.location.href = 'event-calendar.html';
+    }
+
+    /* ════════ CROSS-TAB SYNC ════════ */
+    window.addEventListener('storage', e => {
+        if (e.key !== 'ec_events') return;
+        const allEvents = loadData('ec_events', []);
+        const fresh = allEvents.find(x => x.id === evId);
+        if (!fresh) return;
+        // Only sync if the change came from another tab (saveTimer would be null here)
+        if (!saveTimer) {
+            ev = normaliseEvent(fresh);
+            populateForm();
+            renderMenuCourses();
+            renderAddOns();
+            updateFinancials();
+        }
+    });
+
+    /* ════════ TOAST ════════ */
+    function showToast(msg) {
+        const t = document.getElementById('toast');
+        t.textContent = msg;
+        t.classList.add('show');
+        clearTimeout(t._timer);
+        t._timer = setTimeout(() => t.classList.remove('show'), 2000);
+    }
+
+    /* ════════ THEME ════════ */
+    const LOGOS = { dark:'images/logo-dark-bg.svg', light:'images/logo-light.svg' };
+    function applyTheme(theme) {
+        const isLight = theme === 'light';
+        document.documentElement.setAttribute('data-theme', theme);
+        document.getElementById('theme-icon-moon').classList.toggle('hidden', isLight);
+        document.getElementById('theme-icon-sun').classList.toggle('hidden', !isLight);
+        const logo = isLight ? LOGOS.light : LOGOS.dark;
+        document.getElementById('sidebar-logo').src = logo;
+        document.getElementById('mobile-logo').src  = logo;
+        localStorage.setItem('admin-theme', theme);
+    }
+    function toggleTheme() {
+        const cur = document.documentElement.getAttribute('data-theme') || 'dark';
+        applyTheme(cur === 'light' ? 'dark' : 'light');
+    }
+
+    /* ════════ MOBILE MENU ════════ */
+    function toggleMobileMenu() {
+        const menu = document.getElementById('mobile-menu');
+        const isOpen = !menu.classList.contains('opacity-0');
+        menu.classList.toggle('opacity-0', isOpen);
+        menu.classList.toggle('pointer-events-none', isOpen);
+    }
+
+    /* ════════ BOOT ════════ */
+    populateForm();
+    renderMenuCourses();
+    renderAddOns();
+    updateFinancials();
+    applyTheme(localStorage.getItem('admin-theme') || 'dark');
+    </script>
+</body>
+</html>

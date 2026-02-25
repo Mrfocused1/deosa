@@ -420,7 +420,7 @@
             const dayEvents = events.filter(e => e.date === dateStr);
 
             const pills = dayEvents.map(e =>
-                `<span class="ev-pill ev-${e.status}" onclick="event.stopPropagation(); openEditDrawer(${e.id})" title="${e.title} — ${e.client}">${e.title}</span>`
+                `<span class="ev-pill ev-${e.status}" onclick="event.stopPropagation(); goToBooking(${e.id})" title="${e.title} — ${e.client}">${e.title}</span>`
             ).join('');
 
             html += `
@@ -463,7 +463,7 @@
             html += `<p class="font-sans text-[10px] uppercase tracking-widests text-cream/30 mb-2 px-1">${label}</p>`;
             dayEvs.forEach(e => {
                 html += `
-                    <div class="list-row dash-card mb-2" onclick="openEditDrawer(${e.id})">
+                    <div class="list-row dash-card mb-2" onclick="goToBooking(${e.id})">
                         <div class="w-1 self-stretch rounded-full ev-${e.status}" style="min-width:4px; background:currentColor; opacity:.7"></div>
                         <div class="flex-1 min-w-0">
                             <p class="font-serif text-lg text-cream leading-tight">${e.title}</p>
@@ -589,7 +589,16 @@
         renderStats();
         renderCalendar();
         if (viewMode === 'list') renderList();
-        showToast(editingId ? 'Event updated' : 'Event added');
+        if (editingId) {
+            showToast('Event updated');
+        } else {
+            const newId = ev.id;
+            showToast('Event added — tap to view profile');
+            // Brief delay so toast is visible before navigation
+            const t = document.getElementById('toast');
+            t.style.cursor = 'pointer';
+            t.onclick = () => goToBooking(newId);
+        }
     }
 
     function deleteEvent() {
@@ -605,6 +614,10 @@
 
     function saveData() {
         try { localStorage.setItem('ec_events', JSON.stringify(events)); } catch(e) {}
+    }
+
+    function goToBooking(id) {
+        window.location.href = 'booking-detail.html?id=' + id;
     }
 
     /* ════════ TOAST ════════ */
