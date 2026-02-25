@@ -49,9 +49,8 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 4px; }
+        * { scrollbar-width: none; }
+        ::-webkit-scrollbar { display: none; }
 
         /* Noise texture */
         .noise::before {
