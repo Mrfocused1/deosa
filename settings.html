@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="images/logo-light.svg">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings | De'Osa CRM</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cream: '#FDFBF7', charcoal: '#1C1C1C', gold: '#C5A059', 'gold-light': '#E8D3A2', sand: '#F4F1EA'
+                    },
+                    fontFamily: {
+                        serif: ['"Cormorant Garamond"', 'serif'],
+                        sans:  ['Montserrat', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root { --cream:#FDFBF7; --charcoal:#1C1C1C; --gold:#C5A059; }
+        * { box-sizing:border-box; }
+        body { background-color:var(--charcoal); color:var(--cream); overflow-x:hidden; -webkit-font-smoothing:antialiased; }
+        * { scrollbar-width:none; } ::-webkit-scrollbar { display:none; }
+
+        .noise::before { content:""; position:fixed; inset:0; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E"); pointer-events:none; z-index:0; }
+
+        .nav-active   { background:rgba(197,160,89,0.12); color:var(--gold); border:1px solid rgba(197,160,89,0.25); }
+        .nav-inactive { color:rgba(253,251,247,0.45); border:1px solid transparent; }
+        .nav-inactive:hover { color:rgba(253,251,247,0.85); background:rgba(253,251,247,0.05); }
+
+        .dash-card { background:rgba(253,251,247,0.04); border:1px solid rgba(253,251,247,0.1); border-radius:.75rem; }
+
+        /* Page tabs */
+        .page-tab { color:rgba(253,251,247,0.35); border-bottom:2px solid transparent; padding:.75rem 1.25rem; font-size:.65rem; font-family:'Montserrat',sans-serif; font-weight:700; text-transform:uppercase; letter-spacing:.15em; cursor:pointer; transition:color .2s, border-color .2s; white-space:nowrap; }
+        .page-tab:hover { color:rgba(253,251,247,0.65); }
+        .page-tab.active { color:var(--gold); border-bottom-color:var(--gold); }
+        .tab-panel { display:none; }
+        .tab-panel.active { display:block; }
+
+        /* Form fields */
+        .field-input { width:100%; background:rgba(253,251,247,0.05); border:1px solid rgba(253,251,247,0.1); border-radius:.375rem; padding:.6rem .9rem; font-family:'Montserrat',sans-serif; font-size:.8rem; color:var(--cream); outline:none; transition:border-color .2s; }
+        .field-input:focus { border-color:var(--gold); }
+        .field-input option { background:#1a1a1a; color:var(--cream); }
+        .field-label { display:block; font-family:'Montserrat',sans-serif; font-size:.6rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:rgba(253,251,247,0.35); margin-bottom:.35rem; }
+
+        /* Toggle switch */
+        .toggle { width:2.5rem; height:1.35rem; background:rgba(253,251,247,0.15); border-radius:9999px; position:relative; cursor:pointer; transition:background .2s; flex-shrink:0; }
+        .toggle::after { content:""; position:absolute; left:.2rem; top:.2rem; width:.95rem; height:.95rem; background:#fff; border-radius:50%; transition:transform .2s; }
+        .toggle.on { background:var(--gold); }
+        .toggle.on::after { transform:translateX(1.15rem); }
+
+        /* Setting rows */
+        .setting-row { display:flex; align-items:center; justify-content:space-between; padding:1rem 0; border-bottom:1px solid rgba(253,251,247,0.06); gap:1.5rem; }
+        .setting-row:last-child { border-bottom:none; }
+
+        /* Danger zone */
+        .danger-row { display:flex; align-items:center; justify-content:space-between; padding:.9rem 1rem; border-radius:.5rem; border:1px solid rgba(248,113,113,0.12); background:rgba(248,113,113,0.04); gap:1rem; margin-bottom:.75rem; }
+
+        /* Avatar ring */
+        .avatar-ring { width:4rem; height:4rem; border-radius:50%; background:var(--gold); display:flex; align-items:center; justify-content:center; font-family:'"Cormorant Garamond"',serif; font-size:1.75rem; color:#1C1C1C; flex-shrink:0; border:2px solid rgba(197,160,89,0.4); }
+
+        /* Toast */
+        #toast { position:fixed; bottom:2rem; left:50%; transform:translateX(-50%) translateY(4rem); background:rgba(197,160,89,0.95); color:#1C1C1C; padding:.65rem 1.5rem; border-radius:.5rem; font-family:'Montserrat',sans-serif; font-size:.75rem; font-weight:600; z-index:200; transition:transform .3s; pointer-events:none; white-space:nowrap; }
+        #toast.show { transform:translateX(-50%) translateY(0); }
+
+        /* ─── Light Mode ─── */
+        html[data-theme="light"] body         { background:#F0EDE6; color:#1C1C1C; }
+        html[data-theme="light"] aside        { background:#FDFBF7!important; border-right-color:rgba(28,28,28,.1)!important; }
+        html[data-theme="light"] main         { background:#F0EDE6; }
+        html[data-theme="light"] main > header { border-bottom-color:rgba(28,28,28,.1)!important; }
+        html[data-theme="light"] .nav-inactive { color:rgba(28,28,28,.5)!important; }
+        html[data-theme="light"] .nav-inactive:hover { color:rgba(28,28,28,.85)!important; background:rgba(28,28,28,.05)!important; }
+        html[data-theme="light"] .nav-active  { background:rgba(197,160,89,.12)!important; color:#C5A059!important; border-color:rgba(197,160,89,.25)!important; }
+        html[data-theme="light"] .dash-card   { background:rgba(253,251,247,.85)!important; border-color:rgba(28,28,28,.09)!important; }
+        html[data-theme="light"] .text-cream  { color:#1C1C1C!important; }
+        html[data-theme="light"] .text-cream\/80  { color:rgba(28,28,28,.8)!important; }
+        html[data-theme="light"] .text-cream\/60  { color:rgba(28,28,28,.6)!important; }
+        html[data-theme="light"] .text-cream\/50  { color:rgba(28,28,28,.5)!important; }
+        html[data-theme="light"] .text-cream\/40  { color:rgba(28,28,28,.4)!important; }
+        html[data-theme="light"] .text-cream\/35  { color:rgba(28,28,28,.35)!important; }
+        html[data-theme="light"] .text-cream\/30  { color:rgba(28,28,28,.3)!important; }
+        html[data-theme="light"] .border-cream\/10 { border-color:rgba(28,28,28,.1)!important; }
+        html[data-theme="light"] .field-input { background:rgba(28,28,28,.04)!important; border-color:rgba(28,28,28,.12)!important; color:#1C1C1C!important; }
+        html[data-theme="light"] .field-input:focus { border-color:#C5A059!important; }
+        html[data-theme="light"] .field-input option { background:#FDFBF7!important; color:#1C1C1C!important; }
+        html[data-theme="light"] .field-label { color:rgba(28,28,28,.4)!important; }
+        html[data-theme="light"] .page-tab  { color:rgba(28,28,28,.4); }
+        html[data-theme="light"] .page-tab:hover { color:rgba(28,28,28,.7); }
+        html[data-theme="light"] .page-tab.active { color:#C5A059; border-bottom-color:#C5A059; }
+        html[data-theme="light"] .toggle { background:rgba(28,28,28,.2); }
+        html[data-theme="light"] .toggle.on { background:#C5A059; }
+        html[data-theme="light"] .toggle::after { background:#FDFBF7; }
+        html[data-theme="light"] .setting-row { border-color:rgba(28,28,28,.07)!important; }
+        html[data-theme="light"] .danger-row  { border-color:rgba(239,68,68,.15)!important; background:rgba(239,68,68,.03)!important; }
+        html[data-theme="light"] #mobile-menu { background:#FDFBF7!important; }
+    </style>
+</head>
+<body class="noise selection:bg-gold selection:text-charcoal flex h-screen overflow-hidden">
+
+    <!-- Sidebar -->
+    <aside class="w-64 flex-col hidden md:flex shrink-0 z-20 border-r border-cream/10 relative" style="background:var(--charcoal);">
+        <div class="p-8 border-b border-cream/10">
+            <a href="index.html"><img id="sidebar-logo" src="images/logo-dark-bg.svg" alt="De'Osa" class="h-8 w-auto"></a>
+            <p class="font-sans text-[10px] tracking-[0.25em] uppercase text-cream/40 mt-3">Staff Dashboard</p>
+        </div>
+        <nav class="flex-1 px-4 py-8 space-y-1 font-sans text-xs font-medium">
+            <a href="admin.html" class="flex items-center gap-4 px-4 py-3 rounded-lg nav-inactive transition-all">
+                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                <span class="tracking-widest uppercase text-[10px]">Home</span>
+            </a>
+            <a href="admin.html" class="flex items-center gap-4 px-4 py-3 rounded-lg nav-inactive transition-all">
+                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                <span class="tracking-widest uppercase text-[10px]">Call CRM</span>
+            </a>
+            <a href="menus-pricing.html" class="flex items-center gap-4 px-4 py-3 rounded-lg nav-inactive transition-all">
+                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                <span class="tracking-widest uppercase text-[10px]">Menus & Pricing</span>
+            </a>
+            <a href="event-calendar.html" class="flex items-center gap-4 px-4 py-3 rounded-lg nav-inactive transition-all">
+                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                <span class="tracking-widest uppercase text-[10px]">Event Calendar</span>
+            </a>
+            <a href="settings.html" class="flex items-center gap-4 px-4 py-3 rounded-lg nav-active transition-all">
+                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                <span class="tracking-widest uppercase text-[10px]">Settings</span>
+            </a>
+        </nav>
+        <div class="p-5 border-t border-cream/10 flex items-center gap-3">
+            <div id="sidebar-avatar" class="w-9 h-9 rounded-full bg-gold flex items-center justify-center text-charcoal font-serif text-lg shrink-0">D</div>
+            <div>
+                <p id="sidebar-name" class="font-sans text-xs font-semibold text-cream">De'Osa Admin</p>
+                <p id="sidebar-role" class="font-sans text-[10px] text-cream/40 tracking-widest uppercase">Director</p>
+            </div>
+            <a href="login.html" class="ml-auto text-cream/30 hover:text-gold transition-colors" title="Sign out">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="fixed inset-0 z-50 flex flex-col justify-center items-center gap-6 transition-all duration-500 opacity-0 pointer-events-none" style="background:#111111;">
+        <button onclick="toggleMobileMenu()" class="absolute top-6 right-6 font-sans text-xs font-bold tracking-widest uppercase text-cream/50 hover:text-gold transition-colors border border-cream/10 px-4 py-2 rounded-full">Close</button>
+        <img id="mobile-logo" src="images/logo-dark-bg.svg" alt="De'Osa" class="h-10 w-auto">
+        <a href="admin.html"          class="w-full flex justify-center px-6 py-4 rounded-xl nav-inactive transition-all font-sans text-xs font-bold tracking-widest uppercase">Call CRM</a>
+        <a href="menus-pricing.html"  class="w-full flex justify-center px-6 py-4 rounded-xl nav-inactive transition-all font-sans text-xs font-bold tracking-widest uppercase">Menus & Pricing</a>
+        <a href="event-calendar.html" class="w-full flex justify-center px-6 py-4 rounded-xl nav-inactive transition-all font-sans text-xs font-bold tracking-widest uppercase">Event Calendar</a>
+        <a href="settings.html"       class="w-full flex justify-center px-6 py-4 rounded-xl nav-active  transition-all font-sans text-xs font-bold tracking-widest uppercase">Settings</a>
+    </div>
+
+    <!-- Main -->
+    <main class="flex-1 flex flex-col h-screen overflow-hidden relative z-10">
+
+        <!-- Topbar -->
+        <header class="border-b border-cream/10 h-16 md:h-20 flex items-center justify-between px-5 md:px-8 shrink-0 gap-4">
+            <div class="flex items-center gap-3">
+                <button onclick="toggleMobileMenu()" class="text-cream/60 hover:text-gold transition-colors p-1 md:hidden">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                </button>
+                <div class="hidden md:block">
+                    <h2 class="font-serif text-3xl text-cream">Settings</h2>
+                </div>
+            </div>
+            <div class="flex items-center gap-3 ml-auto">
+                <button onclick="saveAll()" class="px-4 py-2 bg-gold hover:bg-gold-light text-charcoal font-sans text-[10px] font-bold uppercase tracking-widest rounded-sm transition-colors">Save Changes</button>
+                <button onclick="toggleTheme()" class="p-2 text-cream/40 hover:text-gold transition-colors">
+                    <svg id="theme-icon-moon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+                    <svg id="theme-icon-sun" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m8.66-9h-1M4.34 12h-1m15.07-6.07-.71.71M6.34 17.66l-.71.71m12.73 0-.71-.71M6.34 6.34l-.71-.71M12 5a7 7 0 100 14A7 7 0 0012 5z"/></svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- Tab bar -->
+        <div class="flex border-b border-cream/10 px-6 md:px-8 overflow-x-auto shrink-0">
+            <button class="page-tab active" data-tab="account">Account</button>
+            <button class="page-tab"        data-tab="business">Business</button>
+            <button class="page-tab"        data-tab="appearance">Appearance</button>
+            <button class="page-tab"        data-tab="data">Data</button>
+        </div>
+
+        <!-- Scrollable content -->
+        <div class="flex-1 overflow-y-auto px-6 md:px-8 py-8">
+
+            <!-- ══ ACCOUNT TAB ══ -->
+            <div id="tab-account" class="tab-panel active space-y-6">
+
+                <!-- Profile card -->
+                <div class="dash-card p-6">
+                    <h3 class="font-serif text-2xl text-cream mb-1">Admin Profile</h3>
+                    <p class="font-sans text-xs text-cream/35 mb-6">Your name and role appear in the sidebar and on all documents</p>
+
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center gap-5 mb-6 pb-6 border-b border-cream/08">
+                        <div id="profile-avatar" class="avatar-ring">D</div>
+                        <div class="flex-1">
+                            <p class="font-serif text-xl text-cream" id="avatar-preview-name">De'Osa Admin</p>
+                            <p class="font-sans text-xs text-cream/40 mt-0.5" id="avatar-preview-role">Director</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="field-label">Display Name</label>
+                            <input id="acc-name" type="text" class="field-input" placeholder="Your name" oninput="livePreviewAccount()">
+                        </div>
+                        <div>
+                            <label class="field-label">Role / Title</label>
+                            <input id="acc-role" type="text" class="field-input" placeholder="e.g. Director, Manager" oninput="livePreviewAccount()">
+                        </div>
+                        <div>
+                            <label class="field-label">Email Address</label>
+                            <input id="acc-email" type="email" class="field-input" placeholder="admin@deosa.co.uk">
+                        </div>
+                        <div>
+                            <label class="field-label">Phone</label>
+                            <input id="acc-phone" type="tel" class="field-input" placeholder="+44 20 0000 0000">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Security card -->
+                <div class="dash-card p-6">
+                    <h3 class="font-serif text-2xl text-cream mb-1">Security</h3>
+                    <p class="font-sans text-xs text-cream/35 mb-6">Update your login credentials</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="field-label">New Password</label>
+                            <input id="acc-pw" type="password" class="field-input" placeholder="Leave blank to keep current" autocomplete="new-password">
+                        </div>
+                        <div>
+                            <label class="field-label">Confirm Password</label>
+                            <input id="acc-pw2" type="password" class="field-input" placeholder="Repeat new password" autocomplete="new-password">
+                        </div>
+                    </div>
+                    <p id="pw-match-msg" class="font-sans text-[10px] mt-2 hidden"></p>
+                </div>
+
+            </div>
+
+            <!-- ══ BUSINESS TAB ══ -->
+            <div id="tab-business" class="tab-panel space-y-6">
+
+                <div class="dash-card p-6">
+                    <h3 class="font-serif text-2xl text-cream mb-1">Company Details</h3>
+                    <p class="font-sans text-xs text-cream/35 mb-6">Used on quotes, invoices and client-facing documents</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="sm:col-span-2">
+                            <label class="field-label">Business Name</label>
+                            <input id="biz-name" type="text" class="field-input" placeholder="De'Osa Catering & Events">
+                        </div>
+                        <div class="sm:col-span-2">
+                            <label class="field-label">Tagline</label>
+                            <input id="biz-tagline" type="text" class="field-input" placeholder="Luxury African & Caribbean Catering">
+                        </div>
+                        <div>
+                            <label class="field-label">Email</label>
+                            <input id="biz-email" type="email" class="field-input" placeholder="hello@deosa.co.uk">
+                        </div>
+                        <div>
+                            <label class="field-label">Phone</label>
+                            <input id="biz-phone" type="tel" class="field-input" placeholder="+44 20 0000 0000">
+                        </div>
+                        <div class="sm:col-span-2">
+                            <label class="field-label">Address</label>
+                            <input id="biz-address" type="text" class="field-input" placeholder="London, United Kingdom">
+                        </div>
+                        <div>
+                            <label class="field-label">VAT / Company Number</label>
+                            <input id="biz-vat" type="text" class="field-input" placeholder="GB 000 0000 00">
+                        </div>
+                        <div>
+                            <label class="field-label">Website</label>
+                            <input id="biz-website" type="text" class="field-input" placeholder="https://deosa.shop">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dash-card p-6">
+                    <h3 class="font-serif text-2xl text-cream mb-1">Booking Defaults</h3>
+                    <p class="font-sans text-xs text-cream/35 mb-6">Pre-filled values when creating a new booking</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="field-label">Default Service Style</label>
+                            <select id="biz-default-service" class="field-input">
+                                <option value="Plated Multi-Course">Plated Multi-Course</option>
+                                <option value="Fine Dining">Fine Dining</option>
+                                <option value="Buffet Service">Buffet Service</option>
+                                <option value="Family Style">Family Style</option>
+                                <option value="Canapés & Drinks Only">Canapés &amp; Drinks Only</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="field-label">Default Event Status</label>
+                            <select id="biz-default-status" class="field-input">
+                                <option value="confirmed">Confirmed</option>
+                                <option value="pending">Pending</option>
+                                <option value="enquiry">Enquiry</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="field-label">Deposit Rate (%)</label>
+                            <input id="biz-deposit" type="number" min="0" max="100" step="5" class="field-input" placeholder="25">
+                        </div>
+                        <div>
+                            <label class="field-label">Currency Symbol</label>
+                            <select id="biz-currency" class="field-input">
+                                <option value="£">£ — British Pound</option>
+                                <option value="$">$ — US Dollar</option>
+                                <option value="€">€ — Euro</option>
+                                <option value="₦">₦ — Nigerian Naira</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <label class="field-label">Payment Terms (shown on invoices)</label>
+                        <textarea id="biz-terms" rows="3" class="field-input resize-none" placeholder="e.g. 25% deposit on booking. Balance due 14 days before event."></textarea>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ══ APPEARANCE TAB ══ -->
+            <div id="tab-appearance" class="tab-panel space-y-6">
+
+                <div class="dash-card p-6">
+                    <h3 class="font-serif text-2xl text-cream mb-1">Theme</h3>
+                    <p class="font-sans text-xs text-cream/35 mb-4">Controls the colour scheme across all admin pages</p>
+
+                    <div class="setting-row">
+                        <div>
+                            <p class="font-sans text-sm font-semibold text-cream/80">Dark Mode</p>
+                            <p class="font-sans text-xs text-cream/35 mt-0.5">Rich charcoal backgrounds with gold accents</p>
+                        </div>
+                        <div id="theme-toggle-row" class="toggle on" onclick="toggleThemeRow()"></div>
+                    </div>
+
+                    <!-- Theme preview -->
+                    <div class="mt-5 grid grid-cols-2 gap-3">
+                        <div id="preview-dark" class="rounded-lg p-4 border-2 cursor-pointer transition-all" style="background:#1C1C1C; border-color:rgba(197,160,89,0.6);" onclick="setTheme('dark')">
+                            <div class="flex items-center gap-2 mb-3">
+                                <div class="w-2 h-2 rounded-full bg-red-400"></div>
+                                <div class="w-2 h-2 rounded-full bg-yellow-400"></div>
+                                <div class="w-2 h-2 rounded-full bg-green-400"></div>
+                            </div>
+                            <div class="space-y-1.5">
+                                <div class="h-2 rounded-full w-3/4" style="background:rgba(253,251,247,0.15)"></div>
+                                <div class="h-2 rounded-full w-1/2" style="background:rgba(197,160,89,0.4)"></div>
+                                <div class="h-2 rounded-full w-2/3" style="background:rgba(253,251,247,0.08)"></div>
+                            </div>
+                            <p class="font-sans text-[9px] font-bold uppercase tracking-widest mt-3" style="color:#C5A059">Dark</p>
+                        </div>
+                        <div id="preview-light" class="rounded-lg p-4 border-2 cursor-pointer transition-all" style="background:#F0EDE6; border-color:rgba(28,28,28,0.1);" onclick="setTheme('light')">
+                            <div class="flex items-center gap-2 mb-3">
+                                <div class="w-2 h-2 rounded-full bg-red-400"></div>
+                                <div class="w-2 h-2 rounded-full bg-yellow-400"></div>
+                                <div class="w-2 h-2 rounded-full bg-green-400"></div>
+                            </div>
+                            <div class="space-y-1.5">
+                                <div class="h-2 rounded-full w-3/4" style="background:rgba(28,28,28,0.15)"></div>
+                                <div class="h-2 rounded-full w-1/2" style="background:rgba(197,160,89,0.5)"></div>
+                                <div class="h-2 rounded-full w-2/3" style="background:rgba(28,28,28,0.08)"></div>
+                            </div>
+                            <p class="font-sans text-[9px] font-bold uppercase tracking-widest mt-3" style="color:#C5A059">Light</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dash-card p-6">
+                    <h3 class="font-serif text-2xl text-cream mb-1">Preferences</h3>
+                    <p class="font-sans text-xs text-cream/35 mb-4">Interface behaviour settings</p>
+
+                    <div class="setting-row">
+                        <div>
+                            <p class="font-sans text-sm font-semibold text-cream/80">Show Revenue in Calendar</p>
+                            <p class="font-sans text-xs text-cream/35 mt-0.5">Display estimated revenue in the calendar stats bar</p>
+                        </div>
+                        <div id="pref-revenue" class="toggle on" onclick="togglePref('pref-revenue', 'showRevenue')"></div>
+                    </div>
+
+                    <div class="setting-row">
+                        <div>
+                            <p class="font-sans text-sm font-semibold text-cream/80">Auto-save Booking Changes</p>
+                            <p class="font-sans text-xs text-cream/35 mt-0.5">Automatically save edits on the booking detail page</p>
+                        </div>
+                        <div id="pref-autosave" class="toggle on" onclick="togglePref('pref-autosave', 'autoSave')"></div>
+                    </div>
+
+                    <div class="setting-row">
+                        <div>
+                            <p class="font-sans text-sm font-semibold text-cream/80">Confirm Before Deleting</p>
+                            <p class="font-sans text-xs text-cream/35 mt-0.5">Require a second tap to confirm booking deletion</p>
+                        </div>
+                        <div id="pref-confirm-delete" class="toggle on" onclick="togglePref('pref-confirm-delete', 'confirmDelete')"></div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ══ DATA TAB ══ -->
+            <div id="tab-data" class="tab-panel space-y-6">
+
+                <!-- Export -->
+                <div class="dash-card p-6">
+                    <h3 class="font-serif text-2xl text-cream mb-1">Export Data</h3>
+                    <p class="font-sans text-xs text-cream/35 mb-5">Download a JSON backup of any data store</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <button onclick="exportData('ec_events','deosa-events')" class="flex items-center gap-3 px-4 py-3 dash-card hover:border-gold/30 transition-all rounded-lg text-left">
+                            <svg class="w-4 h-4 text-gold/60 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                            <div>
+                                <p class="font-sans text-xs font-semibold text-cream/80">Events</p>
+                                <p class="font-sans text-[10px] text-cream/35">ec_events</p>
+                            </div>
+                            <svg class="w-3.5 h-3.5 ml-auto text-cream/25" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                        </button>
+                        <button onclick="exportData('mp_menuCatalogue','deosa-menu')" class="flex items-center gap-3 px-4 py-3 dash-card hover:border-gold/30 transition-all rounded-lg text-left">
+                            <svg class="w-4 h-4 text-gold/60 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                            <div>
+                                <p class="font-sans text-xs font-semibold text-cream/80">Menu Catalogue</p>
+                                <p class="font-sans text-[10px] text-cream/35">mp_menuCatalogue</p>
+                            </div>
+                            <svg class="w-3.5 h-3.5 ml-auto text-cream/25" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                        </button>
+                        <button onclick="exportData('mp_serviceStyles','deosa-styles')" class="flex items-center gap-3 px-4 py-3 dash-card hover:border-gold/30 transition-all rounded-lg text-left">
+                            <svg class="w-4 h-4 text-gold/60 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-5 5a2 2 0 01-2.828 0l-7-7A2 2 0 013 10V5a2 2 0 012-2z"/></svg>
+                            <div>
+                                <p class="font-sans text-xs font-semibold text-cream/80">Service Styles</p>
+                                <p class="font-sans text-[10px] text-cream/35">mp_serviceStyles</p>
+                            </div>
+                            <svg class="w-3.5 h-3.5 ml-auto text-cream/25" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                        </button>
+                        <button onclick="exportAll()" class="flex items-center gap-3 px-4 py-3 bg-gold/08 border border-gold/25 hover:border-gold/50 transition-all rounded-lg text-left">
+                            <svg class="w-4 h-4 text-gold shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1M5 19h14a2 2 0 002-2v-5a2 2 0 00-2-2H9a2 2 0 00-2 2v5a2 2 0 01-2 2z"/></svg>
+                            <div>
+                                <p class="font-sans text-xs font-semibold text-gold">Export Everything</p>
+                                <p class="font-sans text-[10px] text-cream/35">Full backup — all stores</p>
+                            </div>
+                            <svg class="w-3.5 h-3.5 ml-auto text-gold/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Data summary -->
+                <div class="dash-card p-6">
+                    <h3 class="font-serif text-2xl text-cream mb-1">Stored Data</h3>
+                    <p class="font-sans text-xs text-cream/35 mb-5">Current records across all data stores</p>
+                    <div id="data-summary" class="grid grid-cols-2 sm:grid-cols-4 gap-3"></div>
+                </div>
+
+                <!-- Danger zone -->
+                <div class="dash-card p-6">
+                    <h3 class="font-serif text-2xl text-cream mb-1">Danger Zone</h3>
+                    <p class="font-sans text-xs text-red-400/70 mb-5">These actions cannot be undone</p>
+
+                    <div class="danger-row">
+                        <div class="min-w-0">
+                            <p class="font-sans text-xs font-semibold text-cream/80">Reset Events</p>
+                            <p class="font-sans text-[10px] text-cream/35 mt-0.5">Restore the 10 default seed events, deleting all custom bookings</p>
+                        </div>
+                        <button id="btn-reset-events" onclick="resetStore('ec_events', 'btn-reset-events')" class="shrink-0 px-3 py-1.5 border border-red-500/25 text-red-400/70 font-sans text-[10px] font-bold uppercase tracking-widest rounded-sm hover:border-red-500/50 hover:text-red-400 transition-all whitespace-nowrap">Reset</button>
+                    </div>
+
+                    <div class="danger-row">
+                        <div class="min-w-0">
+                            <p class="font-sans text-xs font-semibold text-cream/80">Reset Menu Pricing</p>
+                            <p class="font-sans text-[10px] text-cream/35 mt-0.5">Restore default service styles, add-ons and menu item prices</p>
+                        </div>
+                        <button id="btn-reset-menu" onclick="resetStore('mp_all', 'btn-reset-menu')" class="shrink-0 px-3 py-1.5 border border-red-500/25 text-red-400/70 font-sans text-[10px] font-bold uppercase tracking-widest rounded-sm hover:border-red-500/50 hover:text-red-400 transition-all whitespace-nowrap">Reset</button>
+                    </div>
+
+                    <div class="danger-row">
+                        <div class="min-w-0">
+                            <p class="font-sans text-xs font-semibold text-cream/80">Clear All Data</p>
+                            <p class="font-sans text-[10px] text-cream/35 mt-0.5">Wipe everything — events, menu, settings, profile</p>
+                        </div>
+                        <button id="btn-clear-all" onclick="clearAll()" class="shrink-0 px-3 py-1.5 border border-red-500/40 text-red-400 font-sans text-[10px] font-bold uppercase tracking-widest rounded-sm hover:bg-red-500/10 transition-all whitespace-nowrap">Clear All</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Toast -->
+    <div id="toast"></div>
+
+    <script>
+    /* ════════ DATA ════════ */
+    function ls(key, fallback) {
+        try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; } catch(e) { return fallback; }
+    }
+    function lsSet(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); } catch(e) {} }
+    function lsRaw(key) { return localStorage.getItem(key) || ''; }
+    function lsSetRaw(key, val) { try { localStorage.setItem(key, val); } catch(e) {} }
+
+    /* Profile & prefs */
+    const adminData = ls('ds_admin', { name:"De'Osa Admin", role:'Director', email:'', phone:'' });
+    const bizData   = ls('ds_business', { name:"De'Osa Catering & Events", tagline:'Luxury African & Caribbean Catering', email:'', phone:'', address:'London, United Kingdom', vat:'', website:'https://deosa.shop', defaultService:'Plated Multi-Course', defaultStatus:'confirmed', deposit:25, currency:'£', terms:'' });
+    const prefs     = ls('ds_prefs', { showRevenue:true, autoSave:true, confirmDelete:true });
+
+    /* ════════ TABS ════════ */
+    document.querySelectorAll('.page-tab').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.page-tab').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+            if (btn.dataset.tab === 'data') renderDataSummary();
+        });
+    });
+
+    /* ════════ POPULATE FORM ════════ */
+    function populate() {
+        document.getElementById('acc-name').value   = adminData.name  || '';
+        document.getElementById('acc-role').value   = adminData.role  || '';
+        document.getElementById('acc-email').value  = adminData.email || '';
+        document.getElementById('acc-phone').value  = adminData.phone || '';
+
+        document.getElementById('biz-name').value            = bizData.name    || '';
+        document.getElementById('biz-tagline').value         = bizData.tagline || '';
+        document.getElementById('biz-email').value           = bizData.email   || '';
+        document.getElementById('biz-phone').value           = bizData.phone   || '';
+        document.getElementById('biz-address').value         = bizData.address || '';
+        document.getElementById('biz-vat').value             = bizData.vat     || '';
+        document.getElementById('biz-website').value         = bizData.website || '';
+        document.getElementById('biz-default-service').value = bizData.defaultService || 'Plated Multi-Course';
+        document.getElementById('biz-default-status').value  = bizData.defaultStatus  || 'confirmed';
+        document.getElementById('biz-deposit').value         = bizData.deposit  ?? 25;
+        document.getElementById('biz-currency').value        = bizData.currency || '£';
+        document.getElementById('biz-terms').value           = bizData.terms   || '';
+
+        // Prefs toggles
+        document.getElementById('pref-revenue').classList.toggle('on', prefs.showRevenue !== false);
+        document.getElementById('pref-autosave').classList.toggle('on', prefs.autoSave !== false);
+        document.getElementById('pref-confirm-delete').classList.toggle('on', prefs.confirmDelete !== false);
+
+        livePreviewAccount();
+    }
+
+    /* ════════ LIVE ACCOUNT PREVIEW ════════ */
+    function livePreviewAccount() {
+        const name = document.getElementById('acc-name').value.trim() || "De'Osa Admin";
+        const role = document.getElementById('acc-role').value.trim() || 'Director';
+        const letter = name.charAt(0).toUpperCase();
+        document.getElementById('profile-avatar').textContent  = letter;
+        document.getElementById('avatar-preview-name').textContent = name;
+        document.getElementById('avatar-preview-role').textContent = role;
+        document.getElementById('sidebar-avatar').textContent   = letter;
+        document.getElementById('sidebar-name').textContent     = name;
+        document.getElementById('sidebar-role').textContent     = role;
+    }
+
+    /* ════════ PASSWORD MATCH ════════ */
+    ['acc-pw','acc-pw2'].forEach(id => {
+        document.getElementById(id).addEventListener('input', () => {
+            const p1 = document.getElementById('acc-pw').value;
+            const p2 = document.getElementById('acc-pw2').value;
+            const msg = document.getElementById('pw-match-msg');
+            if (!p1 && !p2) { msg.classList.add('hidden'); return; }
+            msg.classList.remove('hidden');
+            if (p1 === p2) {
+                msg.textContent = '✓ Passwords match';
+                msg.className = 'font-sans text-[10px] mt-2 text-green-400';
+            } else {
+                msg.textContent = 'Passwords do not match';
+                msg.className = 'font-sans text-[10px] mt-2 text-red-400';
+            }
+        });
+    });
+
+    /* ════════ THEME (appearance tab) ════════ */
+    function setTheme(theme) {
+        applyTheme(theme);
+        syncThemeUI(theme);
+    }
+    function syncThemeUI(theme) {
+        const isDark = theme !== 'light';
+        document.getElementById('theme-toggle-row').classList.toggle('on', isDark);
+        document.getElementById('preview-dark').style.borderColor  = isDark ? 'rgba(197,160,89,0.6)' : 'rgba(197,160,89,0.15)';
+        document.getElementById('preview-light').style.borderColor = !isDark ? 'rgba(197,160,89,0.6)' : 'rgba(28,28,28,0.1)';
+    }
+    function toggleThemeRow() {
+        const cur = document.documentElement.getAttribute('data-theme') || 'dark';
+        setTheme(cur === 'light' ? 'dark' : 'light');
+    }
+
+    /* ════════ PREFS ════════ */
+    function togglePref(elemId, key) {
+        prefs[key] = !prefs[key];
+        document.getElementById(elemId).classList.toggle('on', prefs[key]);
+    }
+
+    /* ════════ SAVE ALL ════════ */
+    function saveAll() {
+        const p1 = document.getElementById('acc-pw').value;
+        const p2 = document.getElementById('acc-pw2').value;
+        if (p1 && p1 !== p2) { showToast('Passwords do not match'); return; }
+
+        adminData.name  = document.getElementById('acc-name').value.trim();
+        adminData.role  = document.getElementById('acc-role').value.trim();
+        adminData.email = document.getElementById('acc-email').value.trim();
+        adminData.phone = document.getElementById('acc-phone').value.trim();
+        if (p1) adminData.pw = btoa(p1);
+
+        bizData.name           = document.getElementById('biz-name').value.trim();
+        bizData.tagline        = document.getElementById('biz-tagline').value.trim();
+        bizData.email          = document.getElementById('biz-email').value.trim();
+        bizData.phone          = document.getElementById('biz-phone').value.trim();
+        bizData.address        = document.getElementById('biz-address').value.trim();
+        bizData.vat            = document.getElementById('biz-vat').value.trim();
+        bizData.website        = document.getElementById('biz-website').value.trim();
+        bizData.defaultService = document.getElementById('biz-default-service').value;
+        bizData.defaultStatus  = document.getElementById('biz-default-status').value;
+        bizData.deposit        = parseInt(document.getElementById('biz-deposit').value) || 25;
+        bizData.currency       = document.getElementById('biz-currency').value;
+        bizData.terms          = document.getElementById('biz-terms').value.trim();
+
+        lsSet('ds_admin',    adminData);
+        lsSet('ds_business', bizData);
+        lsSet('ds_prefs',    prefs);
+
+        // Clear password fields
+        document.getElementById('acc-pw').value  = '';
+        document.getElementById('acc-pw2').value = '';
+        document.getElementById('pw-match-msg').classList.add('hidden');
+
+        livePreviewAccount();
+        showToast('Settings saved');
+    }
+
+    /* ════════ DATA SUMMARY ════════ */
+    function renderDataSummary() {
+        const stores = [
+            { key:'ec_events',       label:'Events',        icon:'🗓' },
+            { key:'mp_serviceStyles',label:'Service Styles', icon:'🍽' },
+            { key:'mp_addOns',       label:'Add-Ons',        icon:'✚' },
+            { key:'mp_menuCatalogue',label:'Menu Items',     icon:'📋' },
+        ];
+        const el = document.getElementById('data-summary');
+        el.innerHTML = stores.map(s => {
+            const raw = localStorage.getItem(s.key);
+            let count = '—';
+            if (raw) {
+                try {
+                    const parsed = JSON.parse(raw);
+                    if (Array.isArray(parsed)) count = parsed.length;
+                    else if (typeof parsed === 'object') count = Object.values(parsed).reduce((a, v) => a + (Array.isArray(v) ? v.length : 1), 0);
+                } catch(e) {}
+            }
+            const kb = raw ? (new Blob([raw]).size / 1024).toFixed(1) : '0';
+            return `
+            <div class="dash-card p-4">
+                <p class="font-sans text-[10px] uppercase tracking-widest text-cream/30 mb-1">${s.label}</p>
+                <p class="font-serif text-2xl text-cream">${count}</p>
+                <p class="font-sans text-[10px] text-cream/25 mt-0.5">${kb} KB</p>
+            </div>`;
+        }).join('');
+    }
+
+    /* ════════ EXPORT ════════ */
+    function exportData(key, filename) {
+        const raw = localStorage.getItem(key);
+        if (!raw) { showToast('No data to export for ' + key); return; }
+        download(raw, filename + '-' + dateStamp() + '.json', 'application/json');
+        showToast('Exported ' + filename);
+    }
+    function exportAll() {
+        const keys = ['ec_events','mp_serviceStyles','mp_addOns','mp_menuCatalogue','mp_packages','ds_admin','ds_business','ds_prefs'];
+        const out = {};
+        keys.forEach(k => { const v = localStorage.getItem(k); if (v) { try { out[k] = JSON.parse(v); } catch(e) {} } });
+        download(JSON.stringify(out, null, 2), 'deosa-backup-' + dateStamp() + '.json', 'application/json');
+        showToast('Full backup exported');
+    }
+    function download(content, filename, type) {
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob([content], { type }));
+        a.download = filename;
+        a.click();
+        URL.revokeObjectURL(a.href);
+    }
+    function dateStamp() {
+        return new Date().toISOString().split('T')[0];
+    }
+
+    /* ════════ RESET / CLEAR ════════ */
+    const resetTimers = {};
+    function resetStore(key, btnId) {
+        const btn = document.getElementById(btnId);
+        if (!resetTimers[btnId]) {
+            resetTimers[btnId] = true;
+            const orig = btn.textContent;
+            btn.textContent = 'Confirm?';
+            btn.classList.add('border-red-500/50', 'text-red-400');
+            setTimeout(() => {
+                resetTimers[btnId] = false;
+                btn.textContent = orig;
+                btn.classList.remove('border-red-500/50', 'text-red-400');
+            }, 3000);
+            return;
+        }
+        // Confirmed
+        resetTimers[btnId] = false;
+        if (key === 'mp_all') {
+            ['mp_serviceStyles','mp_addOns','mp_menuCatalogue','mp_packages'].forEach(k => localStorage.removeItem(k));
+            showToast('Menu pricing reset to defaults');
+        } else {
+            localStorage.removeItem(key);
+            showToast('Reset — defaults will reload on next visit');
+        }
+        btn.textContent = 'Done ✓';
+        setTimeout(() => { btn.textContent = key === 'mp_all' ? 'Reset' : 'Reset'; }, 2000);
+        renderDataSummary();
+    }
+
+    let clearArmed = false, clearTimer = null;
+    function clearAll() {
+        const btn = document.getElementById('btn-clear-all');
+        if (!clearArmed) {
+            clearArmed = true;
+            btn.textContent = 'Tap again — this is permanent';
+            clearTimer = setTimeout(() => {
+                clearArmed = false;
+                btn.textContent = 'Clear All';
+            }, 4000);
+            return;
+        }
+        clearTimeout(clearTimer);
+        clearArmed = false;
+        const keep = { 'admin-theme': localStorage.getItem('admin-theme') };
+        localStorage.clear();
+        if (keep['admin-theme']) localStorage.setItem('admin-theme', keep['admin-theme']);
+        showToast('All data cleared');
+        btn.textContent = 'Cleared ✓';
+        setTimeout(() => { btn.textContent = 'Clear All'; }, 2000);
+        renderDataSummary();
+    }
+
+    /* ════════ TOAST ════════ */
+    function showToast(msg) {
+        const t = document.getElementById('toast');
+        t.textContent = msg;
+        t.classList.add('show');
+        clearTimeout(t._t);
+        t._t = setTimeout(() => t.classList.remove('show'), 2500);
+    }
+
+    /* ════════ THEME ════════ */
+    const LOGOS = { dark:'images/logo-dark-bg.svg', light:'images/logo-light.svg' };
+    function applyTheme(theme) {
+        const isLight = theme === 'light';
+        document.documentElement.setAttribute('data-theme', theme);
+        document.getElementById('theme-icon-moon').classList.toggle('hidden', isLight);
+        document.getElementById('theme-icon-sun').classList.toggle('hidden', !isLight);
+        document.getElementById('sidebar-logo').src = isLight ? LOGOS.light : LOGOS.dark;
+        document.getElementById('mobile-logo').src  = isLight ? LOGOS.light : LOGOS.dark;
+        localStorage.setItem('admin-theme', theme);
+    }
+    function toggleTheme() {
+        const cur = document.documentElement.getAttribute('data-theme') || 'dark';
+        setTheme(cur === 'light' ? 'dark' : 'light');
+    }
+
+    /* ════════ MOBILE MENU ════════ */
+    function toggleMobileMenu() {
+        const menu = document.getElementById('mobile-menu');
+        const isOpen = !menu.classList.contains('opacity-0');
+        menu.classList.toggle('opacity-0', isOpen);
+        menu.classList.toggle('pointer-events-none', isOpen);
+    }
+
+    /* ════════ BOOT ════════ */
+    populate();
+    const _theme = localStorage.getItem('admin-theme') || 'dark';
+    applyTheme(_theme);
+    syncThemeUI(_theme);
+    </script>
+</body>
+</html>
