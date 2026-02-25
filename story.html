@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <link rel="icon" type="image/svg+xml" href="images/logo-light.svg">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Our Story | De'Osa Luxury Catering</title>
+    <title>About | De'Osa Luxury Catering</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -155,7 +155,7 @@
                 <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:rgba(253,251,247,0.2);"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"/></svg>
             </a>
             <a href="story.html" class="group flex items-center justify-between py-5" style="border-bottom:1px solid rgba(253,251,247,0.07);">
-                <span class="font-serif text-3xl" style="color:rgba(253,251,247,0.9);">Our Story</span>
+                <span class="font-serif text-3xl" style="color:rgba(253,251,247,0.9);">About</span>
                 <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:rgba(253,251,247,0.2);"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"/></svg>
             </a>
             <a href="gallery.html" class="group flex items-center justify-between py-5" style="border-bottom:1px solid rgba(253,251,247,0.07);">
@@ -251,12 +251,12 @@
                     <h3 class="font-serif text-3xl font-bold mb-4">Uncompromising Authenticity</h3>
                     <p class="font-sans text-sm text-cream/70 leading-relaxed">We honor traditional recipes and sourcing methods. Our Jollof is deeply smoky, our Jerk is steeped in authentic spices, and our flavors are never diluted. We bring true cultural heritage to the plate.</p>
                 </div>
-                <div class="border-t border-gold/30 pt-8 reveal-up stagger-item" style="transition-delay: 100ms;">
+                <div class="border-t border-gold/30 pt-8 reveal-up stagger-item">
                     <span class="font-serif text-4xl text-gold/50 mb-6 block">02</span>
                     <h3 class="font-serif text-3xl font-bold mb-4">Bespoke Elegance</h3>
                     <p class="font-sans text-sm text-cream/70 leading-relaxed">Authentic food should not sacrifice aesthetics. We specialize in modern, high-end presentation, ensuring that our dishes look as breathtaking as the luxury venues in which they are served.</p>
                 </div>
-                <div class="border-t border-gold/30 pt-8 reveal-up stagger-item" style="transition-delay: 200ms;">
+                <div class="border-t border-gold/30 pt-8 reveal-up stagger-item">
                     <span class="font-serif text-4xl text-gold/50 mb-6 block">03</span>
                     <h3 class="font-serif text-3xl font-bold mb-4">Flawless Execution</h3>
                     <p class="font-sans text-sm text-cream/70 leading-relaxed">A luxury wedding is a once-in-a-lifetime event. From the first private tasting to the final dessert served, our multi-award-winning service team guarantees a seamless, stress-free dining experience.</p>
@@ -381,8 +381,9 @@
                 ease: 'power2.out'
             });
 
-            // Scroll Reveal
+            // Scroll Reveal — skip stagger-items (handled separately below)
             gsap.utils.toArray('.reveal-up').forEach(elem => {
+                if (elem.classList.contains('stagger-item')) return;
                 gsap.from(elem, {
                     y: 40,
                     opacity: 0,
@@ -394,6 +395,22 @@
                     }
                 });
             });
+
+            // Philosophy pillars — staggered reveal from shared trigger
+            const staggerItems = gsap.utils.toArray('.stagger-item');
+            if (staggerItems.length) {
+                gsap.from(staggerItems, {
+                    y: 50,
+                    opacity: 0,
+                    duration: 1,
+                    ease: 'power3.out',
+                    stagger: 0.18,
+                    scrollTrigger: {
+                        trigger: staggerItems[0].closest('section') || staggerItems[0],
+                        start: 'top 72%'
+                    }
+                });
+            }
 
             // Parallax Images
             gsap.utils.toArray('.parallax-img-wrap').forEach(wrap => {
