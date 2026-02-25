@@ -124,6 +124,23 @@
         .menu-item-row:last-child { border-bottom: none; }
 
         .menu-toggle-btn { transition: background 0.2s ease, border-color 0.2s ease; }
+
+        /* Editable order inputs */
+        .order-input {
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid rgba(253,251,247,0.15);
+            outline: none;
+            color: rgba(253,251,247,0.7);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.75rem;
+            padding: 2px 2px 2px 0;
+            transition: border-color 0.2s, color 0.2s;
+            -moz-appearance: textfield;
+        }
+        .order-input::-webkit-inner-spin-button,
+        .order-input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        .order-input:focus { border-bottom-color: #C5A059; color: rgba(253,251,247,0.9); }
     </style>
 </head>
 <body class="noise selection:bg-gold selection:text-charcoal pb-24">
@@ -245,46 +262,85 @@
         <!-- Right Column -->
         <div class="space-y-6">
 
-            <!-- Financial Summary -->
+            <!-- Your Order -->
             <div class="dash-card p-8 dash-anim">
-                <h2 class="font-serif text-2xl text-cream mb-6 border-b border-cream/10 pb-4">Financial Summary</h2>
+                <div class="flex justify-between items-center mb-6 border-b border-cream/10 pb-4">
+                    <h2 class="font-serif text-2xl text-cream">Your Order</h2>
+                    <span class="font-sans text-[10px] uppercase tracking-widest text-cream/25">Tap values to edit</span>
+                </div>
 
-                <div class="space-y-3 font-sans text-sm mb-6 border-b border-cream/10 pb-5">
-                    <div class="flex justify-between text-cream/50">
-                        <span>Catering (150 Guests)</span>
-                        <span>£13,500.00</span>
+                <!-- Editable Line Items -->
+                <div class="space-y-5 mb-6 border-b border-cream/10 pb-5">
+
+                    <!-- Catering -->
+                    <div>
+                        <p class="font-sans text-[10px] uppercase tracking-widest text-cream/30 font-bold mb-2">Catering</p>
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center gap-1 font-sans text-xs text-cream/45">
+                                <input id="guest-count" type="number" value="150" min="1" max="2000"
+                                    class="order-input w-14 text-right">
+                                <span>guests &times; £</span>
+                                <input id="per-person" type="number" value="90" min="0" step="5"
+                                    class="order-input w-12 text-right">
+                                <span>pp</span>
+                            </div>
+                            <span id="catering-total" class="font-sans text-sm text-cream/60 ml-3 tabular-nums">£13,500.00</span>
+                        </div>
                     </div>
-                    <div class="flex justify-between text-cream/50">
-                        <span>Staffing &amp; Service</span>
-                        <span>£2,250.00</span>
+
+                    <!-- Staffing -->
+                    <div class="flex justify-between items-center">
+                        <p class="font-sans text-xs text-cream/45">Staffing &amp; Service</p>
+                        <div class="flex items-center gap-0.5">
+                            <span class="font-sans text-xs text-cream/30">£</span>
+                            <input id="staffing-amount" type="number" value="2250" min="0" step="50"
+                                class="order-input w-20 text-right">
+                        </div>
                     </div>
-                    <div class="flex justify-between text-cream/50">
-                        <span>Tableware Rentals</span>
-                        <span>£1,100.00</span>
+
+                    <!-- Tableware -->
+                    <div class="flex justify-between items-center">
+                        <p class="font-sans text-xs text-cream/45">Tableware Rentals</p>
+                        <div class="flex items-center gap-0.5">
+                            <span class="font-sans text-xs text-cream/30">£</span>
+                            <input id="tableware-amount" type="number" value="1100" min="0" step="50"
+                                class="order-input w-20 text-right">
+                        </div>
                     </div>
-                    <div class="flex justify-between font-bold text-cream pt-2 border-t border-cream/10">
-                        <span>Total Estimated</span>
-                        <span>£16,850.00</span>
+
+                    <!-- Total -->
+                    <div class="flex justify-between items-center pt-3 border-t border-cream/10">
+                        <span class="font-sans text-sm font-bold text-cream">Total</span>
+                        <span id="order-total" class="font-sans text-sm font-bold text-cream tabular-nums">£16,850.00</span>
                     </div>
                 </div>
 
-                <div class="bg-gold/8 p-4 rounded-lg mb-5 border border-gold/20">
-                    <div class="flex justify-between text-xs font-bold uppercase tracking-widest text-green-400 mb-2">
-                        <span>Deposit Paid</span>
-                        <span>– £4,212.50</span>
+                <!-- Deposit & Balance -->
+                <div class="p-4 rounded-lg mb-6 border border-gold/20" style="background:rgba(197,160,89,0.05);">
+                    <div class="flex justify-between text-xs font-bold uppercase tracking-widest text-green-400 mb-2 font-sans">
+                        <span>Deposit Paid (25%)</span>
+                        <span id="deposit-amount" class="tabular-nums">– £4,212.50</span>
                     </div>
                     <div class="flex justify-between font-serif text-xl text-cream">
                         <span>Balance Due</span>
-                        <span class="text-gold">£12,637.50</span>
+                        <span id="balance-due" class="text-gold tabular-nums">£12,637.50</span>
                     </div>
                     <p class="text-[10px] text-cream/30 font-sans mt-2">Final balance due by 12 July 2026</p>
                 </div>
 
-                <div class="flex gap-3">
-                    <button class="flex-1 py-3 bg-gold/20 border border-gold/40 text-gold font-sans text-xs font-bold uppercase tracking-widest rounded-sm hover:bg-gold hover:text-charcoal transition-all">Make Payment</button>
-                    <button onclick="openInvoice('The Vance Wedding')" class="w-12 h-12 flex items-center justify-center bg-cream/5 border border-cream/15 text-cream/50 rounded-sm hover:border-gold/40 hover:text-gold transition-all group" title="View Invoice">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                <!-- CTAs -->
+                <div class="space-y-3">
+                    <button onclick="saveOrder()" class="w-full py-3.5 bg-gold hover:bg-gold-light text-charcoal font-sans text-xs font-bold uppercase tracking-widest rounded-sm transition-colors">
+                        Save Changes
                     </button>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button onclick="sendOrderAs('text')" class="py-3 bg-cream/5 border border-cream/15 text-cream/55 font-sans text-xs font-bold uppercase tracking-widest rounded-sm hover:border-cream/35 hover:text-cream transition-all">
+                            Send as Text
+                        </button>
+                        <button onclick="sendOrderAs('email')" class="py-3 bg-cream/5 border border-cream/15 text-cream/55 font-sans text-xs font-bold uppercase tracking-widest rounded-sm hover:border-cream/35 hover:text-cream transition-all">
+                            Send as Email
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -543,6 +599,81 @@
         };
 
     </script>
+    <script>
+        /* ── Editable Order ── */
+
+        function fmtGBP(n) {
+            return '£' + n.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        function recalcOrder() {
+            const guests   = Math.max(0, parseInt(document.getElementById('guest-count').value)    || 0);
+            const pp       = Math.max(0, parseFloat(document.getElementById('per-person').value)   || 0);
+            const staffing = Math.max(0, parseFloat(document.getElementById('staffing-amount').value) || 0);
+            const tableware= Math.max(0, parseFloat(document.getElementById('tableware-amount').value) || 0);
+
+            const catering = guests * pp;
+            const total    = catering + staffing + tableware;
+            const deposit  = total * 0.25;
+            const balance  = total - deposit;
+
+            document.getElementById('catering-total').textContent = fmtGBP(catering);
+            document.getElementById('order-total').textContent    = fmtGBP(total);
+            document.getElementById('deposit-amount').textContent = '– ' + fmtGBP(deposit);
+            document.getElementById('balance-due').textContent    = fmtGBP(balance);
+        }
+
+        ['guest-count', 'per-person', 'staffing-amount', 'tableware-amount'].forEach(id => {
+            document.getElementById(id).addEventListener('input', recalcOrder);
+        });
+
+        function buildOrderSummary() {
+            const guests    = document.getElementById('guest-count').value;
+            const pp        = document.getElementById('per-person').value;
+            const staffing  = document.getElementById('staffing-amount').value;
+            const tableware = document.getElementById('tableware-amount').value;
+            const catering  = (parseFloat(guests) * parseFloat(pp));
+            const total     = catering + parseFloat(staffing) + parseFloat(tableware);
+            const deposit   = total * 0.25;
+            const balance   = total - deposit;
+            return [
+                `The Vance Wedding — Order Summary`,
+                `Date: 12 August 2026 | Venue: Syon Park`,
+                ``,
+                `Catering (${guests} guests × £${pp} pp): ${fmtGBP(catering)}`,
+                `Staffing & Service: ${fmtGBP(parseFloat(staffing))}`,
+                `Tableware Rentals: ${fmtGBP(parseFloat(tableware))}`,
+                ``,
+                `Total: ${fmtGBP(total)}`,
+                `Deposit Paid (25%): – ${fmtGBP(deposit)}`,
+                `Balance Due: ${fmtGBP(balance)}`,
+                ``,
+                `Due by 12 July 2026`
+            ].join('\n');
+        }
+
+        function showToast(msg, success) {
+            const existing = document.getElementById('order-toast');
+            if (existing) existing.remove();
+            const t = document.createElement('div');
+            t.id = 'order-toast';
+            t.className = 'fixed bottom-8 left-1/2 z-[70] font-sans text-xs font-bold uppercase tracking-widest px-6 py-3 rounded-sm shadow-xl';
+            t.style.cssText = `transform:translateX(-50%); background:${success === false ? '#ef4444' : '#C5A059'}; color:#1C1C1C;`;
+            t.textContent = msg;
+            document.body.appendChild(t);
+            gsap.from(t, { y: 16, opacity: 0, duration: 0.35, ease: 'power3.out' });
+            setTimeout(() => { gsap.to(t, { y: 16, opacity: 0, duration: 0.25, onComplete: () => t.remove() }); }, 3200);
+        }
+
+        window.saveOrder = function() {
+            showToast('Order saved successfully');
+        };
+
+        window.sendOrderAs = function(type) {
+            showToast(type === 'text' ? 'Order summary sent as text' : 'Order summary sent as email');
+        };
+    </script>
+
     <script src="js/voice.js"></script>
 
     <script>
