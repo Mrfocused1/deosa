@@ -279,6 +279,15 @@
                     </div>
                     <div id="addons-list"></div>
                 </div>
+
+                <!-- Menu Item Pricing -->
+                <div class="dash-card p-6">
+                    <div class="mb-5 pb-4 border-b border-cream/10">
+                        <h3 class="font-serif text-2xl text-cream">Menu Item Pricing</h3>
+                        <p class="font-sans text-xs text-cream/35 mt-1">Per-person rate for each individual dish</p>
+                    </div>
+                    <div id="menu-pricing-list"></div>
+                </div>
             </div>
 
             <!-- ══════════════ MENU CATALOGUE TAB ══════════════ -->
@@ -533,6 +542,41 @@
         renderAddOns();
     }
 
+    function renderMenuPricing() {
+        const el = document.getElementById('menu-pricing-list');
+        el.innerHTML = '';
+        Object.entries(menuCatalogue).forEach(([course, items]) => {
+            // Course header
+            const hdr = document.createElement('div');
+            hdr.className = 'px-3 pt-4 pb-2 first:pt-0';
+            hdr.innerHTML = `<p class="font-sans text-[10px] uppercase tracking-widest text-gold/60">${course}</p>`;
+            el.appendChild(hdr);
+            items.forEach((item, idx) => {
+                const row = document.createElement('div');
+                row.className = 'item-row';
+                const tagHTML = item.tags.map(t => `<span class="tag tag-${t}">${t}</span>`).join('');
+                row.innerHTML = `
+                    <div class="flex-1 flex items-center gap-3 min-w-0">
+                        <p class="font-sans text-sm text-cream/70 truncate">${item.name}</p>
+                        <div class="flex gap-1 shrink-0">${tagHTML}</div>
+                    </div>
+                    <div class="flex items-center gap-1 shrink-0">
+                        <span class="font-sans text-xs text-cream/40">£</span>
+                        <input type="number" value="${item.price ?? 0}" min="0" step="0.5" class="price-input w-20" data-mp-course="${course}" data-mp-idx="${idx}">
+                        <span class="font-sans text-xs text-cream/30">pp</span>
+                    </div>`;
+                el.appendChild(row);
+            });
+        });
+        el.querySelectorAll('[data-mp-course]').forEach(inp => {
+            inp.addEventListener('input', e => {
+                const course = e.target.dataset.mpCourse;
+                const idx    = parseInt(e.target.dataset.mpIdx);
+                menuCatalogue[course][idx].price = parseFloat(e.target.value) || 0;
+            });
+        });
+    }
+
     function updatePricingStats() {
         const active = serviceStyles.filter(s=>s.active);
         document.getElementById('stat-styles').textContent = active.length;
@@ -620,7 +664,7 @@
     }
     function removeItem(id, course) {
         menuCatalogue[course] = menuCatalogue[course].filter(i=>i.id!==id);
-        renderCoursePills(); renderMenuItems();
+        renderCoursePills(); renderMenuItems(); renderMenuPricing();
     }
 
     function renderMenuStats() {
@@ -662,6 +706,7 @@
         renderNewItemTags();
         renderCoursePills();
         renderMenuItems();
+        renderMenuPricing();
         showToast('Item added to ' + activeCourse);
     }
 
@@ -822,6 +867,7 @@
 
     renderServiceStyles();
     renderAddOns();
+    renderMenuPricing();
     renderCoursePills();
     renderMenuItems();
     renderNewItemTags();
