@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="images/logo-light.svg">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menus & Pricing | De'Osa CRM</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cream: '#FDFBF7', charcoal: '#1C1C1C', gold: '#C5A059', 'gold-light': '#E8D3A2', sand: '#F4F1EA'
+                    },
+                    fontFamily: {
+                        serif: ['"Cormorant Garamond"', 'serif'],
+                        sans:  ['Montserrat', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root { --cream:#FDFBF7; --charcoal:#1C1C1C; --gold:#C5A059; }
+        * { box-sizing:border-box; }
+        body { background-color:var(--charcoal); color:var(--cream); overflow-x:hidden; -webkit-font-smoothing:antialiased; }
+        * { scrollbar-width:none; } ::-webkit-scrollbar { display:none; }
+
+        .noise::before { content:""; position:fixed; inset:0; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E"); pointer-events:none; z-index:0; }
+
+        .dash-card { background:rgba(253,251,247,0.04); border:1px solid rgba(253,251,247,0.1); border-radius:.75rem; transition:border-color .3s; }
+        .dash-card:hover { border-color:rgba(197,160,89,0.2); }
+
+        .nav-active   { background:rgba(197,160,89,0.12); color:var(--gold); border:1px solid rgba(197,160,89,0.25); }
+        .nav-inactive { color:rgba(253,251,247,0.45); border:1px solid transparent; }
+        .nav-inactive:hover { color:rgba(253,251,247,0.85); background:rgba(253,251,247,0.05); }
+
+        /* Page tabs */
+        .page-tab { color:rgba(253,251,247,0.35); border-bottom:2px solid transparent; padding:.75rem 1.25rem; font-size:.65rem; font-family:'Montserrat',sans-serif; font-weight:700; text-transform:uppercase; letter-spacing:.15em; cursor:pointer; transition:color .2s, border-color .2s; white-space:nowrap; }
+        .page-tab:hover { color:rgba(253,251,247,0.65); }
+        .page-tab.active { color:var(--gold); border-bottom-color:var(--gold); }
+        .tab-panel { display:none; }
+        .tab-panel.active { display:block; }
+
+        /* Inline editing */
+        .editable { border-bottom:1px solid transparent; outline:none; transition:border-color .2s; cursor:text; }
+        .editable:hover { border-bottom-color:rgba(253,251,247,0.2); }
+        .editable:focus { border-bottom-color:var(--gold); }
+        .price-input { background:transparent; border:none; border-bottom:1px solid rgba(253,251,247,0.12); outline:none; color:rgba(253,251,247,0.8); font-family:'Montserrat',sans-serif; font-weight:600; transition:border-color .2s; -moz-appearance:textfield; text-align:right; }
+        .price-input::-webkit-inner-spin-button, .price-input::-webkit-outer-spin-button { -webkit-appearance:none; }
+        .price-input:focus { border-bottom-color:var(--gold); color:var(--cream); }
+
+        /* Dietary tags */
+        .tag { display:inline-flex; align-items:center; padding:.15rem .5rem; border-radius:.25rem; font-size:.6rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; font-family:'Montserrat',sans-serif; cursor:pointer; transition:all .15s; user-select:none; }
+        .tag-H  { background:rgba(74,222,128,0.12); color:#4ade80; border:1px solid rgba(74,222,128,0.3); }
+        .tag-V  { background:rgba(34,197,94,0.12);  color:#22c55e; border:1px solid rgba(34,197,94,0.3); }
+        .tag-VG { background:rgba(16,185,129,0.12); color:#10b981; border:1px solid rgba(16,185,129,0.3); }
+        .tag-GF { background:rgba(251,191,36,0.12); color:#fbbf24; border:1px solid rgba(251,191,36,0.3); }
+        .tag-DF { background:rgba(99,179,237,0.12); color:#63b3ed; border:1px solid rgba(99,179,237,0.3); }
+        .tag.inactive { opacity:.3; }
+
+        /* Toggle switch */
+        .toggle { width:2.25rem; height:1.25rem; background:rgba(253,251,247,0.15); border-radius:9999px; position:relative; cursor:pointer; transition:background .2s; flex-shrink:0; }
+        .toggle::after { content:""; position:absolute; left:.2rem; top:.2rem; width:.85rem; height:.85rem; background:#fff; border-radius:50%; transition:transform .2s; }
+        .toggle.on { background:var(--gold); }
+        .toggle.on::after { transform:translateX(1rem); }
+
+        /* Course pill nav */
+        .course-pill { padding:.4rem 1rem; border-radius:9999px; font-family:'Montserrat',sans-serif; font-size:.65rem; font-weight:700; text-transform:uppercase; letter-spacing:.12em; cursor:pointer; transition:all .2s; border:1px solid rgba(253,251,247,0.1); color:rgba(253,251,247,0.4); white-space:nowrap; }
+        .course-pill:hover { color:rgba(253,251,247,0.75); border-color:rgba(253,251,247,0.2); }
+        .course-pill.active { background:rgba(197,160,89,0.12); color:var(--gold); border-color:rgba(197,160,89,0.35); }
+
+        /* Package cards */
+        .pkg-card { border-radius:.75rem; padding:1.75rem; border:1px solid rgba(253,251,247,0.1); transition:border-color .3s, transform .2s; }
+        .pkg-card:hover { border-color:rgba(197,160,89,0.3); transform:translateY(-2px); }
+        .pkg-gold { border-color:rgba(197,160,89,0.3); background:rgba(197,160,89,0.04); }
+
+        /* Stats */
+        .stat-card { background:rgba(253,251,247,0.04); border:1px solid rgba(253,251,247,0.08); border-radius:.5rem; padding:1rem 1.25rem; }
+
+        /* Item row */
+        .item-row { display:flex; align-items:center; gap:.75rem; padding:.75rem .5rem; border-bottom:1px solid rgba(253,251,247,0.06); transition:background .15s; border-radius:.375rem; }
+        .item-row:hover { background:rgba(253,251,247,0.03); }
+        .item-row:last-child { border-bottom:none; }
+
+        /* Service style row */
+        .style-row { display:grid; grid-template-columns:1fr auto auto auto auto; align-items:center; gap:1rem; padding:.9rem 1rem; border-bottom:1px solid rgba(253,251,247,0.07); transition:background .15s; border-radius:.375rem; }
+        .style-row:hover { background:rgba(253,251,247,0.025); }
+        .style-row:last-child { border-bottom:none; }
+
+        /* ─── Light Mode ─── */
+        html[data-theme="light"] body { background-color:#F0EDE6; color:#1C1C1C; }
+        html[data-theme="light"] aside { background-color:#FDFBF7; border-right-color:rgba(28,28,28,.1)!important; }
+        html[data-theme="light"] aside .border-b { border-color:rgba(28,28,28,.08)!important; }
+        html[data-theme="light"] .nav-inactive { color:rgba(28,28,28,.5)!important; border-color:transparent!important; }
+        html[data-theme="light"] .nav-inactive:hover { color:rgba(28,28,28,.85)!important; background:rgba(28,28,28,.05)!important; }
+        html[data-theme="light"] .nav-active { background:rgba(197,160,89,.12)!important; color:#C5A059!important; border-color:rgba(197,160,89,.25)!important; }
+        html[data-theme="light"] main > header { border-bottom-color:rgba(28,28,28,.1)!important; }
+        html[data-theme="light"] .dash-card { background:rgba(253,251,247,.85)!important; border-color:rgba(28,28,28,.09)!important; }
+        html[data-theme="light"] .stat-card { background:rgba(253,251,247,.7)!important; border-color:rgba(28,28,28,.09)!important; }
+        html[data-theme="light"] .pkg-card { background:rgba(253,251,247,.7)!important; border-color:rgba(28,28,28,.1)!important; }
+        html[data-theme="light"] .pkg-gold { background:rgba(197,160,89,.06)!important; border-color:rgba(197,160,89,.3)!important; }
+        html[data-theme="light"] .page-tab { color:rgba(28,28,28,.4); }
+        html[data-theme="light"] .page-tab:hover { color:rgba(28,28,28,.7); }
+        html[data-theme="light"] .page-tab.active { color:#C5A059; border-bottom-color:#C5A059; }
+        html[data-theme="light"] .course-pill { color:rgba(28,28,28,.4); border-color:rgba(28,28,28,.12); }
+        html[data-theme="light"] .course-pill:hover { color:rgba(28,28,28,.75); border-color:rgba(28,28,28,.2); }
+        html[data-theme="light"] .course-pill.active { background:rgba(197,160,89,.12); color:#C5A059; border-color:rgba(197,160,89,.35); }
+        html[data-theme="light"] .item-row:hover { background:rgba(28,28,28,.025); }
+        html[data-theme="light"] .item-row { border-color:rgba(28,28,28,.07); }
+        html[data-theme="light"] .style-row:hover { background:rgba(28,28,28,.02); }
+        html[data-theme="light"] .style-row { border-color:rgba(28,28,28,.06); }
+        html[data-theme="light"] .toggle { background:rgba(28,28,28,.2); }
+        html[data-theme="light"] .toggle.on { background:#C5A059; }
+        html[data-theme="light"] .toggle::after { background:#FDFBF7; }
+        html[data-theme="light"] .price-input { color:rgba(28,28,28,.8); border-bottom-color:rgba(28,28,28,.15); }
+        html[data-theme="light"] .price-input:focus { color:#1C1C1C; }
+        html[data-theme="light"] .editable:hover { border-bottom-color:rgba(28,28,28,.2); }
+        html[data-theme="light"] #mobile-menu { background:#FDFBF7!important; }
+        html[data-theme="light"] .text-cream { color:#1C1C1C!important; }
+        html[data-theme="light"] .text-cream\/80 { color:rgba(28,28,28,.8)!important; }
+        html[data-theme="light"] .text-cream\/60 { color:rgba(28,28,28,.6)!important; }
+        html[data-theme="light"] .text-cream\/50 { color:rgba(28,28,28,.5)!important; }
+        html[data-theme="light"] .text-cream\/40 { color:rgba(28,28,28,.4)!important; }
+        html[data-theme="light"] .text-cream\/35 { color:rgba(28,28,28,.35)!important; }
+        html[data-theme="light"] .text-cream\/30 { color:rgba(28,28,28,.3)!important; }
+        html[data-theme="light"] .border-cream\/10 { border-color:rgba(28,28,28,.1)!important; }
+        html[data-theme="light"] .bg-cream\/5 { background-color:rgba(28,28,28,.05)!important; }
+        html[data-theme="light"] #search-items { background:rgba(28,28,28,.05)!important; border-color:rgba(28,28,28,.12)!important; color:#1C1C1C!important; }
+    </style>
+</head>
+<body class="noise selection:bg-gold selection:text-charcoal flex h-screen overflow-hidden">
+
+    <!-- Sidebar -->
+    <aside class="w-64 flex-col hidden md:flex shrink-0 z-20 border-r border-cream/10 relative">
+        <div class="p-8 border-b border-cream/10">
+            <a href="index.html"><img id="sidebar-logo" src="images/logo-dark-bg.svg" alt="De'Osa" class="h-8 w-auto"></a>
+            <p class="font-sans text-[10px] tracking-[0.25em] uppercase text-cream/40 mt-3">Staff Dashboard</p>
+        </div>
+        <nav class="flex-1 px-4 py-8 space-y-1 font-sans text-xs font-medium">
+            <a href="index.html" class="flex items-center gap-4 px-4 py-3 rounded-lg nav-inactive transition-all">
+                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                <span class="tracking-widest uppercase text-[10px]">Home</span>
+            </a>
+            <a href="admin.html" class="flex items-center gap-4 px-4 py-3 rounded-lg nav-inactive transition-all">
+                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                <span class="tracking-widest uppercase text-[10px]">Call CRM</span>
+            </a>
+            <a href="menus-pricing.html" class="flex items-center gap-4 px-4 py-3 rounded-lg nav-active transition-all">
+                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                <span class="tracking-widest uppercase text-[10px]">Menus & Pricing</span>
+            </a>
+            <a href="#" class="flex items-center gap-4 px-4 py-3 rounded-lg nav-inactive transition-all">
+                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                <span class="tracking-widest uppercase text-[10px]">Event Calendar</span>
+            </a>
+            <a href="#" class="flex items-center gap-4 px-4 py-3 rounded-lg nav-inactive transition-all">
+                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                <span class="tracking-widest uppercase text-[10px]">Settings</span>
+            </a>
+        </nav>
+        <div class="p-5 border-t border-cream/10 flex items-center gap-3">
+            <div class="w-9 h-9 rounded-full bg-gold flex items-center justify-center text-charcoal font-serif text-lg shrink-0">D</div>
+            <div>
+                <p class="font-sans text-xs font-semibold text-cream">De'Osa Admin</p>
+                <p class="font-sans text-[10px] text-cream/40 tracking-widest uppercase">Director</p>
+            </div>
+            <a href="login.html" class="ml-auto text-cream/30 hover:text-gold transition-colors" title="Sign out">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="fixed inset-0 z-50 flex flex-col justify-center items-center gap-6 transition-all duration-500 opacity-0 pointer-events-none" style="background:#111111;">
+        <button onclick="toggleMobileMenu()" class="absolute top-6 right-6 font-sans text-xs font-bold tracking-widest uppercase text-cream/50 hover:text-gold transition-colors border border-cream/10 px-4 py-2 rounded-full">Close</button>
+        <img id="mobile-logo" src="images/logo-dark-bg.svg" alt="De'Osa" class="h-10 w-auto">
+        <nav class="flex flex-col items-center gap-3 w-full max-w-xs">
+            <a href="index.html"         class="w-full flex justify-center gap-4 px-6 py-4 rounded-xl nav-inactive transition-all font-sans text-xs font-bold tracking-widest uppercase">Home</a>
+            <a href="admin.html"         class="w-full flex justify-center gap-4 px-6 py-4 rounded-xl nav-inactive transition-all font-sans text-xs font-bold tracking-widest uppercase">Call CRM</a>
+            <a href="menus-pricing.html" class="w-full flex justify-center gap-4 px-6 py-4 rounded-xl nav-active  transition-all font-sans text-xs font-bold tracking-widest uppercase">Menus & Pricing</a>
+        </nav>
+        <a href="login.html" class="font-sans text-xs font-bold tracking-widest uppercase text-cream/30 hover:text-gold transition-colors mt-2">Sign Out</a>
+    </div>
+
+    <!-- Main -->
+    <main class="flex-1 flex flex-col h-screen overflow-hidden relative z-10">
+
+        <!-- Topbar -->
+        <header class="border-b border-cream/10 h-16 md:h-20 flex items-center justify-between px-5 md:px-8 shrink-0 gap-4">
+            <div class="flex items-center gap-3">
+                <button onclick="toggleMobileMenu()" class="text-cream/60 hover:text-gold transition-colors p-1 md:hidden">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                </button>
+                <div class="hidden md:block">
+                    <h2 class="font-serif text-3xl text-cream">Menus &amp; Pricing</h2>
+                </div>
+            </div>
+            <div class="flex items-center gap-2 md:gap-3">
+                <button onclick="saveAll()" class="px-4 py-2 bg-gold hover:bg-gold-light text-charcoal font-sans text-[10px] font-bold uppercase tracking-widest rounded-sm transition-colors">Save Changes</button>
+                <button onclick="toggleTheme()" class="p-2 text-cream/40 hover:text-gold transition-colors" title="Toggle theme">
+                    <svg id="theme-icon-moon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+                    <svg id="theme-icon-sun" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m8.66-9h-1M4.34 12h-1m15.07-6.07-.71.71M6.34 17.66l-.71.71m12.73 0-.71-.71M6.34 6.34l-.71-.71M12 5a7 7 0 100 14A7 7 0 0012 5z"/></svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- Tab bar -->
+        <div class="flex border-b border-cream/10 px-6 md:px-8 overflow-x-auto shrink-0" id="tab-bar">
+            <button class="page-tab active" data-tab="pricing">Pricing</button>
+            <button class="page-tab"        data-tab="menu">Menu Catalogue</button>
+            <button class="page-tab"        data-tab="packages">Packages</button>
+        </div>
+
+        <!-- Scrollable Content -->
+        <div class="flex-1 overflow-y-auto px-6 md:px-8 py-8 space-y-8">
+
+            <!-- ══════════════ PRICING TAB ══════════════ -->
+            <div id="tab-pricing" class="tab-panel active space-y-6">
+
+                <!-- Stats row -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="stat-card">
+                        <p class="font-sans text-[10px] uppercase tracking-widest text-cream/30 mb-1">Service Styles</p>
+                        <p id="stat-styles" class="font-serif text-3xl text-cream">5</p>
+                    </div>
+                    <div class="stat-card">
+                        <p class="font-sans text-[10px] uppercase tracking-widest text-cream/30 mb-1">Starting From</p>
+                        <p id="stat-from" class="font-serif text-3xl text-gold">£45<span class="font-sans text-sm text-cream/40 ml-1">pp</span></p>
+                    </div>
+                    <div class="stat-card">
+                        <p class="font-sans text-[10px] uppercase tracking-widest text-cream/30 mb-1">Add-Ons</p>
+                        <p id="stat-addons" class="font-serif text-3xl text-cream">5</p>
+                    </div>
+                    <div class="stat-card">
+                        <p class="font-sans text-[10px] uppercase tracking-widest text-cream/30 mb-1">Packages</p>
+                        <p class="font-serif text-3xl text-cream">4</p>
+                    </div>
+                </div>
+
+                <!-- Service Styles -->
+                <div class="dash-card p-6">
+                    <div class="flex items-center justify-between mb-5 pb-4 border-b border-cream/10">
+                        <div>
+                            <h3 class="font-serif text-2xl text-cream">Service Styles</h3>
+                            <p class="font-sans text-xs text-cream/35 mt-1">Per person rates for each style of service</p>
+                        </div>
+                        <button onclick="addServiceStyle()" class="flex items-center gap-2 px-4 py-2 bg-cream/5 border border-cream/15 text-cream/55 font-sans text-[10px] font-bold uppercase tracking-widest rounded-sm hover:border-gold/40 hover:text-gold transition-all">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v14M5 12h14"/></svg>
+                            Add Style
+                        </button>
+                    </div>
+                    <!-- Header row -->
+                    <div class="grid grid-cols-[1fr_auto_auto_auto_auto] gap-4 px-3 mb-2">
+                        <span class="font-sans text-[10px] uppercase tracking-widest text-cream/25">Style</span>
+                        <span class="font-sans text-[10px] uppercase tracking-widest text-cream/25 text-right w-24">Rate / Head</span>
+                        <span class="font-sans text-[10px] uppercase tracking-widest text-cream/25 text-right w-20">Min Guests</span>
+                        <span class="font-sans text-[10px] uppercase tracking-widest text-cream/25 w-12 text-center">Active</span>
+                        <span class="w-6"></span>
+                    </div>
+                    <div id="service-styles-list"></div>
+                </div>
+
+                <!-- Add-ons -->
+                <div class="dash-card p-6">
+                    <div class="flex items-center justify-between mb-5 pb-4 border-b border-cream/10">
+                        <div>
+                            <h3 class="font-serif text-2xl text-cream">Add-Ons &amp; Extras</h3>
+                            <p class="font-sans text-xs text-cream/35 mt-1">Fixed fees applied on top of per-person rates</p>
+                        </div>
+                        <button onclick="addAddon()" class="flex items-center gap-2 px-4 py-2 bg-cream/5 border border-cream/15 text-cream/55 font-sans text-[10px] font-bold uppercase tracking-widest rounded-sm hover:border-gold/40 hover:text-gold transition-all">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v14M5 12h14"/></svg>
+                            Add Extra
+                        </button>
+                    </div>
+                    <div id="addons-list"></div>
+                </div>
+            </div>
+
+            <!-- ══════════════ MENU CATALOGUE TAB ══════════════ -->
+            <div id="tab-menu" class="tab-panel space-y-6">
+
+                <!-- Course nav + search -->
+                <div class="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
+                    <div class="flex gap-2 overflow-x-auto pb-1" id="course-pill-nav"></div>
+                    <div class="flex gap-2 shrink-0">
+                        <div class="relative">
+                            <svg class="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-cream/30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                            <input id="search-items" type="text" placeholder="Search items..." class="w-full sm:w-48 bg-cream/5 border border-cream/10 rounded-full py-1.5 pl-8 pr-4 font-sans text-xs text-cream/70 placeholder-cream/25 focus:outline-none focus:border-gold/50 transition-colors">
+                        </div>
+                        <select id="filter-diet" class="bg-cream/5 border border-cream/10 rounded-full py-1.5 px-3 font-sans text-xs text-cream/60 focus:outline-none focus:border-gold/50 transition-colors" style="-webkit-appearance:none;">
+                            <option value="">All Dietary</option>
+                            <option value="H">Halal</option>
+                            <option value="V">Vegetarian</option>
+                            <option value="VG">Vegan</option>
+                            <option value="GF">Gluten Free</option>
+                            <option value="DF">Dairy Free</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Stats -->
+                <div id="menu-stats" class="flex gap-6 flex-wrap font-sans text-xs text-cream/40"></div>
+
+                <!-- Item list -->
+                <div class="dash-card p-6">
+                    <div id="menu-items-container"></div>
+                    <!-- Add item form -->
+                    <div class="pt-5 mt-5 border-t border-cream/10">
+                        <p class="font-sans text-[10px] uppercase tracking-widest text-cream/30 mb-3">Add to <span id="add-course-label" class="text-gold">Canapés</span></p>
+                        <div class="flex flex-col sm:flex-row gap-3">
+                            <input id="new-item-name" type="text" placeholder="Item name..." class="flex-1 bg-cream/5 border border-cream/10 rounded-md px-4 py-2.5 font-sans text-sm text-cream/70 placeholder-cream/25 focus:outline-none focus:border-gold/50 transition-colors">
+                            <div class="flex flex-wrap gap-2 items-center" id="new-item-tags">
+                                <!-- Tag toggles injected by JS -->
+                            </div>
+                            <button onclick="addMenuItem()" class="px-5 py-2.5 bg-gold/15 border border-gold/35 text-gold font-sans text-[10px] font-bold uppercase tracking-widest rounded-sm hover:bg-gold hover:text-charcoal transition-all shrink-0">Add Item</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tag legend -->
+                <div class="flex flex-wrap gap-3 items-center">
+                    <span class="font-sans text-[10px] uppercase tracking-widest text-cream/25">Dietary Tags:</span>
+                    <span class="tag tag-H">H — Halal</span>
+                    <span class="tag tag-V">V — Vegetarian</span>
+                    <span class="tag tag-VG">VG — Vegan</span>
+                    <span class="tag tag-GF">GF — Gluten Free</span>
+                    <span class="tag tag-DF">DF — Dairy Free</span>
+                </div>
+            </div>
+
+            <!-- ══════════════ PACKAGES TAB ══════════════ -->
+            <div id="tab-packages" class="tab-panel space-y-6">
+                <div>
+                    <p class="font-sans text-xs text-cream/40 max-w-2xl">Pre-set event packages combining a service style, course selection, and add-ons. Use these as a starting point when quoting clients.</p>
+                </div>
+                <div id="packages-grid" class="grid grid-cols-1 md:grid-cols-2 gap-5"></div>
+                <button onclick="addPackage()" class="flex items-center gap-2 px-5 py-3 bg-cream/5 border border-cream/15 text-cream/55 font-sans text-[10px] font-bold uppercase tracking-widest rounded-sm hover:border-gold/40 hover:text-gold transition-all">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v14M5 12h14"/></svg>
+                    Create New Package
+                </button>
+            </div>
+
+        </div><!-- /scrollable -->
+    </main>
+
+    <script>
+    /* ════════════════════════════════════
+       DATA
+    ════════════════════════════════════ */
+    const serviceStyles = [
+        { id:1, style:'Canapés & Drinks Only',   desc:'Arrival reception canapes and drinks, ideal for cocktail hours', rate:45,  minGuests:20, active:true  },
+        { id:2, style:'Buffet Service',           desc:'Self-serve spread with varied dishes and sides',                 rate:65,  minGuests:30, active:true  },
+        { id:3, style:'Family Style',             desc:'Sharing platters served at the table, communal dining',         rate:75,  minGuests:20, active:true  },
+        { id:4, style:'Plated Multi-Course',      desc:'Formal seated service, 3–5 courses per guest',                  rate:90,  minGuests:50, active:true  },
+        { id:5, style:'Fine Dining',              desc:'Premium multi-course with full silver service and sommelier',   rate:120, minGuests:20, active:true  },
+    ];
+
+    const addOns = [
+        { id:1, name:'Staffing & Service',    desc:'Full event day staff team and coordination',   price:2250, unit:'per event',  active:true  },
+        { id:2, name:'Tableware & Rentals',   desc:'Full place settings, serveware and linen',     price:1100, unit:'per event',  active:true  },
+        { id:3, name:'Equipment Hire',        desc:'Chafing dishes, food stations and warmers',    price:650,  unit:'per event',  active:true  },
+        { id:4, name:'Travel & Logistics',    desc:'Applicable beyond a 20-mile radius of base',  price:2.5,  unit:'per mile',   active:true  },
+        { id:5, name:'Additional Staff',      desc:'Per person beyond the standard team',          price:150,  unit:'per person', active:true  },
+    ];
+
+    const packages = [
+        {
+            id:1, name:'Bronze', tagline:'Perfect for intimate gatherings and relaxed celebrations',
+            style:'Buffet Service', courses:['Canapés','Main Course'], addonIds:[1,2], rateFrom:65, gold:false,
+            highlight:'Ideal for private parties, birthdays and casual corporate events'
+        },
+        {
+            id:2, name:'Silver', tagline:'A step up with curated courses and personal service',
+            style:'Family Style', courses:['Canapés','Starters','Main Course'], addonIds:[1,2], rateFrom:85, gold:false,
+            highlight:'Great for anniversaries, milestone birthdays and mid-size events'
+        },
+        {
+            id:3, name:'Gold', tagline:'Our most-requested wedding and gala package',
+            style:'Plated Multi-Course', courses:['Canapés','Starters','Main Course','Desserts'], addonIds:[1,2,3], rateFrom:115, gold:true,
+            highlight:'Full four-course dining with canapés on arrival and all equipment'
+        },
+        {
+            id:4, name:'Platinum', tagline:'The pinnacle of luxury catering',
+            style:'Fine Dining', courses:['Canapés','Starters','Main Course','Desserts'], addonIds:[1,2,3], rateFrom:145, gold:true,
+            highlight:'Premium five-course silver service with full staffing and sommelier'
+        },
+    ];
+
+    const menuCatalogue = {
+        'Canapés': [
+            { id:101, name:'Jerk chicken skewer and plantain with sweet pepper', tags:['H','GF'], active:true },
+            { id:102, name:'Crispy Breaded King Prawns',                          tags:['H'],     active:true },
+            { id:103, name:'Fried Yam and Plantain Mix with Spicy Sauce',         tags:['V','VG','GF'], active:true },
+            { id:104, name:'Ackee and saltfish vol au vent',                      tags:['H'],     active:true },
+            { id:105, name:'Spring Rolls with Sweet Chilli Sauce',                tags:['V','VG'], active:true },
+            { id:106, name:'Mini British Fish and Chips',                         tags:[],        active:true },
+            { id:107, name:'Chicken wings with warm spicy barbecue sauce',        tags:['H','GF'], active:true },
+            { id:108, name:'Spicy gizzard and diced Plantains',                   tags:['H','GF'], active:false },
+            { id:109, name:'Mini Burgers',                                        tags:['H'],     active:true },
+            { id:110, name:'Mini Mixed Meat Pies',                                tags:['H'],     active:true },
+            { id:111, name:'Puff Puff Bites',                                     tags:['V'],     active:true },
+            { id:112, name:'Cooked prawns on a bed of lettuce',                   tags:['H','GF'], active:true },
+        ],
+        'Starters': [
+            { id:201, name:'Spicy gizzard and diced Plantains',                   tags:['H','GF'], active:true },
+            { id:202, name:'Cooked prawns on a bed of lettuce',                   tags:['H','GF'], active:true },
+            { id:203, name:'Puff Puff',                                           tags:['V'],      active:true },
+            { id:204, name:'Moyin Moyin',                                         tags:['V','GF'], active:true },
+            { id:205, name:'Spicy Shish Kebab',                                   tags:['H','GF'], active:true },
+            { id:206, name:'Fried Plantain & Smoked Salmon Sticks',               tags:['H','GF'], active:true },
+            { id:207, name:'Assorted Meat or Fish Pepper Soup',                   tags:['H','GF'], active:true },
+            { id:208, name:'Spring Rolls with sauce',                             tags:['V','VG'], active:true },
+            { id:209, name:'Chicken wings with warm spicy barbecue sauce',        tags:['H','GF'], active:false },
+        ],
+        'Main Course': [
+            { id:301, name:'Smoky Party Jollof Rice with Roasted Lamb',           tags:['H','GF'], active:true },
+            { id:302, name:'Egusi Soup with Pounded Yam & Assorted Meat',         tags:['H','GF'], active:true },
+            { id:303, name:'Jollof, Fried, Coconut or White Rice',                tags:['H','V','GF'], active:true },
+            { id:304, name:'Eforiro, Ewedu, Ogbono or Banga Soup',                tags:['V','GF'], active:true },
+            { id:305, name:'Roasted Potatoes with Roasted Lamb, Chicken or Turkey', tags:['H','GF'], active:true },
+            { id:306, name:'Asaro (Yam Porridge) and Dodo',                       tags:['V','VG','GF'], active:true },
+            { id:307, name:'Jerk Chicken',                                        tags:['H','GF'], active:true },
+            { id:308, name:'Curry Goat',                                          tags:['H','GF'], active:true },
+            { id:309, name:'Oxtail',                                              tags:['H','GF'], active:true },
+            { id:310, name:'Brown Stew Chicken',                                  tags:['H','GF'], active:true },
+            { id:311, name:'Banku with Okro Soup',                                tags:['GF'],     active:true },
+            { id:312, name:'Fufu with Groundnut Soup',                            tags:['GF'],     active:true },
+        ],
+        'Desserts': [
+            { id:401, name:'Fresh tropical fruit salad',                          tags:['V','VG','GF','DF'], active:true },
+            { id:402, name:'Banana cake and ice cream',                           tags:['V'],      active:true },
+            { id:403, name:'Chocolate Gateau',                                    tags:['V'],      active:true },
+            { id:404, name:'Apple Pie with ice cream',                            tags:['V'],      active:true },
+            { id:405, name:'Rum Cake',                                            tags:['V'],      active:true },
+            { id:406, name:'Chocolate Cake',                                      tags:['V'],      active:true },
+        ],
+    };
+
+    let activeCourse  = 'Canapés';
+    let newItemTags   = new Set();
+    let nextId        = 500;
+
+    const ALL_TAGS    = ['H','V','VG','GF','DF'];
+    const TAG_LABELS  = { H:'Halal', V:'Vegetarian', VG:'Vegan', GF:'Gluten Free', DF:'Dairy Free' };
+
+    /* ════════════════════════════════════
+       PRICING TAB
+    ════════════════════════════════════ */
+    function renderServiceStyles() {
+        const el = document.getElementById('service-styles-list');
+        el.innerHTML = '';
+        serviceStyles.forEach((s, i) => {
+            const row = document.createElement('div');
+            row.className = 'style-row';
+            row.innerHTML = `
+                <div>
+                    <p contenteditable="true" spellcheck="false" class="editable font-sans text-sm font-medium text-cream/80 data-idx="${i}">${s.style}</p>
+                    <p contenteditable="true" spellcheck="false" class="editable font-sans text-xs text-cream/35 mt-0.5" data-desc="${i}">${s.desc}</p>
+                </div>
+                <div class="flex items-center gap-1 w-24 justify-end">
+                    <span class="font-sans text-xs text-cream/40">£</span>
+                    <input type="number" value="${s.rate}" min="0" step="5" class="price-input w-16" data-rate="${i}">
+                    <span class="font-sans text-xs text-cream/30">pp</span>
+                </div>
+                <div class="flex items-center gap-1 w-20 justify-end">
+                    <input type="number" value="${s.minGuests}" min="0" step="5" class="price-input w-14" data-min="${i}">
+                    <span class="font-sans text-xs text-cream/30">min</span>
+                </div>
+                <div class="w-12 flex justify-center">
+                    <div class="toggle ${s.active ? 'on' : ''}" data-toggle-style="${i}" onclick="toggleStyle(${i})"></div>
+                </div>
+                <button onclick="removeStyle(${i})" class="text-cream/20 hover:text-red-400 transition-colors w-6 flex justify-center">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                </button>`;
+            el.appendChild(row);
+        });
+        // Attach live listeners
+        el.querySelectorAll('[data-rate]').forEach(inp => inp.addEventListener('input', e => { serviceStyles[e.target.dataset.rate].rate = parseFloat(e.target.value)||0; updatePricingStats(); }));
+        el.querySelectorAll('[data-min]').forEach(inp  => inp.addEventListener('input', e => { serviceStyles[e.target.dataset.min].minGuests = parseInt(e.target.value)||0; }));
+        el.querySelectorAll('[contenteditable][data-idx]').forEach(el => el.addEventListener('blur', e => { serviceStyles[e.target.dataset.idx].style = e.target.textContent.trim(); }));
+        el.querySelectorAll('[contenteditable][data-desc]').forEach(el => el.addEventListener('blur', e => { serviceStyles[e.target.dataset.desc].desc = e.target.textContent.trim(); }));
+        updatePricingStats();
+    }
+
+    function toggleStyle(i) { serviceStyles[i].active = !serviceStyles[i].active; renderServiceStyles(); }
+    function removeStyle(i) { if(serviceStyles.length > 1) { serviceStyles.splice(i,1); renderServiceStyles(); } }
+    function addServiceStyle() {
+        serviceStyles.push({ id: Date.now(), style:'New Service Style', desc:'Description', rate:80, minGuests:20, active:true });
+        renderServiceStyles();
+        // Focus the new name
+        const rows = document.querySelectorAll('[data-idx]');
+        if (rows.length) rows[rows.length-1].focus();
+    }
+
+    function renderAddOns() {
+        const el = document.getElementById('addons-list');
+        el.innerHTML = '';
+        addOns.forEach((a, i) => {
+            const row = document.createElement('div');
+            row.className = 'item-row';
+            row.innerHTML = `
+                <div class="flex-1">
+                    <p contenteditable="true" spellcheck="false" class="editable font-sans text-sm font-medium text-cream/75" data-addon-name="${i}">${a.name}</p>
+                    <p contenteditable="true" spellcheck="false" class="editable font-sans text-xs text-cream/35 mt-0.5" data-addon-desc="${i}">${a.desc}</p>
+                </div>
+                <div class="flex items-center gap-1.5 shrink-0">
+                    <span class="font-sans text-xs text-cream/40">£</span>
+                    <input type="number" value="${a.price}" min="0" step="0.5" class="price-input w-20" data-addon-price="${i}">
+                    <span contenteditable="true" spellcheck="false" class="editable font-sans text-xs text-cream/35 min-w-[4rem]" data-addon-unit="${i}">${a.unit}</span>
+                </div>
+                <div class="toggle ${a.active ? 'on' : ''}" onclick="toggleAddon(${i})"></div>
+                <button onclick="removeAddon(${i})" class="text-cream/20 hover:text-red-400 transition-colors">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                </button>`;
+            el.appendChild(row);
+        });
+        el.querySelectorAll('[data-addon-price]').forEach(inp => inp.addEventListener('input', e => { addOns[e.target.dataset.addonPrice].price = parseFloat(e.target.value)||0; }));
+        el.querySelectorAll('[contenteditable][data-addon-name]').forEach(el => el.addEventListener('blur', e => { addOns[e.target.dataset.addonName].name = e.target.textContent.trim(); }));
+        el.querySelectorAll('[contenteditable][data-addon-desc]').forEach(el => el.addEventListener('blur', e => { addOns[e.target.dataset.addonDesc].desc = e.target.textContent.trim(); }));
+        el.querySelectorAll('[contenteditable][data-addon-unit]').forEach(el => el.addEventListener('blur', e => { addOns[e.target.dataset.addonUnit].unit = e.target.textContent.trim(); }));
+        document.getElementById('stat-addons').textContent = addOns.length;
+    }
+
+    function toggleAddon(i) { addOns[i].active = !addOns[i].active; renderAddOns(); }
+    function removeAddon(i) { addOns.splice(i,1); renderAddOns(); }
+    function addAddon() {
+        addOns.push({ id:Date.now(), name:'New Add-On', desc:'Description', price:500, unit:'per event', active:true });
+        renderAddOns();
+    }
+
+    function updatePricingStats() {
+        const active = serviceStyles.filter(s=>s.active);
+        document.getElementById('stat-styles').textContent = active.length;
+        const min = active.length ? Math.min(...active.map(s=>s.rate)) : 0;
+        document.getElementById('stat-from').innerHTML = '£' + min + '<span class="font-sans text-sm text-cream/40 ml-1">pp</span>';
+    }
+
+    /* ════════════════════════════════════
+       MENU CATALOGUE TAB
+    ════════════════════════════════════ */
+    function renderCoursePills() {
+        const nav = document.getElementById('course-pill-nav');
+        nav.innerHTML = '';
+        Object.keys(menuCatalogue).forEach(course => {
+            const btn = document.createElement('button');
+            btn.className = 'course-pill' + (course === activeCourse ? ' active' : '');
+            btn.textContent = course + ' (' + menuCatalogue[course].length + ')';
+            btn.addEventListener('click', () => { activeCourse = course; renderCoursePills(); renderMenuItems(); });
+            nav.appendChild(btn);
+        });
+        document.getElementById('add-course-label').textContent = activeCourse;
+    }
+
+    function renderMenuItems() {
+        const search = (document.getElementById('search-items').value||'').toLowerCase();
+        const diet   = document.getElementById('filter-diet').value;
+        const el     = document.getElementById('menu-items-container');
+        const items  = menuCatalogue[activeCourse].filter(item => {
+            const matchSearch = !search || item.name.toLowerCase().includes(search);
+            const matchDiet   = !diet   || item.tags.includes(diet);
+            return matchSearch && matchDiet;
+        });
+
+        el.innerHTML = '';
+        if (items.length === 0) {
+            el.innerHTML = '<p class="font-sans text-sm text-cream/25 italic py-4">No items match your filter.</p>';
+        } else {
+            items.forEach(item => {
+                const row = document.createElement('div');
+                row.className = 'item-row';
+                const tagsHtml = ALL_TAGS.map(t => {
+                    const has = item.tags.includes(t);
+                    return `<span class="tag tag-${t} ${has?'':'inactive'} cursor-pointer" data-tag-item="${item.id}" data-tag="${t}" title="${TAG_LABELS[t]}">${t}</span>`;
+                }).join('');
+                row.innerHTML = `
+                    <div class="flex-1 min-w-0">
+                        <p contenteditable="true" spellcheck="false" class="editable font-serif text-base text-cream/80 truncate" data-item-name="${item.id}">${item.name}</p>
+                    </div>
+                    <div class="flex items-center gap-1.5 shrink-0">${tagsHtml}</div>
+                    <div class="toggle ${item.active?'on':''} shrink-0" onclick="toggleItem(${item.id}, '${activeCourse}')"></div>
+                    <button onclick="removeItem(${item.id}, '${activeCourse}')" class="text-cream/20 hover:text-red-400 transition-colors shrink-0">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                    </button>`;
+                el.appendChild(row);
+            });
+        }
+
+        // Tag click listeners
+        el.querySelectorAll('[data-tag-item]').forEach(tag => {
+            tag.addEventListener('click', () => {
+                const itemId = parseInt(tag.dataset.tagItem);
+                const t      = tag.dataset.tag;
+                const item   = menuCatalogue[activeCourse].find(i=>i.id===itemId);
+                if (!item) return;
+                if (item.tags.includes(t)) item.tags = item.tags.filter(x=>x!==t);
+                else item.tags.push(t);
+                renderMenuItems();
+            });
+        });
+        // Name edit listeners
+        el.querySelectorAll('[data-item-name]').forEach(span => {
+            span.addEventListener('blur', e => {
+                const itemId = parseInt(e.target.dataset.itemName);
+                const item   = menuCatalogue[activeCourse].find(i=>i.id===itemId);
+                if (item) item.name = e.target.textContent.trim();
+            });
+        });
+
+        renderMenuStats();
+    }
+
+    function toggleItem(id, course) {
+        const item = menuCatalogue[course].find(i=>i.id===id);
+        if (item) { item.active = !item.active; renderMenuItems(); }
+    }
+    function removeItem(id, course) {
+        menuCatalogue[course] = menuCatalogue[course].filter(i=>i.id!==id);
+        renderCoursePills(); renderMenuItems();
+    }
+
+    function renderMenuStats() {
+        const total  = Object.values(menuCatalogue).reduce((s,arr)=>s+arr.length, 0);
+        const active = Object.values(menuCatalogue).reduce((s,arr)=>s+arr.filter(i=>i.active).length, 0);
+        document.getElementById('menu-stats').innerHTML =
+            `<span><span class="text-cream/70 font-medium">${total}</span> total items</span>
+             <span class="text-cream/20">·</span>
+             <span><span class="text-green-400 font-medium">${active}</span> active</span>
+             <span class="text-cream/20">·</span>
+             <span><span class="text-cream/50 font-medium">${total-active}</span> hidden</span>`;
+    }
+
+    // New item tag toggles
+    function renderNewItemTags() {
+        const el = document.getElementById('new-item-tags');
+        el.innerHTML = '';
+        ALL_TAGS.forEach(t => {
+            const span = document.createElement('span');
+            span.className = 'tag tag-' + t + (newItemTags.has(t) ? '' : ' inactive');
+            span.textContent = t;
+            span.title = TAG_LABELS[t];
+            span.style.cursor = 'pointer';
+            span.addEventListener('click', () => {
+                if (newItemTags.has(t)) newItemTags.delete(t);
+                else newItemTags.add(t);
+                renderNewItemTags();
+            });
+            el.appendChild(span);
+        });
+    }
+
+    function addMenuItem() {
+        const name = document.getElementById('new-item-name').value.trim();
+        if (!name) { showToast('Enter an item name first'); return; }
+        menuCatalogue[activeCourse].push({ id:++nextId, name, tags:[...newItemTags], active:true });
+        document.getElementById('new-item-name').value = '';
+        newItemTags.clear();
+        renderNewItemTags();
+        renderCoursePills();
+        renderMenuItems();
+        showToast('Item added to ' + activeCourse);
+    }
+
+    document.getElementById('search-items').addEventListener('input', renderMenuItems);
+    document.getElementById('filter-diet').addEventListener('input', renderMenuItems);
+
+    /* ════════════════════════════════════
+       PACKAGES TAB
+    ════════════════════════════════════ */
+    function renderPackages() {
+        const el = document.getElementById('packages-grid');
+        el.innerHTML = '';
+        packages.forEach((pkg, i) => {
+            const addonNames = pkg.addonIds.map(id => addOns.find(a=>a.id===id)?.name || '').filter(Boolean);
+            const card = document.createElement('div');
+            card.className = 'pkg-card ' + (pkg.gold ? 'pkg-gold' : '');
+            card.innerHTML = `
+                <div class="flex items-start justify-between mb-4">
+                    <div>
+                        <div class="flex items-center gap-2 mb-1">
+                            ${pkg.gold ? '<svg class="w-4 h-4 text-gold" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>' : ''}
+                            <h3 class="font-serif text-2xl text-cream">${pkg.name}</h3>
+                        </div>
+                        <p class="font-sans text-xs text-cream/45">${pkg.tagline}</p>
+                    </div>
+                    <div class="text-right shrink-0 ml-4">
+                        <p class="font-sans text-[10px] uppercase tracking-widest text-cream/30">From</p>
+                        <div class="flex items-baseline gap-0.5">
+                            <span class="font-sans text-xs text-cream/50">£</span>
+                            <input type="number" value="${pkg.rateFrom}" min="0" step="5" class="price-input w-16 text-xl font-serif text-gold" data-pkg-rate="${i}">
+                            <span class="font-sans text-xs text-cream/35">pp</span>
+                        </div>
+                    </div>
+                </div>
+                <p class="font-sans text-xs text-gold/70 italic mb-4 pb-4 border-b border-cream/10">${pkg.highlight}</p>
+                <div class="space-y-3 mb-5">
+                    <div>
+                        <p class="font-sans text-[10px] uppercase tracking-widest text-cream/30 mb-1.5">Service Style</p>
+                        <p class="font-sans text-xs text-cream/65 font-medium">${pkg.style}</p>
+                    </div>
+                    <div>
+                        <p class="font-sans text-[10px] uppercase tracking-widest text-cream/30 mb-1.5">Courses Included</p>
+                        <div class="flex flex-wrap gap-1.5">
+                            ${pkg.courses.map(c=>`<span class="px-2 py-0.5 bg-cream/5 border border-cream/10 rounded-full font-sans text-[10px] text-cream/55">${c}</span>`).join('')}
+                        </div>
+                    </div>
+                    <div>
+                        <p class="font-sans text-[10px] uppercase tracking-widest text-cream/30 mb-1.5">Add-Ons</p>
+                        <div class="flex flex-wrap gap-1.5">
+                            ${addonNames.map(a=>`<span class="px-2 py-0.5 bg-gold/8 border border-gold/20 rounded-full font-sans text-[10px] text-gold/70">${a}</span>`).join('')}
+                        </div>
+                    </div>
+                </div>
+                <div class="flex gap-2 pt-4 border-t border-cream/10">
+                    <button onclick="showToast('Package copied to clipboard')" class="flex-1 py-2 bg-cream/5 border border-cream/15 text-cream/55 font-sans text-[10px] font-bold uppercase tracking-widest rounded-sm hover:border-cream/25 hover:text-cream transition-all">Copy Quote</button>
+                    <button onclick="removePackage(${i})" class="px-3 py-2 bg-red-500/10 border border-red-500/20 text-red-400/60 font-sans text-[10px] rounded-sm hover:bg-red-500/20 hover:text-red-400 transition-all">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                    </button>
+                </div>`;
+            el.appendChild(card);
+        });
+        // Rate listeners
+        el.querySelectorAll('[data-pkg-rate]').forEach(inp => {
+            inp.addEventListener('input', e => { packages[e.target.dataset.pkgRate].rateFrom = parseFloat(e.target.value)||0; });
+        });
+    }
+
+    function removePackage(i) { packages.splice(i,1); renderPackages(); }
+    function addPackage() {
+        packages.push({ id:Date.now(), name:'New Package', tagline:'Custom package', style:'Plated Multi-Course', courses:['Canapés','Main Course'], addonIds:[1,2], rateFrom:90, gold:false, highlight:'Custom event package' });
+        renderPackages();
+        showToast('New package created');
+    }
+
+    /* ════════════════════════════════════
+       TABS
+    ════════════════════════════════════ */
+    document.getElementById('tab-bar').addEventListener('click', e => {
+        const tab = e.target.closest('.page-tab');
+        if (!tab) return;
+        document.querySelectorAll('.page-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+    });
+
+    /* ════════════════════════════════════
+       SAVE
+    ════════════════════════════════════ */
+    function saveAll() {
+        try {
+            localStorage.setItem('mp_serviceStyles', JSON.stringify(serviceStyles));
+            localStorage.setItem('mp_addOns',        JSON.stringify(addOns));
+            localStorage.setItem('mp_packages',      JSON.stringify(packages));
+            localStorage.setItem('mp_menuCatalogue', JSON.stringify(menuCatalogue));
+        } catch(e) {}
+        showToast('All changes saved');
+    }
+
+    /* ════════════════════════════════════
+       MOBILE MENU
+    ════════════════════════════════════ */
+    function toggleMobileMenu() {
+        const menu = document.getElementById('mobile-menu');
+        const isOpen = !menu.classList.contains('opacity-0');
+        menu.classList.toggle('opacity-0', isOpen);
+        menu.classList.toggle('pointer-events-none', isOpen);
+    }
+
+    /* ════════════════════════════════════
+       TOAST
+    ════════════════════════════════════ */
+    function showToast(msg) {
+        const ex = document.getElementById('mp-toast');
+        if (ex) ex.remove();
+        const t = document.createElement('div');
+        t.id = 'mp-toast';
+        t.style.cssText = 'position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);z-index:9999;background:#C5A059;color:#1C1C1C;font-family:Montserrat,sans-serif;font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;padding:.65rem 1.25rem;border-radius:2px;box-shadow:0 8px 32px rgba(0,0,0,.4);white-space:nowrap;';
+        t.textContent = msg;
+        document.body.appendChild(t);
+        t.animate([{opacity:0,transform:'translateX(-50%) translateY(12px)'},{opacity:1,transform:'translateX(-50%) translateY(0)'}],{duration:280,fill:'forwards'});
+        setTimeout(() => { t.animate([{opacity:1},{opacity:0}],{duration:200,fill:'forwards'}).onfinish=()=>t.remove(); }, 2800);
+    }
+
+    /* ════════════════════════════════════
+       THEME
+    ════════════════════════════════════ */
+    function applyTheme(theme) {
+        const isLight = theme === 'light';
+        document.documentElement.setAttribute('data-theme', theme);
+        document.getElementById('theme-icon-moon').classList.toggle('hidden', isLight);
+        document.getElementById('theme-icon-sun').classList.toggle('hidden', !isLight);
+        const logo = isLight ? 'images/logo-light.svg' : 'images/logo-dark-bg.svg';
+        document.getElementById('sidebar-logo').src = logo;
+        document.getElementById('mobile-logo').src  = logo;
+        localStorage.setItem('admin-theme', theme);
+    }
+    function toggleTheme() {
+        applyTheme(document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light');
+    }
+
+    /* ════════════════════════════════════
+       BOOT
+    ════════════════════════════════════ */
+    renderServiceStyles();
+    renderAddOns();
+    renderCoursePills();
+    renderMenuItems();
+    renderNewItemTags();
+    renderPackages();
+    applyTheme(localStorage.getItem('admin-theme') || 'dark');
+    </script>
+</body>
+</html>
