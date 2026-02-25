@@ -352,7 +352,7 @@
                         <button onclick="duplicateBooking()" class="w-full py-2.5 border border-cream/15 text-cream/60 font-sans text-[10px] font-bold uppercase tracking-widest rounded-sm hover:border-gold/40 hover:text-gold transition-all">
                             Duplicate Booking
                         </button>
-                        <button onclick="deleteBooking()" class="w-full py-2.5 border border-red-500/20 text-red-400/70 font-sans text-[10px] font-bold uppercase tracking-widest rounded-sm hover:border-red-500/40 hover:text-red-400 transition-all">
+                        <button id="btn-delete" onclick="deleteBooking()" class="w-full py-2.5 border border-red-500/20 text-red-400/70 font-sans text-[10px] font-bold uppercase tracking-widest rounded-sm hover:border-red-500/40 hover:text-red-400 transition-all">
                             Delete Booking
                         </button>
                     </div>
@@ -588,6 +588,13 @@
     /* ════════ MENU COURSES ════════ */
     function renderMenuCourses() {
         const container = document.getElementById('menu-courses');
+
+        // Preserve which sections the user has opened so they don't collapse on re-render
+        const openSections = new Set();
+        container.querySelectorAll('details[open]').forEach(d => {
+            if (d.dataset.course) openSections.add(d.dataset.course);
+        });
+
         container.innerHTML = '';
 
         Object.entries(catalogue).forEach(([course, items]) => {
@@ -599,7 +606,9 @@
 
             const details = document.createElement('details');
             details.className = 'course-section border-b border-cream/08 last:border-b-0';
-            if (selectedInCourse.length > 0) details.open = true;
+            details.dataset.course = course;
+            // Keep open if it was already open OR has selected items
+            if (openSections.has(course) || selectedInCourse.length > 0) details.open = true;
 
             details.innerHTML = `
                 <summary>
@@ -611,8 +620,8 @@
                         const checked = ev.order.some(o => o.itemId === item.id);
                         return `
                         <div class="menu-item-row" onclick="toggleMenuItem(${item.id}, '${course.replace(/'/g,"\\'")}', ${item.price})">
-                            <input type="checkbox" ${checked ? 'checked' : ''} id="item-${item.id}" onclick="event.stopPropagation(); toggleMenuItem(${item.id}, '${course.replace(/'/g,"\\'")}', ${item.price})">
-                            <label for="item-${item.id}" class="flex-1 font-sans text-xs text-cream/70 cursor-pointer">${item.name}</label>
+                            <input type="checkbox" ${checked ? 'checked' : ''} id="item-${item.id}" onclick="event.stopPropagation()">
+                            <span class="flex-1 font-sans text-xs text-cream/70">${item.name}</span>
                             <span class="font-sans text-xs text-gold/70 shrink-0">£${item.price}pp</span>
                         </div>`;
                     }).join('')}
@@ -627,15 +636,10 @@
         if (idx > -1) {
             ev.order.splice(idx, 1);
         } else {
-            // Find item name
             const items = catalogue[course] || [];
             const item  = items.find(i => i.id === itemId);
             ev.order.push({ itemId, course, name: item ? item.name : '', qty: 1, unitPrice });
         }
-        // Update checkbox state
-        const cb = document.getElementById('item-' + itemId);
-        if (cb) cb.checked = ev.order.some(o => o.itemId === itemId);
-        // Update course header count
         renderMenuCourses();
         updateFinancials();
         scheduleSave();
@@ -768,12 +772,26 @@
         setTimeout(() => { window.location.href = 'booking-detail.html?id=' + copy.id; }, 1200);
     }
 
+    let deleteArmed = false;
+    let deleteResetTimer = null;
     function deleteBooking() {
-        if (!confirm('Delete this booking? This cannot be undone.')) return;
+        const btn = document.getElementById('btn-delete');
+        if (!deleteArmed) {
+            deleteArmed = true;
+            btn.textContent = 'Tap again to confirm';
+            btn.classList.add('border-red-500/50', 'text-red-400');
+            deleteResetTimer = setTimeout(() => {
+                deleteArmed = false;
+                btn.textContent = 'Delete Booking';
+                btn.classList.remove('border-red-500/50', 'text-red-400');
+            }, 3000);
+            return;
+        }
+        clearTimeout(deleteResetTimer);
         const allEvents = loadData('ec_events', []);
         const filtered  = allEvents.filter(e => e.id !== ev.id);
         try { localStorage.setItem('ec_events', JSON.stringify(filtered)); } catch(e) {}
-        window.location.href = 'event-calendar.html';
+        window.location.replace('event-calendar.html');
     }
 
     /* ════════ CROSS-TAB SYNC ════════ */
