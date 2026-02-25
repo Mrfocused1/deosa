@@ -513,6 +513,15 @@
                 venueSelect.appendChild(opt);
             });
 
+            // Pre-select venue passed from venues page
+            const urlVenue = new URLSearchParams(window.location.search).get('venue');
+            if (urlVenue) {
+                const opts = Array.from(venueSelect.options);
+                const match = opts.find(o => o.value.toLowerCase() === urlVenue.toLowerCase())
+                           || opts.find(o => o.value.toLowerCase().includes(urlVenue.toLowerCase().split(' ')[0]));
+                if (match) venueSelect.value = match.value;
+            }
+
             renderMenu();
 
             guestSelect.addEventListener('change', (e) => {
