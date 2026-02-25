@@ -173,6 +173,44 @@
         html[data-theme="light"] .bg-cream\/\[0\.03\] { background-color: rgba(28,28,28,0.03) !important; }
         /* Theme toggle button */
         .theme-toggle { transition: color 0.2s, background 0.2s; }
+
+        /* ── Call Log intake form ── */
+        .cl-input {
+            width: 100%;
+            background: rgba(253,251,247,0.04);
+            border: 1px solid rgba(253,251,247,0.1);
+            border-radius: 0.5rem;
+            padding: 0.6rem 0.875rem;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.75rem;
+            color: #FDFBF7;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .cl-input:focus { border-color: rgba(197,160,89,0.5); box-shadow: 0 0 0 2px rgba(197,160,89,0.08); }
+        .cl-input::placeholder { color: rgba(253,251,247,0.2); }
+        select.cl-input {
+            background-image: url("data:image/svg+xml;utf8,<svg fill='%23FDFBF7' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
+            background-repeat: no-repeat; background-position: right 0.75rem center;
+            -webkit-appearance: none; appearance: none;
+        }
+        textarea.cl-input { resize: vertical; }
+        .cl-label {
+            display: block;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.6rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.18em;
+            color: rgba(253,251,247,0.35); margin-bottom: 0.4rem;
+        }
+        .cl-section { padding-bottom: 1.25rem; margin-bottom: 1.25rem; border-bottom: 1px solid rgba(253,251,247,0.07); }
+        .cl-section-hd {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.6rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.22em;
+            color: #C5A059; margin-bottom: 0.875rem;
+        }
+        .cl-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.875rem; }
+        @media (max-width: 560px) { .cl-grid-2 { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body class="noise selection:bg-gold selection:text-charcoal flex h-screen overflow-hidden">
@@ -362,6 +400,21 @@
                     </div>
 
                 </div>
+            </div>
+
+            <!-- ───────────── Call Log ───────────── -->
+            <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="font-sans text-[10px] uppercase tracking-widest text-cream/30 font-medium">Recent</p>
+                        <h3 class="font-serif text-2xl text-cream">Call Log</h3>
+                    </div>
+                    <button onclick="openNewCall()" class="flex items-center gap-2 px-4 py-2.5 bg-gold/20 border border-gold/40 text-gold rounded-lg font-sans text-[10px] font-bold uppercase tracking-widest hover:bg-gold hover:text-charcoal transition-all shrink-0">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+                        New Call
+                    </button>
+                </div>
+                <div id="call-log-list" class="space-y-2"><!-- populated by JS --></div>
             </div>
 
             <!-- Table Controls -->
@@ -1198,8 +1251,463 @@
             menu.classList.toggle('pointer-events-none', isOpen);
         }
 
+        /* ═══════════════════════════════════════════════════════════
+           CALL LOG
+        ═══════════════════════════════════════════════════════════ */
+
+        const DEFAULT_CALL_LOG = [
+            {
+                id: 1740476040000, name: 'Priya Nair', phone: '07923 456 789', email: 'p.nair@email.com',
+                source: 'Instagram', time: '2026-02-25T10:14:00', eventType: 'Wedding', eventDate: '2026-09-20',
+                eventStart: '12:00', eventEnd: '23:00', guests: '130', venue: 'Morden Hall Park',
+                venueConfirmed: 'Yes – confirmed', indoorOutdoor: 'Indoor', kitchen: 'Full commercial kitchen',
+                serviceStyle: 'Silver Plated', courses: '3 courses', canapes: 'Yes', bar: 'Full bar', cake: 'Yes',
+                cuisine: 'Mediterranean', starter: 'Burrata with heirloom tomatoes',
+                main: 'Herb-crusted lamb with dauphinoise', dessert: 'Elderflower panna cotta',
+                dietary: 'Vegetarian options for 12, halal for all meat dishes',
+                arrival: '08:00', access: 'Easy – loading bay available', parking: 'Yes',
+                hire: 'Linens, Crockery, Glassware', logisticsNotes: '',
+                budgetPP: '£90-110pp', budgetTotal: '~£13,000', quoted: 'No', tasting: 'Yes',
+                timeline: 'Within 1-2 weeks', followUp: 'Email', comparing: 'Yes',
+                summary: 'Caller enquired about wedding catering for 130 guests at Morden Hall Park in September 2026. 3-course silver plated service, Mediterranean theme. Budget £90-110pp. Vegetarian & halal options needed. Comparing two other caterers. Requested proposal by email and interested in a tasting.',
+                outcome: 'Quote Requested'
+            },
+            {
+                id: 1740462120000, name: '', phone: '', email: '', source: 'Website',
+                time: '2026-02-25T06:22:00', eventType: 'Corporate Gala', eventDate: '',
+                eventStart: '18:30', eventEnd: '23:00', guests: '200', venue: 'TBC – Central London',
+                venueConfirmed: 'Still looking', indoorOutdoor: 'Indoor', kitchen: 'Unknown',
+                serviceStyle: 'Buffet', courses: '1 course', canapes: 'Yes', bar: 'Full bar', cake: 'N/A',
+                cuisine: '', starter: '', main: '', dessert: '', dietary: 'Mix of needs – full list TBC',
+                arrival: '', access: 'Unknown', parking: 'Unknown', hire: 'None', logisticsNotes: '',
+                budgetPP: '£60-70pp', budgetTotal: '~£13,000', quoted: 'No', tasting: 'Maybe',
+                timeline: 'Unknown', followUp: 'Phone', comparing: 'Unknown',
+                summary: 'Anonymous caller enquiring about a corporate gala for approx 200 guests. Venue TBC, Central London. Buffet style with canapés and full bar. Budget around £60-70pp. Will call back once a date is confirmed.',
+                outcome: 'Callback Required'
+            },
+            {
+                id: 1740409980000, name: 'Thomas Osei', phone: '07800 123 456', email: 'thomas.o@creativeco.com',
+                source: 'Referral', time: '2026-02-24T15:33:00', eventType: 'Birthday', eventDate: '2026-07-05',
+                eventStart: '18:00', eventEnd: '23:00', guests: '60', venue: 'Private Residence – Kensington',
+                venueConfirmed: 'Yes – confirmed', indoorOutdoor: 'Indoor', kitchen: 'Basic facilities',
+                serviceStyle: 'Canapés & Drinks Reception', courses: '1 course', canapes: 'Yes',
+                bar: 'Wine & beer only', cake: 'N/A', cuisine: '', starter: '', main: '', dessert: '',
+                dietary: 'Nut allergy – 1 guest, gluten-free – 3 guests',
+                arrival: '15:00', access: 'Limited access', parking: 'No', hire: 'Glassware',
+                logisticsNotes: 'Tight staircase, no loading bay',
+                budgetPP: '£75pp', budgetTotal: '~£4,500', quoted: 'No', tasting: 'No',
+                timeline: 'ASAP', followUp: 'WhatsApp', comparing: 'No',
+                summary: 'Referred by Sarah & David. Birthday canapés & drinks reception for 60 guests in Kensington. Budget £75pp. Nut allergy and gluten-free needs noted. Tight staircase access. Information pack sent via WhatsApp.',
+                outcome: 'Information Sent'
+            },
+            {
+                id: 1740391500000, name: '', phone: '07700 900 123', email: '', source: 'Google',
+                time: '2026-02-24T10:25:00', eventType: 'Anniversary', eventDate: '2026-06-14',
+                eventStart: '19:00', eventEnd: '00:00', guests: '40', venue: 'The Connaught – Mayfair',
+                venueConfirmed: 'Yes – confirmed', indoorOutdoor: 'Indoor', kitchen: 'Full commercial kitchen',
+                serviceStyle: 'Silver Plated', courses: '4+ courses', canapes: 'Yes', bar: 'Full bar', cake: 'N/A',
+                cuisine: 'French-British', starter: '', main: '', dessert: '', dietary: '1 vegan, 1 nut allergy',
+                arrival: '12:00', access: 'Easy – loading bay available', parking: 'Yes', hire: 'None', logisticsNotes: '',
+                budgetPP: '£120+pp', budgetTotal: 'Open', quoted: 'No', tasting: 'Yes',
+                timeline: 'Within 1-2 weeks', followUp: 'Email', comparing: 'No',
+                summary: 'Intimate anniversary dinner for 40 at The Connaught. 4-course silver plated with reception canapés. Premium open budget. French-British cuisine preferred. Dietary: 1 vegan, 1 nut allergy. Tasting session booked for early March.',
+                outcome: 'Tasting Scheduled'
+            },
+            {
+                id: 1740321600000, name: 'Fatima Al-Rashid', phone: '07600 987 654', email: 'fatima.ar@outlook.com',
+                source: 'Word of Mouth', time: '2026-02-23T14:40:00', eventType: 'Christening', eventDate: '2026-05-10',
+                eventStart: '13:00', eventEnd: '18:00', guests: '90', venue: 'St. James Church Hall – Islington',
+                venueConfirmed: 'Yes – confirmed', indoorOutdoor: 'Indoor', kitchen: 'Basic facilities',
+                serviceStyle: 'Buffet', courses: '1 course', canapes: 'No', bar: 'Soft drinks only', cake: 'N/A',
+                cuisine: '', starter: '', main: '', dessert: '', dietary: 'Halal-only menu required throughout',
+                arrival: '10:00', access: 'Limited access', parking: 'Unknown', hire: 'None', logisticsNotes: '',
+                budgetPP: '£45-55pp', budgetTotal: '~£4,500', quoted: 'No', tasting: 'No',
+                timeline: 'Within 1 month', followUp: 'Phone', comparing: 'Unknown',
+                summary: 'Christening catering for 90 guests at a church hall in Islington. Halal-only buffet, soft drinks only. Budget £45-55pp. Quote requested, decision expected within a month.',
+                outcome: 'Quote Requested'
+            }
+        ];
+
+        function loadCallLog() {
+            try {
+                const s = localStorage.getItem('deosa_call_log');
+                return s ? JSON.parse(s) : DEFAULT_CALL_LOG;
+            } catch (_) { return DEFAULT_CALL_LOG; }
+        }
+
+        function persistCallLog(log) {
+            localStorage.setItem('deosa_call_log', JSON.stringify(log));
+        }
+
+        function _clFmtTime(isoStr) {
+            if (!isoStr) return '—';
+            try {
+                const d = new Date(isoStr);
+                const daysAgo = (Date.now() - d) / 86400000;
+                const t = d.toLocaleString('en-GB', { timeZone: 'Europe/London', hour: '2-digit', minute: '2-digit' });
+                if (daysAgo < 1)  return 'Today, ' + t;
+                if (daysAgo < 2)  return 'Yesterday, ' + t;
+                return d.toLocaleString('en-GB', { timeZone: 'Europe/London', day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
+            } catch (_) { return isoStr; }
+        }
+
+        const CL_OUTCOME_STYLE = {
+            'Booking Confirmed': 'text-green-400 border-green-400/30',
+            'Quote Requested':   'text-gold border-gold/30',
+            'Tasting Scheduled': 'text-gold border-gold/30',
+            'Information Sent':  'text-blue-300 border-blue-300/30',
+            'Callback Required': 'text-orange-300 border-orange-300/30',
+            'No Interest':       'text-cream/30 border-cream/15'
+        };
+
+        function _clDetailRow(label, val) {
+            if (!val) return '';
+            return `<div><p class="font-sans text-[10px] uppercase tracking-widest text-cream/30 mb-0.5">${label}</p><p class="font-sans text-xs text-cream/70">${val}</p></div>`;
+        }
+
+        function renderCallLog() {
+            const log = loadCallLog();
+            const container = document.getElementById('call-log-list');
+            if (!container) return;
+
+            if (log.length === 0) {
+                container.innerHTML = `<div class="dash-card p-8 text-center"><svg class="w-8 h-8 text-cream/15 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg><p class="font-sans text-sm text-cream/30">No calls logged yet. Press <span class="text-gold">New Call</span> to begin.</p></div>`;
+                return;
+            }
+
+            const sorted = [...log].sort((a, b) => b.id - a.id);
+            container.innerHTML = sorted.map(e => {
+                const isAnon = !e.name || !e.name.trim();
+                const displayName = isAnon ? 'Anonymous' : e.name;
+                const os = CL_OUTCOME_STYLE[e.outcome] || 'text-cream/40 border-cream/15';
+                const meta = [_clFmtTime(e.time), e.eventType, e.guests ? e.guests + ' guests' : ''].filter(Boolean).join(' · ');
+                return `
+                <div class="dash-card px-5 py-4 hover:border-gold/20 transition-all">
+                    <div class="flex items-start gap-4 cursor-pointer" onclick="toggleCallDetail(${e.id})">
+                        <div class="w-9 h-9 rounded-full bg-gold/10 border border-gold/20 flex items-center justify-center text-gold shrink-0 mt-0.5">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex flex-wrap items-center justify-between gap-2">
+                                <p class="font-serif text-lg ${isAnon ? 'text-cream/40 italic' : 'text-cream'}">${displayName}</p>
+                                <span class="font-sans text-[10px] ${os} border rounded-full px-2.5 py-0.5 uppercase tracking-widest whitespace-nowrap">${e.outcome}</span>
+                            </div>
+                            <p class="font-sans text-[10px] text-cream/30 mt-0.5 tracking-wide">${meta}</p>
+                            <p class="font-sans text-xs text-cream/50 mt-1.5 leading-relaxed" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">${e.summary || '—'}</p>
+                        </div>
+                    </div>
+                    <div id="cl-detail-${e.id}" class="hidden mt-4 pt-4" style="border-top:1px solid rgba(253,251,247,0.07);">
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-3 mb-4">
+                            ${_clDetailRow('Phone', e.phone)}
+                            ${_clDetailRow('Email', e.email)}
+                            ${_clDetailRow('Source', e.source)}
+                            ${_clDetailRow('Event Date', e.eventDate)}
+                            ${_clDetailRow('Time', e.eventStart && e.eventEnd ? e.eventStart + ' – ' + e.eventEnd : (e.eventStart || ''))}
+                            ${_clDetailRow('Venue', e.venue)}
+                            ${_clDetailRow('Venue Confirmed', e.venueConfirmed)}
+                            ${_clDetailRow('Setting', e.indoorOutdoor)}
+                            ${_clDetailRow('Kitchen', e.kitchen)}
+                            ${_clDetailRow('Service Style', e.serviceStyle)}
+                            ${_clDetailRow('Courses', e.courses)}
+                            ${_clDetailRow('Canapés', e.canapes)}
+                            ${_clDetailRow('Bar', e.bar)}
+                            ${_clDetailRow('Cake Cutting', e.cake)}
+                            ${_clDetailRow('Cuisine / Theme', e.cuisine)}
+                            ${_clDetailRow('Starter', e.starter)}
+                            ${_clDetailRow('Main', e.main)}
+                            ${_clDetailRow('Dessert', e.dessert)}
+                            ${e.dietary ? `<div class="col-span-2">${_clDetailRow('Dietary & Allergies', e.dietary)}</div>` : ''}
+                            ${_clDetailRow('Team Arrival', e.arrival)}
+                            ${_clDetailRow('Site Access', e.access)}
+                            ${_clDetailRow('Parking', e.parking)}
+                            ${_clDetailRow('Hire Equipment', e.hire)}
+                            ${_clDetailRow('Logistics Notes', e.logisticsNotes)}
+                            ${_clDetailRow('Budget / head', e.budgetPP)}
+                            ${_clDetailRow('Total Budget', e.budgetTotal)}
+                            ${_clDetailRow('Tasting', e.tasting)}
+                            ${_clDetailRow('Timeline', e.timeline)}
+                            ${_clDetailRow('Follow-up', e.followUp)}
+                            ${_clDetailRow('Comparing', e.comparing)}
+                        </div>
+                        ${e.summary ? `<div style="border-top:1px solid rgba(253,251,247,0.06);" class="pt-3 mt-1"><p class="font-sans text-[10px] uppercase tracking-widest text-cream/30 mb-1.5">Call Summary</p><p class="font-sans text-xs text-cream/65 leading-relaxed">${e.summary}</p></div>` : ''}
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        window.toggleCallDetail = function(id) {
+            const el = document.getElementById('cl-detail-' + id);
+            if (el) el.classList.toggle('hidden');
+        };
+
+        /* ── New Call Drawer ── */
+        let _callTimer = null;
+        let _callSeconds = 0;
+
+        window.openNewCall = function() {
+            // Reset all form fields
+            document.getElementById('new-call-form').querySelectorAll('input, select, textarea').forEach(el => {
+                if (el.type === 'checkbox') el.checked = false;
+                else el.value = '';
+            });
+            document.getElementById('cl-summary').style.borderColor = '';
+            // Start elapsed timer
+            _callSeconds = 0;
+            clearInterval(_callTimer);
+            _callTimer = setInterval(() => {
+                _callSeconds++;
+                const m = String(Math.floor(_callSeconds / 60)).padStart(2, '0');
+                const s = String(_callSeconds % 60).padStart(2, '0');
+                const el = document.getElementById('new-call-timer');
+                if (el) el.textContent = m + ':' + s;
+            }, 1000);
+            const overlay = document.getElementById('new-call-overlay');
+            const drawer  = document.getElementById('new-call-drawer');
+            overlay.classList.remove('hidden');
+            setTimeout(() => {
+                overlay.classList.remove('opacity-0');
+                drawer.classList.remove('drawer-closed');
+                drawer.classList.add('drawer-open');
+            }, 10);
+        };
+
+        window.closeNewCall = function() {
+            clearInterval(_callTimer);
+            const overlay = document.getElementById('new-call-overlay');
+            const drawer  = document.getElementById('new-call-drawer');
+            drawer.classList.remove('drawer-open');
+            drawer.classList.add('drawer-closed');
+            overlay.classList.add('opacity-0');
+            setTimeout(() => overlay.classList.add('hidden'), 300);
+        };
+
+        window.saveNewCall = function() {
+            const summary = document.getElementById('cl-summary').value.trim();
+            const outcome = document.getElementById('cl-outcome').value;
+            if (!summary) {
+                const el = document.getElementById('cl-summary');
+                el.style.borderColor = 'rgba(197,160,89,0.8)';
+                el.focus(); return;
+            }
+            if (!outcome) { document.getElementById('cl-outcome').focus(); return; }
+
+            const hire = ['tables','linens','crockery','glassware','furniture','none']
+                .filter(h => document.getElementById('cl-hire-' + h).checked)
+                .map(h => h.charAt(0).toUpperCase() + h.slice(1)).join(', ');
+
+            const entry = {
+                id:             Date.now(),
+                name:           document.getElementById('cl-name').value.trim(),
+                phone:          document.getElementById('cl-phone').value.trim(),
+                email:          document.getElementById('cl-email').value.trim(),
+                source:         document.getElementById('cl-source').value,
+                time:           new Date().toISOString(),
+                eventType:      document.getElementById('cl-event-type').value,
+                eventDate:      document.getElementById('cl-event-date').value,
+                eventStart:     document.getElementById('cl-event-start').value,
+                eventEnd:       document.getElementById('cl-event-end').value,
+                guests:         document.getElementById('cl-guests').value,
+                venue:          document.getElementById('cl-venue').value.trim(),
+                venueConfirmed: document.getElementById('cl-venue-confirmed').value,
+                indoorOutdoor:  document.getElementById('cl-indoor-outdoor').value,
+                kitchen:        document.getElementById('cl-kitchen').value,
+                serviceStyle:   document.getElementById('cl-service-style').value,
+                courses:        document.getElementById('cl-courses').value,
+                canapes:        document.getElementById('cl-canapes').value,
+                bar:            document.getElementById('cl-bar').value,
+                cake:           document.getElementById('cl-cake').value,
+                cuisine:        document.getElementById('cl-cuisine').value.trim(),
+                starter:        document.getElementById('cl-starter').value.trim(),
+                main:           document.getElementById('cl-main').value.trim(),
+                dessert:        document.getElementById('cl-dessert').value.trim(),
+                dietary:        document.getElementById('cl-dietary').value.trim(),
+                arrival:        document.getElementById('cl-arrival').value,
+                access:         document.getElementById('cl-access').value,
+                parking:        document.getElementById('cl-parking').value,
+                hire,
+                logisticsNotes: document.getElementById('cl-logistics-notes').value.trim(),
+                budgetPP:       document.getElementById('cl-budget-pp').value.trim(),
+                budgetTotal:    document.getElementById('cl-budget-total').value.trim(),
+                quoted:         document.getElementById('cl-quoted').value,
+                tasting:        document.getElementById('cl-tasting').value,
+                timeline:       document.getElementById('cl-timeline').value,
+                followUp:       document.getElementById('cl-followup').value,
+                comparing:      document.getElementById('cl-comparing').value,
+                summary, outcome
+            };
+
+            const log = loadCallLog();
+            log.unshift(entry);
+            persistCallLog(log);
+            renderCallLog();
+            closeNewCall();
+        };
+
+        document.addEventListener('DOMContentLoaded', renderCallLog);
+
 
     </script>
+
+    <!-- New Call Overlay -->
+    <div id="new-call-overlay" class="fixed inset-0 bg-charcoal/60 z-40 hidden transition-opacity opacity-0 backdrop-blur-sm"></div>
+
+    <!-- New Call Intake Drawer -->
+    <div id="new-call-drawer" class="fixed top-0 right-0 h-full w-full max-w-2xl z-50 drawer-closed transition-transform duration-300 flex flex-col border-l border-cream/10" style="background:#161616;">
+
+        <!-- Header -->
+        <div class="p-6 border-b border-cream/10 flex justify-between items-center shrink-0">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-full bg-gold/15 border border-gold/25 flex items-center justify-center text-gold shrink-0">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+                </div>
+                <div>
+                    <h3 class="font-serif text-2xl text-cream">New Call Intake</h3>
+                    <p id="new-call-timer" class="font-sans text-[10px] text-gold/60 mt-0.5 tracking-widest tabular-nums">00:00</p>
+                </div>
+            </div>
+            <button onclick="closeNewCall()" class="p-2 rounded-full text-cream/40 hover:text-gold hover:bg-cream/5 transition-colors border border-cream/10">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+
+        <!-- Scrollable Form -->
+        <div class="flex-1 overflow-y-auto p-6" id="new-call-form">
+
+            <!-- A: Caller Details -->
+            <div class="cl-section">
+                <p class="cl-section-hd">A — Caller Details</p>
+                <div class="cl-grid-2">
+                    <div><label class="cl-label">Name <span style="color:rgba(197,160,89,0.45);">(leave blank if anonymous)</span></label><input type="text" id="cl-name" class="cl-input" placeholder="Full name…"></div>
+                    <div><label class="cl-label">Phone Number</label><input type="tel" id="cl-phone" class="cl-input" placeholder="07xxx xxx xxx"></div>
+                    <div><label class="cl-label">Email Address</label><input type="email" id="cl-email" class="cl-input" placeholder="email@example.com"></div>
+                    <div><label class="cl-label">How did they hear about De'Osa?</label>
+                        <select id="cl-source" class="cl-input"><option value="">Select…</option><option>Website</option><option>Google</option><option>Instagram</option><option>Facebook</option><option>Referral</option><option>Word of Mouth</option><option>Previous Client</option><option>Press / Media</option><option>Other</option></select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- B: Event Overview -->
+            <div class="cl-section">
+                <p class="cl-section-hd">B — Event Overview</p>
+                <div class="cl-grid-2">
+                    <div><label class="cl-label">Type of Event</label>
+                        <select id="cl-event-type" class="cl-input"><option value="">Select…</option><option>Wedding</option><option>Corporate Gala</option><option>Private Party</option><option>Birthday</option><option>Anniversary</option><option>Christening</option><option>Baby Shower</option><option>Christmas Party</option><option>Product Launch</option><option>Awards Dinner</option><option>Networking Event</option><option>Dinner Party</option><option>Funeral Reception</option><option>Other</option></select>
+                    </div>
+                    <div><label class="cl-label">Event Date</label><input type="date" id="cl-event-date" class="cl-input"></div>
+                    <div><label class="cl-label">Event Start Time</label><input type="time" id="cl-event-start" class="cl-input"></div>
+                    <div><label class="cl-label">Event End Time</label><input type="time" id="cl-event-end" class="cl-input"></div>
+                    <div><label class="cl-label">Number of Guests</label><input type="number" id="cl-guests" class="cl-input" placeholder="e.g. 120" min="1"></div>
+                    <div><label class="cl-label">Venue Name / Location</label><input type="text" id="cl-venue" class="cl-input" placeholder="e.g. Syon Park, London"></div>
+                    <div><label class="cl-label">Is the Venue Confirmed?</label>
+                        <select id="cl-venue-confirmed" class="cl-input"><option value="">Select…</option><option>Yes – confirmed</option><option>Still looking</option><option>No – not decided</option></select>
+                    </div>
+                    <div><label class="cl-label">Indoor or Outdoor?</label>
+                        <select id="cl-indoor-outdoor" class="cl-input"><option value="">Select…</option><option>Indoor</option><option>Outdoor</option><option>Both</option><option>Not decided</option></select>
+                    </div>
+                    <div><label class="cl-label">On-Site Kitchen?</label>
+                        <select id="cl-kitchen" class="cl-input"><option value="">Select…</option><option>Full commercial kitchen</option><option>Basic facilities</option><option>None – we bring everything</option><option>Unknown</option></select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- C: Menu & Service -->
+            <div class="cl-section">
+                <p class="cl-section-hd">C — Menu & Service</p>
+                <div class="cl-grid-2">
+                    <div><label class="cl-label">Service Style</label>
+                        <select id="cl-service-style" class="cl-input"><option value="">Select…</option><option>Silver Plated</option><option>Buffet</option><option>Family Style</option><option>Canapés & Drinks Reception</option><option>Bowl Food</option><option>BBQ</option><option>Afternoon Tea</option><option>Grazing Table</option><option>Mixed / Multiple</option><option>Not decided</option></select>
+                    </div>
+                    <div><label class="cl-label">Number of Courses</label>
+                        <select id="cl-courses" class="cl-input"><option value="">Select…</option><option>1 course</option><option>2 courses</option><option>3 courses</option><option>4+ courses</option><option>TBC</option></select>
+                    </div>
+                    <div><label class="cl-label">Canapés at Reception?</label>
+                        <select id="cl-canapes" class="cl-input"><option value="">Select…</option><option>Yes</option><option>No</option><option>TBC</option></select>
+                    </div>
+                    <div><label class="cl-label">Bar / Drinks Service?</label>
+                        <select id="cl-bar" class="cl-input"><option value="">Select…</option><option>Full bar</option><option>Wine & beer only</option><option>Soft drinks only</option><option>No</option><option>TBC</option></select>
+                    </div>
+                    <div><label class="cl-label">Wedding Cake Cutting & Serving?</label>
+                        <select id="cl-cake" class="cl-input"><option value="">Select…</option><option>Yes</option><option>No</option><option>N/A</option></select>
+                    </div>
+                </div>
+                <div class="mt-3 space-y-3">
+                    <div><label class="cl-label">Cuisine Preference / Theme</label><input type="text" id="cl-cuisine" class="cl-input" placeholder="e.g. Mediterranean, British, Asian Fusion…"></div>
+                    <div><label class="cl-label">Starter Ideas / Requests</label><input type="text" id="cl-starter" class="cl-input" placeholder="e.g. Burrata, Smoked salmon, Soup…"></div>
+                    <div><label class="cl-label">Main Course Ideas / Requests</label><input type="text" id="cl-main" class="cl-input" placeholder="e.g. Herb-crusted lamb, Pan-seared sea bass…"></div>
+                    <div><label class="cl-label">Dessert Ideas / Requests</label><input type="text" id="cl-dessert" class="cl-input" placeholder="e.g. Panna cotta, Chocolate fondant…"></div>
+                    <div><label class="cl-label">Dietary Requirements & Allergies</label><textarea id="cl-dietary" class="cl-input" rows="2" placeholder="e.g. 4 vegetarian, 2 vegan, 1 nut allergy, 3 gluten-free, halal throughout…"></textarea></div>
+                </div>
+            </div>
+
+            <!-- D: Staffing & Logistics -->
+            <div class="cl-section">
+                <p class="cl-section-hd">D — Staffing & Logistics</p>
+                <div class="cl-grid-2">
+                    <div><label class="cl-label">Team Arrival Time Available</label><input type="time" id="cl-arrival" class="cl-input"></div>
+                    <div><label class="cl-label">Site Access</label>
+                        <select id="cl-access" class="cl-input"><option value="">Select…</option><option>Easy – loading bay available</option><option>Limited access</option><option>Challenging</option><option>Unknown</option></select>
+                    </div>
+                    <div><label class="cl-label">Parking for Team?</label>
+                        <select id="cl-parking" class="cl-input"><option value="">Select…</option><option>Yes</option><option>No</option><option>Unknown</option></select>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <label class="cl-label">Hire Equipment Needed</label>
+                    <div class="flex flex-wrap gap-4 mt-1.5">
+                        <label class="flex items-center gap-2 font-sans text-xs text-cream/55 cursor-pointer"><input type="checkbox" id="cl-hire-tables" class="accent-gold w-3.5 h-3.5"> Tables</label>
+                        <label class="flex items-center gap-2 font-sans text-xs text-cream/55 cursor-pointer"><input type="checkbox" id="cl-hire-linens" class="accent-gold w-3.5 h-3.5"> Linens</label>
+                        <label class="flex items-center gap-2 font-sans text-xs text-cream/55 cursor-pointer"><input type="checkbox" id="cl-hire-crockery" class="accent-gold w-3.5 h-3.5"> Crockery</label>
+                        <label class="flex items-center gap-2 font-sans text-xs text-cream/55 cursor-pointer"><input type="checkbox" id="cl-hire-glassware" class="accent-gold w-3.5 h-3.5"> Glassware</label>
+                        <label class="flex items-center gap-2 font-sans text-xs text-cream/55 cursor-pointer"><input type="checkbox" id="cl-hire-furniture" class="accent-gold w-3.5 h-3.5"> Furniture</label>
+                        <label class="flex items-center gap-2 font-sans text-xs text-cream/55 cursor-pointer"><input type="checkbox" id="cl-hire-none" class="accent-gold w-3.5 h-3.5"> None</label>
+                    </div>
+                </div>
+                <div class="mt-3"><label class="cl-label">Other Logistics Notes</label><input type="text" id="cl-logistics-notes" class="cl-input" placeholder="e.g. tight staircase, no lift, long walk from parking…"></div>
+            </div>
+
+            <!-- E: Budget & Next Steps -->
+            <div class="cl-section">
+                <p class="cl-section-hd">E — Budget & Next Steps</p>
+                <div class="cl-grid-2">
+                    <div><label class="cl-label">Budget Per Head</label><input type="text" id="cl-budget-pp" class="cl-input" placeholder="e.g. £80-100pp"></div>
+                    <div><label class="cl-label">Overall Budget</label><input type="text" id="cl-budget-total" class="cl-input" placeholder="e.g. £15,000"></div>
+                    <div><label class="cl-label">Quoted Before?</label>
+                        <select id="cl-quoted" class="cl-input"><option value="">Select…</option><option>Yes</option><option>No</option></select>
+                    </div>
+                    <div><label class="cl-label">Interested in a Tasting?</label>
+                        <select id="cl-tasting" class="cl-input"><option value="">Select…</option><option>Yes</option><option>No</option><option>Maybe</option></select>
+                    </div>
+                    <div><label class="cl-label">Decision Timeline</label>
+                        <select id="cl-timeline" class="cl-input"><option value="">Select…</option><option>ASAP</option><option>Within 1-2 weeks</option><option>Within 1 month</option><option>3+ months</option><option>Unknown</option></select>
+                    </div>
+                    <div><label class="cl-label">Preferred Follow-Up</label>
+                        <select id="cl-followup" class="cl-input"><option value="">Select…</option><option>Email</option><option>Phone</option><option>WhatsApp</option><option>Any</option></select>
+                    </div>
+                    <div><label class="cl-label">Comparing Other Caterers?</label>
+                        <select id="cl-comparing" class="cl-input"><option value="">Select…</option><option>Yes</option><option>No</option><option>Unknown</option></select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- F: Call Summary & Outcome -->
+            <div>
+                <p class="cl-section-hd">F — Call Summary & Outcome</p>
+                <div class="space-y-3">
+                    <div><label class="cl-label">Call Notes / Summary <span style="color:rgba(197,160,89,0.7);">*</span></label><textarea id="cl-summary" class="cl-input" rows="5" placeholder="Summarise the conversation, client preferences, decisions made, and any follow-up agreed…"></textarea></div>
+                    <div><label class="cl-label">Call Outcome <span style="color:rgba(197,160,89,0.7);">*</span></label>
+                        <select id="cl-outcome" class="cl-input"><option value="">Select outcome…</option><option>Booking Confirmed</option><option>Quote Requested</option><option>Tasting Scheduled</option><option>Information Sent</option><option>Callback Required</option><option>No Interest</option></select>
+                    </div>
+                </div>
+            </div>
+
+        </div><!-- /form body -->
+
+        <!-- Footer -->
+        <div class="p-5 border-t border-cream/10 flex gap-3 shrink-0">
+            <button onclick="closeNewCall()" class="flex-1 py-3 bg-cream/5 border border-cream/15 text-cream/60 rounded-lg font-sans text-[10px] font-bold uppercase tracking-widest hover:border-cream/30 hover:text-cream transition-all">Cancel</button>
+            <button onclick="saveNewCall()" class="flex-1 py-3 bg-gold/20 border border-gold/40 text-gold rounded-lg font-sans text-[10px] font-bold uppercase tracking-widest hover:bg-gold hover:text-charcoal transition-all">Save Call</button>
+        </div>
+    </div>
 
     <!-- Comms Sheet Overlay -->
     <div id="comms-overlay" class="fixed inset-0 z-40 hidden opacity-0 transition-opacity duration-300 backdrop-blur-sm" style="background:rgba(28,28,28,0.75);" onclick="closeCommsSheet()"></div>
