@@ -747,9 +747,9 @@
             <h2 class="font-serif text-5xl md:text-6xl text-charcoal">African & Caribbean Cuisine, Elevated</h2>
         </div>
 
-        <!-- Tab Navigation — desktop only -->
-        <div class="hidden md:block overflow-x-auto">
-            <div class="flex border-b border-charcoal/10 px-12">
+        <!-- Tab Navigation -->
+        <div class="overflow-x-auto">
+            <div class="flex border-b border-charcoal/10 px-6 md:px-12">
                 <button class="cuisine-tab active-tab" data-tab="1">Nigerian Heritage</button>
                 <button class="cuisine-tab" data-tab="2">Ghanaian Traditions</button>
                 <button class="cuisine-tab" data-tab="3">Sierra Leonean Flavors</button>
@@ -1297,30 +1297,56 @@
 
             });
 
-            // --- CUISINE TABS (desktop) ---
-            document.querySelectorAll('.cuisine-tab').forEach(tab => {
-                tab.addEventListener('click', () => {
-                    document.querySelectorAll('.cuisine-tab').forEach(t => t.classList.remove('active-tab'));
-                    document.querySelectorAll('.cuisine-panel').forEach(p => p.classList.remove('active-panel'));
-                    tab.classList.add('active-tab');
-                    document.getElementById('tab-' + tab.dataset.tab).classList.add('active-panel');
-                });
+            // --- CUISINE TABS + CAROUSEL ---
+            const cuisineCarousel = document.getElementById('cuisine-carousel');
+            const cuisineDots     = document.querySelectorAll('.cuisine-dot');
+            const cuisineTabs     = document.querySelectorAll('.cuisine-tab');
+            const cuisinePanels   = document.querySelectorAll('.cuisine-panel');
+            let cuisineAutoTimer;
+
+            function setCuisineActive(idx) {
+                cuisineTabs.forEach((t, i)  => t.classList.toggle('active-tab',   i === idx));
+                cuisineDots.forEach((d, i)  => d.classList.toggle('active-dot',   i === idx));
+                if (window.innerWidth < 768) {
+                    // mobile: scroll carousel
+                    cuisineCarousel.scrollTo({ left: idx * cuisineCarousel.offsetWidth, behavior: 'smooth' });
+                } else {
+                    // desktop: show/hide panel
+                    cuisinePanels.forEach((p, i) => p.classList.toggle('active-panel', i === idx));
+                }
+            }
+
+            function resetCuisineAuto() {
+                clearInterval(cuisineAutoTimer);
+                cuisineAutoTimer = setInterval(() => {
+                    if (window.innerWidth < 768) {
+                        const cur  = Math.round(cuisineCarousel.scrollLeft / cuisineCarousel.offsetWidth);
+                        setCuisineActive((cur + 1) % cuisinePanels.length);
+                    }
+                }, 4000);
+            }
+
+            // Tab clicks — work on both mobile and desktop
+            cuisineTabs.forEach((tab, i) => {
+                tab.addEventListener('click', () => { resetCuisineAuto(); setCuisineActive(i); });
             });
 
-            // --- CUISINE CAROUSEL (mobile) ---
-            const cuisineCarousel = document.getElementById('cuisine-carousel');
-            const cuisineDots = document.querySelectorAll('.cuisine-dot');
-            if (cuisineCarousel && cuisineDots.length) {
+            // Dot clicks
+            cuisineDots.forEach(dot => {
+                dot.addEventListener('click', () => { resetCuisineAuto(); setCuisineActive(parseInt(dot.dataset.index)); });
+            });
+
+            // Sync tabs + dots when user manually swipes
+            if (cuisineCarousel) {
                 cuisineCarousel.addEventListener('scroll', () => {
                     const idx = Math.round(cuisineCarousel.scrollLeft / cuisineCarousel.offsetWidth);
+                    cuisineTabs.forEach((t, i) => t.classList.toggle('active-tab', i === idx));
                     cuisineDots.forEach((d, i) => d.classList.toggle('active-dot', i === idx));
                 }, { passive: true });
-                cuisineDots.forEach(dot => {
-                    dot.addEventListener('click', () => {
-                        cuisineCarousel.scrollTo({ left: parseInt(dot.dataset.index) * cuisineCarousel.offsetWidth, behavior: 'smooth' });
-                    });
-                });
+                cuisineCarousel.addEventListener('touchstart', resetCuisineAuto, { passive: true });
             }
+
+            resetCuisineAuto();
 
 
             // --- TESTIMONIALS ---
