@@ -188,7 +188,7 @@
         </div>
 
         <!-- Filters & Controls -->
-        <div class="bg-sand p-4 md:p-8 grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 justify-between items-start border border-charcoal/10 fade-in-up">
+        <div id="filter-bar" class="bg-sand p-4 md:p-8 grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 justify-between items-start border border-charcoal/10 fade-in-up" style="transition: box-shadow 0.3s, top 0.3s;">
 
             <!-- Venue -->
             <div class="w-full">
@@ -630,6 +630,20 @@
         function applyFilters() {
             const query = searchInput.value.toLowerCase().trim();
             const selectedType = typeFilter.value.toLowerCase();
+
+            // Pin filter bar to top while search is active
+            const filterBar = document.getElementById('filter-bar');
+            if (query.length > 0) {
+                filterBar.style.position = 'sticky';
+                filterBar.style.top = '80px';
+                filterBar.style.zIndex = '30';
+                filterBar.style.boxShadow = '0 4px 24px rgba(28,28,28,0.10)';
+            } else {
+                filterBar.style.position = '';
+                filterBar.style.top = '';
+                filterBar.style.zIndex = '';
+                filterBar.style.boxShadow = '';
+            }
             let totalVisibleItems = 0;
 
             document.querySelectorAll('.menu-item-row').forEach(row => {
