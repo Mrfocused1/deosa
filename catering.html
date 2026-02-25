@@ -218,13 +218,16 @@
                 </div>
                 <div id="waiter-options" class="hidden mt-4 pb-2 space-y-2">
                     <div class="flex items-center justify-between">
-                        <div>
-                            <p class="font-serif text-xl font-medium text-charcoal" id="waiter-count-display">1 waiter</p>
-                            <p class="font-sans text-[10px] text-charcoal/80 font-medium mt-0.5" id="waiter-min-note">Included for up to 20 guests</p>
+                        <p class="font-sans text-[10px] text-charcoal/60 font-medium" id="waiter-min-note">Included free for up to 20 guests</p>
+                        <div class="flex items-center gap-2">
+                            <button onclick="adjustWaiters(-1)" class="w-7 h-7 border border-charcoal/30 text-charcoal/50 rounded-full flex items-center justify-center hover:border-gold hover:text-gold transition-all focus:outline-none text-lg leading-none">−</button>
+                            <span id="waiter-count-display" class="font-serif text-xl font-medium text-charcoal min-w-[1.5rem] text-center">1</span>
+                            <button onclick="adjustWaiters(1)" class="w-7 h-7 border border-charcoal/30 text-charcoal/50 rounded-full flex items-center justify-center hover:border-gold hover:text-gold transition-all focus:outline-none text-lg leading-none">+</button>
+                            <span class="font-sans text-[10px] text-charcoal/40 ml-1">waiters</span>
+                            <span class="font-serif text-xl font-light text-gold ml-3" id="waiter-subtotal">Free</span>
                         </div>
-                        <p class="font-serif text-xl font-light text-gold" id="waiter-subtotal">Free</p>
                     </div>
-                    <p class="font-sans text-[10px] text-charcoal/80 font-medium">+£150 per 10 guests above 20</p>
+                    <p class="font-sans text-[10px] text-charcoal/50 font-medium text-right">+£150 per additional waiter above recommended</p>
                 </div>
             </div>
 
@@ -259,7 +262,9 @@
                 <div>
                     <h3 class="font-sans text-xs font-light uppercase tracking-[0.2em] text-charcoal mb-6 border-b border-charcoal/20 pb-2">Menu Categories</h3>
                     <ul class="space-y-4 font-serif text-xl text-charcoal">
-                        <li class="relative"><a href="#cat-african" class="category-link active hover:text-charcoal transition-colors block">African Heritage</a></li>
+                        <li class="relative"><a href="#cat-nigerian" class="category-link active hover:text-charcoal transition-colors block">Nigerian Cuisine</a></li>
+                        <li class="relative"><a href="#cat-ghanaian" class="category-link hover:text-charcoal transition-colors block">Ghanaian Cuisine</a></li>
+                        <li class="relative"><a href="#cat-sierraleonean" class="category-link hover:text-charcoal transition-colors block">Sierra Leonean Cuisine</a></li>
                         <li class="relative"><a href="#cat-caribbean" class="category-link hover:text-charcoal transition-colors block">Caribbean Cuisine</a></li>
                         <li class="relative"><a href="#cat-canapes" class="category-link hover:text-charcoal transition-colors block">Luxury Canapés</a></li>
                     </ul>
@@ -347,8 +352,8 @@
 
         const menuData = [
             {
-                id: "cat-african",
-                categoryTitle: "African Heritage",
+                id: "cat-nigerian",
+                categoryTitle: "Nigerian Cuisine",
                 subcategories: [
                     {
                         title: "Starters",
@@ -356,7 +361,7 @@
                         items: ["Puff Puff", "Moyin Moyin", "Spicy gizzard", "Spicy Shish Kebab", "Fried Plantain & Smoked Salmon Sticks", "Assorted Meat or Fish pepper soup", "Spring Rolls Served with sauce", "Fermented oil bean seed (Ugba)", "Crispy Breaded King Prawns", "Cooked prawns, on a bed of lettuce", "Chicken wings drizzled with warm spicy barbecue sauce"]
                     },
                     {
-                        title: "Nigerian Mains",
+                        title: "Mains",
                         basePrice: 22,
                         items: [
                             "Jollof, Fried, Coconut or White Rice (w/ Plantain & Meat/Fish)",
@@ -369,7 +374,18 @@
                         ]
                     },
                     {
-                        title: "Ghanaian Mains",
+                        title: "Desserts",
+                        basePrice: 7,
+                        items: ["Fresh tropical fruit salad", "Banana cake and Ice cream", "Chocolate Gateau", "Apple Pie with ice cream"]
+                    }
+                ]
+            },
+            {
+                id: "cat-ghanaian",
+                categoryTitle: "Ghanaian Cuisine",
+                subcategories: [
+                    {
+                        title: "Mains",
                         basePrice: 22,
                         items: [
                             "Banku (Served with Okro Soup)",
@@ -384,9 +400,15 @@
                             "Goat Curry / Beef Stew / Beef Curry",
                             "Fish Stew / Fish Curry (Croaker) / Red Snapper or Tilapia"
                         ]
-                    },
+                    }
+                ]
+            },
+            {
+                id: "cat-sierraleonean",
+                categoryTitle: "Sierra Leonean Cuisine",
+                subcategories: [
                     {
-                        title: "Sierra Leonean Mains",
+                        title: "Mains",
                         basePrice: 22,
                         items: [
                             "Jollof Rice & stew with choice of meat",
@@ -399,11 +421,6 @@
                             "Red palm oil stew with 'check rice'",
                             "Fufu served with choice of soup (Palm oil, Crain Crain)"
                         ]
-                    },
-                    {
-                        title: "Desserts",
-                        basePrice: 7,
-                        items: ["Fresh tropical fruit salad", "Banana cake and Ice cream", "Chocolate Gateau", "Apple Pie with ice cream"]
                     }
                 ]
             },
@@ -458,9 +475,16 @@
 
         // Waiter state
         let waitersEnabled = false;
+        let waiterExtraCount = 0;
         const waiterCountByGuest = { 10: 1, 20: 2, 30: 3, 50: 4, 100: 6, 200: 10, 300: 15 };
-        function getWaiterCost() {
+        function getWaiterBaseCost() {
             return Math.max(0, Math.floor((currentGuestMultiplier - 20) / 10)) * 150;
+        }
+        function getWaiterCost() {
+            return getWaiterBaseCost() + waiterExtraCount * 150;
+        }
+        function getTotalWaiterCount() {
+            return (waiterCountByGuest[currentGuestMultiplier] || 1) + waiterExtraCount;
         }
 
         // --- DOM ELEMENTS ---
@@ -488,6 +512,7 @@
 
             guestSelect.addEventListener('change', (e) => {
                 currentGuestMultiplier = parseInt(e.target.value);
+                waiterExtraCount = 0;
                 updateAllDisplayedPrices();
                 if (waitersEnabled) updateWaiterDisplay();
                 renderCart();
@@ -766,7 +791,7 @@
             // Waiter line item
             if (waitersEnabled) {
                 const waiterCost = getWaiterCost();
-                const waiterCount = waiterCountByGuest[currentGuestMultiplier] || 1;
+                const waiterCount = getTotalWaiterCount();
                 total += waiterCost;
                 html += `
                     <div class="flex justify-between items-center border-b border-cream/10 py-2.5">
@@ -801,6 +826,7 @@
                 updateWaiterDisplay();
                 if (cart.length === 0) cartDrawer.style.transform = 'translateY(0)';
             } else {
+                waiterExtraCount = 0;
                 toggle.style.backgroundColor = 'rgba(28,28,28,0.15)';
                 knob.style.transform = '';
                 options.classList.add('hidden');
@@ -817,13 +843,26 @@
             updateAiBtnPosition();
         };
 
+        window.adjustWaiters = function(delta) {
+            if (delta < 0 && waiterExtraCount === 0) return; // can't go below recommended
+            waiterExtraCount = Math.max(0, waiterExtraCount + delta);
+            updateWaiterDisplay();
+            renderCart();
+        };
+
         function updateWaiterDisplay() {
-            const count = waiterCountByGuest[currentGuestMultiplier] || 1;
-            const cost = getWaiterCost();
-            document.getElementById('waiter-count-display').textContent = `${count} waiter${count !== 1 ? 's' : ''}`;
-            document.getElementById('waiter-min-note').textContent = cost === 0
-                ? 'Included free for up to 20 guests'
-                : `${count} waiters for your guest tier`;
+            const count = getTotalWaiterCount();
+            const cost  = getWaiterCost();
+            const baseCount = waiterCountByGuest[currentGuestMultiplier] || 1;
+            document.getElementById('waiter-count-display').textContent = count;
+            document.getElementById('waiter-min-note').textContent = getWaiterBaseCost() === 0
+                ? `${baseCount} included free · +${waiterExtraCount} extra`
+                : `${baseCount} recommended for ${currentGuestMultiplier} guests`;
+            if (waiterExtraCount === 0) {
+                document.getElementById('waiter-min-note').textContent = getWaiterBaseCost() === 0
+                    ? 'Included free for up to 20 guests'
+                    : `Recommended for ${currentGuestMultiplier} guests`;
+            }
             document.getElementById('waiter-subtotal').textContent = cost === 0 ? 'Free' : `£${cost.toLocaleString()}`;
         }
 
@@ -907,7 +946,7 @@
             window.addEventListener('scroll', () => {
                 let current = '';
                 sections.forEach(section => {
-                    const sectionTop = section.offsetTop;
+                    const sectionTop = section.getBoundingClientRect().top + window.pageYOffset;
                     if (section.style.display !== 'none' && scrollY >= (sectionTop - 250)) {
                         current = section.getAttribute('id');
                     }
@@ -927,7 +966,7 @@
                     const targetId = this.getAttribute('href').substring(1);
                     const targetEl = document.getElementById(targetId);
                     if (targetEl && targetEl.style.display !== 'none') {
-                        window.scrollTo({ top: targetEl.offsetTop - 120, behavior: 'smooth' });
+                        window.scrollTo({ top: targetEl.getBoundingClientRect().top + window.pageYOffset - 120, behavior: 'smooth' });
                     }
                 });
             });

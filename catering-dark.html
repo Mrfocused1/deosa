@@ -182,7 +182,9 @@
                 <div>
                     <h3 class="font-sans text-xs font-light uppercase tracking-[0.2em] text-cream/40 mb-6 border-b border-cream/10 pb-2">Menu Categories</h3>
                     <ul class="space-y-4 font-serif text-xl text-cream/40">
-                        <li class="relative"><a href="#cat-african" class="category-link active hover:text-charcoal transition-colors block">African Heritage</a></li>
+                        <li class="relative"><a href="#cat-nigerian" class="category-link active hover:text-charcoal transition-colors block">Nigerian Cuisine</a></li>
+                        <li class="relative"><a href="#cat-ghanaian" class="category-link hover:text-charcoal transition-colors block">Ghanaian Cuisine</a></li>
+                        <li class="relative"><a href="#cat-sierraleonean" class="category-link hover:text-charcoal transition-colors block">Sierra Leonean Cuisine</a></li>
                         <li class="relative"><a href="#cat-caribbean" class="category-link hover:text-charcoal transition-colors block">Caribbean Cuisine</a></li>
                         <li class="relative"><a href="#cat-canapes" class="category-link hover:text-charcoal transition-colors block">Luxury Canapés</a></li>
                     </ul>
@@ -270,8 +272,8 @@
 
         const menuData = [
             {
-                id: "cat-african",
-                categoryTitle: "African Heritage",
+                id: "cat-nigerian",
+                categoryTitle: "Nigerian Cuisine",
                 subcategories: [
                     {
                         title: "Starters",
@@ -279,7 +281,7 @@
                         items: ["Puff Puff", "Moyin Moyin", "Spicy gizzard", "Spicy Shish Kebab", "Fried Plantain & Smoked Salmon Sticks", "Assorted Meat or Fish pepper soup", "Spring Rolls Served with sauce", "Fermented oil bean seed (Ugba)", "Crispy Breaded King Prawns", "Cooked prawns, on a bed of lettuce", "Chicken wings drizzled with warm spicy barbecue sauce"]
                     },
                     {
-                        title: "Nigerian Mains",
+                        title: "Mains",
                         basePrice: 22,
                         items: [
                             "Jollof, Fried, Coconut or White Rice (w/ Plantain & Meat/Fish)",
@@ -292,7 +294,18 @@
                         ]
                     },
                     {
-                        title: "Ghanaian Mains",
+                        title: "Desserts",
+                        basePrice: 7,
+                        items: ["Fresh tropical fruit salad", "Banana cake and Ice cream", "Chocolate Gateau", "Apple Pie with ice cream"]
+                    }
+                ]
+            },
+            {
+                id: "cat-ghanaian",
+                categoryTitle: "Ghanaian Cuisine",
+                subcategories: [
+                    {
+                        title: "Mains",
                         basePrice: 22,
                         items: [
                             "Banku (Served with Okro Soup)",
@@ -307,9 +320,15 @@
                             "Goat Curry / Beef Stew / Beef Curry",
                             "Fish Stew / Fish Curry (Croaker) / Red Snapper or Tilapia"
                         ]
-                    },
+                    }
+                ]
+            },
+            {
+                id: "cat-sierraleonean",
+                categoryTitle: "Sierra Leonean Cuisine",
+                subcategories: [
                     {
-                        title: "Sierra Leonean Mains",
+                        title: "Mains",
                         basePrice: 22,
                         items: [
                             "Jollof Rice & stew with choice of meat",
@@ -322,11 +341,6 @@
                             "Red palm oil stew with 'check rice'",
                             "Fufu served with choice of soup (Palm oil, Crain Crain)"
                         ]
-                    },
-                    {
-                        title: "Desserts",
-                        basePrice: 7,
-                        items: ["Fresh tropical fruit salad", "Banana cake and Ice cream", "Chocolate Gateau", "Apple Pie with ice cream"]
                     }
                 ]
             },
@@ -754,7 +768,7 @@
             window.addEventListener('scroll', () => {
                 let current = '';
                 sections.forEach(section => {
-                    const sectionTop = section.offsetTop;
+                    const sectionTop = section.getBoundingClientRect().top + window.pageYOffset;
                     if (section.style.display !== 'none' && scrollY >= (sectionTop - 250)) {
                         current = section.getAttribute('id');
                     }
@@ -774,7 +788,7 @@
                     const targetId = this.getAttribute('href').substring(1);
                     const targetEl = document.getElementById(targetId);
                     if (targetEl && targetEl.style.display !== 'none') {
-                        window.scrollTo({ top: targetEl.offsetTop - 120, behavior: 'smooth' });
+                        window.scrollTo({ top: targetEl.getBoundingClientRect().top + window.pageYOffset - 120, behavior: 'smooth' });
                     }
                 });
             });
