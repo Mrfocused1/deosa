@@ -220,20 +220,22 @@
             </div>
 
             <!-- Month nav + view toggle -->
-            <div class="flex items-center justify-between">
-                <div class="flex items-center gap-4">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
                     <button onclick="changeMonth(-1)" class="w-8 h-8 flex items-center justify-center border border-cream/15 text-cream/50 hover:border-gold/40 hover:text-gold transition-all rounded">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
                     </button>
-                    <h3 id="month-label" class="font-serif text-2xl text-cream w-48 text-center"></h3>
+                    <h3 id="month-label" class="font-serif text-2xl text-cream"></h3>
                     <button onclick="changeMonth(1)" class="w-8 h-8 flex items-center justify-center border border-cream/15 text-cream/50 hover:border-gold/40 hover:text-gold transition-all rounded">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                     </button>
-                    <button onclick="goToToday()" class="px-3 py-1.5 border border-cream/15 text-cream/40 font-sans text-[10px] font-bold uppercase tracking-widest rounded hover:border-gold/40 hover:text-gold transition-all">Today</button>
                 </div>
-                <div class="flex gap-1">
-                    <button id="btn-cal" class="view-btn active" onclick="setView('calendar')">Calendar</button>
-                    <button id="btn-list" class="view-btn" onclick="setView('list')">List</button>
+                <div class="flex items-center gap-2">
+                    <button onclick="goToToday()" class="px-3 py-1.5 border border-cream/15 text-cream/40 font-sans text-[10px] font-bold uppercase tracking-widest rounded hover:border-gold/40 hover:text-gold transition-all">Today</button>
+                    <div class="flex gap-1">
+                        <button id="btn-cal" class="view-btn active" onclick="setView('calendar')">Calendar</button>
+                        <button id="btn-list" class="view-btn" onclick="setView('list')">List</button>
+                    </div>
                 </div>
             </div>
 
