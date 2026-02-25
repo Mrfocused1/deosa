@@ -125,6 +125,54 @@
         .drawer-open   { transform: translateX(0%); }
         .drawer-closed { transform: translateX(100%); }
 
+        /* ─── Light Mode ─── */
+        html[data-theme="light"] body {
+            background-color: #F0EDE6;
+            color: #1C1C1C;
+        }
+        html[data-theme="light"] aside {
+            background-color: #FDFBF7;
+            border-right-color: rgba(28,28,28,0.1) !important;
+        }
+        html[data-theme="light"] aside .border-b { border-color: rgba(28,28,28,0.08) !important; }
+        html[data-theme="light"] .nav-inactive { color: rgba(28,28,28,0.5) !important; border-color: transparent !important; }
+        html[data-theme="light"] .nav-inactive:hover { color: rgba(28,28,28,0.85) !important; background: rgba(28,28,28,0.05) !important; }
+        html[data-theme="light"] .nav-active { background: rgba(197,160,89,0.12) !important; color: #C5A059 !important; border-color: rgba(197,160,89,0.25) !important; }
+        html[data-theme="light"] main > header { border-bottom-color: rgba(28,28,28,0.1) !important; }
+        html[data-theme="light"] #mobile-menu { background: #FDFBF7 !important; }
+        html[data-theme="light"] #global-search { background: rgba(28,28,28,0.06) !important; border-color: rgba(28,28,28,0.12) !important; color: #1C1C1C !important; }
+        html[data-theme="light"] #global-search::placeholder { color: rgba(28,28,28,0.35) !important; }
+        html[data-theme="light"] .dash-card { background: rgba(253,251,247,0.85) !important; border-color: rgba(28,28,28,0.09) !important; }
+        html[data-theme="light"] .dash-card:hover { border-color: rgba(197,160,89,0.3) !important; }
+        html[data-theme="light"] .badge-neutral { background: rgba(28,28,28,0.06) !important; color: rgba(28,28,28,0.5) !important; border-color: rgba(28,28,28,0.12) !important; }
+        html[data-theme="light"] select {
+            background-image: url("data:image/svg+xml;utf8,<svg fill='%231C1C1C' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>") !important;
+            color: rgba(28,28,28,0.7) !important;
+            border-color: rgba(28,28,28,0.12) !important;
+        }
+        html[data-theme="light"] #crm-table-body tr { border-color: rgba(28,28,28,0.06) !important; }
+        html[data-theme="light"] #crm-table-body tr:hover { background: rgba(28,28,28,0.025) !important; }
+        html[data-theme="light"] #transcript-drawer { background: #F0EDE6 !important; border-left-color: rgba(28,28,28,0.1) !important; }
+        html[data-theme="light"] #comms-sheet { background: #F0EDE6 !important; border-top-color: rgba(197,160,89,0.2) !important; }
+        /* Tailwind class overrides */
+        html[data-theme="light"] .text-cream { color: #1C1C1C !important; }
+        html[data-theme="light"] .text-cream\/80 { color: rgba(28,28,28,0.8) !important; }
+        html[data-theme="light"] .text-cream\/60 { color: rgba(28,28,28,0.6) !important; }
+        html[data-theme="light"] .text-cream\/50 { color: rgba(28,28,28,0.5) !important; }
+        html[data-theme="light"] .text-cream\/45 { color: rgba(28,28,28,0.45) !important; }
+        html[data-theme="light"] .text-cream\/40 { color: rgba(28,28,28,0.4) !important; }
+        html[data-theme="light"] .text-cream\/35 { color: rgba(28,28,28,0.35) !important; }
+        html[data-theme="light"] .text-cream\/30 { color: rgba(28,28,28,0.3) !important; }
+        html[data-theme="light"] .text-cream\/25 { color: rgba(28,28,28,0.25) !important; }
+        html[data-theme="light"] .text-cream\/20 { color: rgba(28,28,28,0.2) !important; }
+        html[data-theme="light"] .border-cream\/10 { border-color: rgba(28,28,28,0.1) !important; }
+        html[data-theme="light"] .border-cream\/15 { border-color: rgba(28,28,28,0.15) !important; }
+        html[data-theme="light"] .border-cream\/20 { border-color: rgba(28,28,28,0.2) !important; }
+        html[data-theme="light"] .bg-cream\/5 { background-color: rgba(28,28,28,0.05) !important; }
+        html[data-theme="light"] .bg-cream\/8 { background-color: rgba(28,28,28,0.06) !important; }
+        html[data-theme="light"] .bg-cream\/\[0\.03\] { background-color: rgba(28,28,28,0.03) !important; }
+        /* Theme toggle button */
+        .theme-toggle { transition: color 0.2s, background 0.2s; }
     </style>
 </head>
 <body class="noise selection:bg-gold selection:text-charcoal flex h-screen overflow-hidden">
@@ -133,7 +181,7 @@
     <aside class="w-64 flex-col hidden md:flex shrink-0 z-20 border-r border-cream/10 relative">
         <!-- Logo -->
         <div class="p-8 border-b border-cream/10">
-            <a href="index.html"><img src="images/logo-dark-bg.svg" alt="De'Osa" class="h-8 w-auto"></a>
+            <a href="index.html"><img id="sidebar-logo" src="images/logo-dark-bg.svg" alt="De'Osa" class="h-8 w-auto"></a>
             <p class="font-sans text-[10px] tracking-[0.25em] uppercase text-cream/40 mt-3">Staff Dashboard</p>
         </div>
 
@@ -179,7 +227,7 @@
         <button onclick="toggleMobileMenu()" class="absolute top-6 right-6 font-sans text-xs font-bold tracking-widest uppercase text-cream/50 hover:text-gold transition-colors border border-cream/10 px-4 py-2 rounded-full">Close</button>
 
         <div class="text-center mb-4">
-            <img src="images/logo-dark-bg.svg" alt="De'Osa" class="h-10 w-auto mx-auto">
+            <img id="mobile-logo" src="images/logo-dark-bg.svg" alt="De'Osa" class="h-10 w-auto mx-auto">
             <p class="font-sans text-[10px] tracking-[0.25em] uppercase text-cream/30 mt-3">Staff Dashboard</p>
         </div>
 
@@ -239,6 +287,14 @@
             <button class="ml-3 md:ml-4 relative p-2 text-cream/40 hover:text-gold transition-colors shrink-0">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
                 <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-gold rounded-full"></span>
+            </button>
+
+            <!-- Light / Dark toggle -->
+            <button id="theme-toggle" onclick="toggleTheme()" class="theme-toggle ml-1 p-2 text-cream/40 hover:text-gold transition-colors shrink-0" title="Toggle light/dark mode">
+                <!-- Moon — shown in dark mode -->
+                <svg id="theme-icon-moon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+                <!-- Sun — shown in light mode -->
+                <svg id="theme-icon-sun" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m8.66-9h-1M4.34 12h-1m15.07-6.07-.71.71M6.34 17.66l-.71.71m12.73 0-.71-.71M6.34 6.34l-.71-.71M12 5a7 7 0 100 14A7 7 0 0012 5z"/></svg>
             </button>
         </header>
 
@@ -1166,6 +1222,70 @@
         <div class="flex-1 overflow-y-auto px-6 py-5" id="comms-sheet-body"></div>
     </div>
 
+    <script>
+        /* ─── Theme Toggle ─── */
+        const LOGOS = { dark: 'images/logo-dark-bg.svg', light: 'images/logo-light.svg' };
+
+        function applyTheme(theme) {
+            const isLight = theme === 'light';
+            document.documentElement.setAttribute('data-theme', theme);
+            // Icons
+            document.getElementById('theme-icon-moon').classList.toggle('hidden', isLight);
+            document.getElementById('theme-icon-sun').classList.toggle('hidden', !isLight);
+            // Logos
+            const logo = isLight ? LOGOS.light : LOGOS.dark;
+            document.getElementById('sidebar-logo').src = logo;
+            document.getElementById('mobile-logo').src  = logo;
+            // Metric period inline styles need refreshing for correct inactive colour
+            const activePeriodBtn = document.querySelector('.metric-period[data-active="true"]');
+            if (activePeriodBtn) {
+                const inactiveColor  = isLight ? 'rgba(28,28,28,0.4)'  : 'rgba(253,251,247,0.35)';
+                const inactiveBorder = isLight ? 'rgba(28,28,28,0.12)' : 'rgba(253,251,247,0.1)';
+                document.querySelectorAll('.metric-period').forEach(btn => {
+                    const active = btn === activePeriodBtn;
+                    if (!active) {
+                        btn.style.color       = inactiveColor;
+                        btn.style.borderColor = inactiveBorder;
+                        btn.style.background  = 'transparent';
+                    }
+                });
+            }
+            localStorage.setItem('admin-theme', theme);
+        }
+
+        window.toggleTheme = function() {
+            const current = document.documentElement.getAttribute('data-theme') || 'dark';
+            applyTheme(current === 'light' ? 'dark' : 'light');
+        };
+
+        // Patch setMetricPeriod to use theme-aware colours
+        const _origSetMetricPeriod = window.setMetricPeriod || null;
+        document.addEventListener('DOMContentLoaded', () => {
+            const origFn = setMetricPeriod;
+            setMetricPeriod = function(period) {
+                origFn(period);
+                // Mark active button for theme switcher reference
+                document.querySelectorAll('.metric-period').forEach(btn => {
+                    btn.dataset.active = btn.dataset.period === period ? 'true' : 'false';
+                });
+                // Re-apply inactive colour for current theme
+                const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+                const inactiveColor  = isLight ? 'rgba(28,28,28,0.4)'  : 'rgba(253,251,247,0.35)';
+                const inactiveBorder = isLight ? 'rgba(28,28,28,0.12)' : 'rgba(253,251,247,0.1)';
+                document.querySelectorAll('.metric-period').forEach(btn => {
+                    if (btn.dataset.period !== period) {
+                        btn.style.color       = inactiveColor;
+                        btn.style.borderColor = inactiveBorder;
+                        btn.style.background  = 'transparent';
+                    }
+                });
+            };
+
+            // Load saved theme
+            const saved = localStorage.getItem('admin-theme') || 'dark';
+            applyTheme(saved);
+        });
+    </script>
 
 </body>
 </html>
