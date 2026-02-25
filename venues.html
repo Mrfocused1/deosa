@@ -35,9 +35,15 @@
         /* ── Venue list panel ── */
         .venue-panel {
             height: calc(100vh - 80px);
-            overflow-y: auto;
             position: sticky;
             top: 80px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        #list-desk {
+            overflow-y: auto;
+            flex: 1;
         }
         .venue-card {
             padding: 1rem 1.75rem;
@@ -164,9 +170,6 @@
 </div>
 
 <!-- Mobile list -->
-<div class="md:hidden venue-card" onclick="viewAll()" style="border-left:3px solid transparent">
-    <p class="font-sans text-[9px] uppercase tracking-widest text-gold">View All</p>
-</div>
 <div class="md:hidden" id="list-mob"></div>
 
 <!-- ══════════════════════════════════════════
@@ -177,12 +180,9 @@
     <!-- Left: Venue list -->
     <div class="venue-panel bg-cream border-r border-charcoal/8" style="width:36%;min-width:300px;max-width:460px">
         <!-- Sticky search header -->
-        <div class="px-8 py-6 border-b border-charcoal/8 bg-cream sticky top-[80px] z-20">
+        <div class="px-8 py-6 border-b border-charcoal/8 bg-cream shrink-0">
             <input id="search-desk" type="search" placeholder="Search venues…" class="vs-input">
             <p id="count-desk" class="font-sans text-[9px] uppercase tracking-widest text-charcoal/35 mt-3">45 venues</p>
-        </div>
-        <div class="venue-card" onclick="viewAll()" style="border-left:3px solid transparent">
-            <p class="font-sans text-[9px] uppercase tracking-widest text-gold">View All</p>
         </div>
         <div id="list-desk"></div>
     </div>
@@ -374,7 +374,11 @@ function renderList(containerId, list) {
         return;
     }
 
-    el.innerHTML = list.map(v => {
+    const viewAllRow = `<div class="venue-card" onclick="viewAll()" style="border-left:3px solid transparent;background:#FDFBF7">
+        <p class="font-sans text-[9px] uppercase tracking-widest text-gold">View All</p>
+    </div>`;
+
+    el.innerHTML = viewAllRow + list.map(v => {
         const i = VENUES.indexOf(v);
         return `<div class="venue-card" data-idx="${i}" onclick="activateVenue(${i})">
             <div class="flex items-start justify-between gap-3">
