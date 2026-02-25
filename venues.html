@@ -9,6 +9,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -63,18 +65,15 @@
         }
         #map-mobile { width: 100%; height: 50vh; }
 
-        /* ── Map no-key state ── */
-        #no-key-desk {
-            position: absolute; inset: 0;
-            display: none; flex-direction: column; align-items: center; justify-content: center;
-            background: #F4F1EA; text-align: center; padding: 3rem;
-        }
 
-        /* ── Google Maps info window reset ── */
-        .gm-style .gm-style-iw-c  { padding: 0 !important; border-radius: 0 !important; box-shadow: 0 4px 24px rgba(28,28,28,0.12) !important; }
-        .gm-style .gm-style-iw-d  { overflow: hidden !important; }
-        .gm-style .gm-style-iw-tc { display: none !important; }
-        .gm-style button.gm-ui-hover-effect { top: 4px !important; right: 4px !important; }
+        /* ── Leaflet overrides ── */
+        .leaflet-popup-content-wrapper { padding: 0 !important; border-radius: 0 !important; box-shadow: 0 4px 24px rgba(28,28,28,0.12) !important; }
+        .leaflet-popup-content { margin: 0 !important; }
+        .leaflet-popup-tip-container { display: none !important; }
+        .leaflet-control-attribution { font-size: 9px !important; background: rgba(253,251,247,0.8) !important; }
+        /* Warm tile tint to match cream palette */
+        #map-desktop .leaflet-tile-pane,
+        #map-mobile  .leaflet-tile-pane { filter: sepia(15%) saturate(0.85) brightness(1.04); }
 
         /* ── Fade-up animation ── */
         .fade-up { opacity: 0; transform: translateY(24px); transition: opacity .7s ease, transform .7s ease; }
@@ -157,11 +156,6 @@
 ══════════════════════════════════════════ -->
 <div class="md:hidden relative bg-sand">
     <div id="map-mobile"></div>
-    <!-- No-key overlay for mobile -->
-    <div id="no-key-mobile" class="absolute inset-0 flex flex-col items-center justify-center bg-sand text-center px-6" style="display:none">
-        <svg class="w-10 h-10 mb-3" fill="none" stroke="#C5A059" stroke-width="1" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0zM15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-        <p class="font-serif text-xl text-charcoal/40">Add a Google Maps API key to enable the map</p>
-    </div>
 </div>
 
 <div class="md:hidden sticky z-30 bg-cream border-b border-charcoal/8 px-6 py-4" style="top:80px">
@@ -190,16 +184,6 @@
     <!-- Right: Map -->
     <div class="flex-1 relative">
         <div id="map-desktop"></div>
-        <!-- No-key overlay -->
-        <div id="no-key-desk">
-            <svg class="w-14 h-14 mb-6" fill="none" stroke="#C5A059" stroke-width="0.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0zM15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-            <p class="font-serif text-3xl text-charcoal/35 mb-3">Map awaiting API key</p>
-            <p class="font-sans text-xs text-charcoal/25 max-w-xs leading-relaxed">
-                Replace <code class="bg-charcoal/5 px-1 rounded text-charcoal/40">YOUR_GOOGLE_MAPS_API_KEY</code>
-                in <code class="bg-charcoal/5 px-1 rounded text-charcoal/40">venues.html</code> to activate the interactive map.
-                Get a key at <span class="text-charcoal/35">console.cloud.google.com</span>
-            </p>
-        </div>
     </div>
 </div>
 
@@ -222,11 +206,9 @@
      JAVASCRIPT
 ══════════════════════════════════════════ -->
 <script>
-// ─── REPLACE THIS WITH YOUR GOOGLE MAPS API KEY ───────────────────────────
-// Get one free at: https://console.cloud.google.com/apis/library/maps-javascript-api
-// Restrict it to your domain: deosa.shop
-const GMAPS_KEY = 'AIzaSyAsIzyBvWYmmsQtNYDh60QUI8WU4sweljk';
-// ──────────────────────────────────────────────────────────────────────────
+// ── Map tiles (OpenStreetMap via CartoDB Positron — no API key needed) ────
+const TILE_URL  = 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
+const TILE_ATTR = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/">CARTO</a>';
 
 const VENUES = [
     { name: "8 Northumberland Avenue",                  lat: 51.5075,  lng: -0.1236,  area: "London WC2" },
@@ -289,119 +271,89 @@ const PIN_ACTIVE = `<svg xmlns="http://www.w3.org/2000/svg" width="36" height="4
   <text x="15" y="20" text-anchor="middle" fill="#1C1C1C" font-family="Cormorant Garamond,serif" font-size="12" font-weight="700">D</text>
 </svg>`;
 
-// ── Map styles (cream/sand palette matching the site) ─────────────────────
-const MAP_STYLES = [
-    { elementType: "geometry",                  stylers: [{ color: "#FDFBF7" }] },
-    { elementType: "labels.text.fill",          stylers: [{ color: "#1C1C1C" }] },
-    { elementType: "labels.text.stroke",        stylers: [{ color: "#FDFBF7" }] },
-    { featureType: "administrative",            elementType: "geometry.stroke",        stylers: [{ color: "#C5A059" }, { weight: 0.6 }] },
-    { featureType: "administrative.locality",   elementType: "labels.text.fill",       stylers: [{ color: "#4a3f2f" }] },
-    { featureType: "landscape",                 elementType: "geometry",               stylers: [{ color: "#F4F1EA" }] },
-    { featureType: "poi",                       elementType: "geometry",               stylers: [{ color: "#ECE7DF" }] },
-    { featureType: "poi",                       elementType: "labels.text.fill",       stylers: [{ color: "#8B7355" }] },
-    { featureType: "poi.park",                  elementType: "geometry",               stylers: [{ color: "#E0D9CC" }] },
-    { featureType: "road",                      elementType: "geometry",               stylers: [{ color: "#E8E2D8" }] },
-    { featureType: "road",                      elementType: "labels.text.fill",       stylers: [{ color: "#8B7355" }] },
-    { featureType: "road.highway",              elementType: "geometry",               stylers: [{ color: "#D4C9B5" }] },
-    { featureType: "road.highway",              elementType: "geometry.stroke",        stylers: [{ color: "#C5A059" }, { weight: 0.5 }] },
-    { featureType: "transit",                   elementType: "geometry",               stylers: [{ color: "#EDE8E0" }] },
-    { featureType: "water",                     elementType: "geometry.fill",          stylers: [{ color: "#BFC8D0" }] },
-    { featureType: "water",                     elementType: "labels.text.fill",       stylers: [{ color: "#8B7355" }] },
-];
-
 // ── State ─────────────────────────────────────────────────────────────────
-let _map = null, _markers = [], _iw = null, _activeIdx = -1;
+let _mapDesk = null, _mapMob = null, _markersDesk = [], _markersMob = [], _activeIdx = -1;
 
-// ── Auth failure handler (called by Maps API on key errors) ──────────────
-window.gm_authFailure = function () { showNoKey(); };
+// ── Leaflet helpers ────────────────────────────────────────────────────────
+function makeIcon(active) {
+    return L.divIcon({
+        html:       active ? PIN_ACTIVE : PIN,
+        className:  '',
+        iconSize:   active ? [36, 45] : [30, 38],
+        iconAnchor: active ? [18, 45] : [15, 38],
+        popupAnchor:[0, -42],
+    });
+}
 
-// ── Map initialisation (called by Google Maps callback) ───────────────────
-window.initMap = function () {
-    const mapOptions = {
-        center:             { lat: 51.52, lng: -0.12 },
-        zoom:               9,
-        styles:             MAP_STYLES,
-        mapTypeControl:     false,
-        streetViewControl:  false,
-        fullscreenControl:  false,
-        zoomControlOptions: { position: google.maps.ControlPosition.RIGHT_TOP },
-    };
+function createLeafletMap(elId) {
+    const m = L.map(elId, { zoomControl: true, scrollWheelZoom: true });
+    L.tileLayer(TILE_URL, { attribution: TILE_ATTR, maxZoom: 19 }).addTo(m);
+    m.setView([51.52, -0.12], 9);
+    return m;
+}
 
-    // Initialise whichever map containers exist in the DOM
+function popupHtml(v) {
+    return `<div style="padding:14px 18px;min-width:200px;font-family:inherit">
+        <p style="font-family:Cormorant Garamond,serif;font-size:1.05rem;font-weight:500;color:#1C1C1C;margin:0 0 5px">${v.name}</p>
+        <p style="font-family:Montserrat,sans-serif;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:rgba(28,28,28,.4);margin:0">${v.area}</p>
+        <a href="catering.html" style="display:inline-block;margin-top:10px;font-family:Montserrat,sans-serif;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:#C5A059;text-decoration:none">Book this venue →</a>
+    </div>`;
+}
+
+// ── Map initialisation ────────────────────────────────────────────────────
+function initMap() {
     const elDesk = document.getElementById('map-desktop');
     const elMob  = document.getElementById('map-mobile');
-    const el     = elDesk || elMob;
-    if (!el) return;
 
-    _map = new google.maps.Map(el, mapOptions);
-    // Also init the other container if present (handles resize/both viewports)
-    if (elDesk && elMob) new google.maps.Map(elMob, mapOptions);
-
-    _iw = new google.maps.InfoWindow({ pixelOffset: new google.maps.Size(0, -4) });
-
-    const iconDefault = {
-        url:        'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(PIN),
-        scaledSize: new google.maps.Size(30, 38),
-        anchor:     new google.maps.Point(15, 38),
-    };
-
-    VENUES.forEach((v, i) => {
-        const m = new google.maps.Marker({
-            position:  { lat: v.lat, lng: v.lng },
-            map:       _map,
-            title:     v.name,
-            icon:      iconDefault,
-            optimized: false,
+    if (elDesk) {
+        _mapDesk = createLeafletMap('map-desktop');
+        VENUES.forEach((v, i) => {
+            const m = L.marker([v.lat, v.lng], { icon: makeIcon(false) })
+                .bindPopup(popupHtml(v))
+                .on('click', () => activateVenue(i))
+                .addTo(_mapDesk);
+            _markersDesk.push(m);
         });
-        m.addListener('click', () => activateVenue(i));
-        _markers.push(m);
-    });
-};
+    }
+
+    if (elMob) {
+        _mapMob = createLeafletMap('map-mobile');
+        VENUES.forEach((v, i) => {
+            const m = L.marker([v.lat, v.lng], { icon: makeIcon(false) })
+                .bindPopup(popupHtml(v))
+                .on('click', () => activateVenue(i))
+                .addTo(_mapMob);
+            _markersMob.push(m);
+        });
+    }
+}
 
 // ── Activate a venue (from list click or map pin click) ───────────────────
 function activateVenue(idx) {
-    // Reset previous
-    if (_activeIdx >= 0 && _markers[_activeIdx]) {
-        _markers[_activeIdx].setIcon({
-            url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(PIN),
-            scaledSize: new google.maps.Size(30, 38),
-            anchor:     new google.maps.Point(15, 38),
-        });
-        _markers[_activeIdx].setZIndex(0);
+    // Reset previous marker
+    if (_activeIdx >= 0) {
+        if (_markersDesk[_activeIdx]) _markersDesk[_activeIdx].setIcon(makeIcon(false));
+        if (_markersMob[_activeIdx])  _markersMob[_activeIdx].setIcon(makeIcon(false));
     }
 
     _activeIdx = idx;
     const v = VENUES[idx];
 
-    // Set active marker
-    if (_markers[idx]) {
-        _markers[idx].setIcon({
-            url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(PIN_ACTIVE),
-            scaledSize: new google.maps.Size(36, 45),
-            anchor:     new google.maps.Point(18, 45),
-        });
-        _markers[idx].setZIndex(999);
-
-        if (_map) {
-            _map.panTo({ lat: v.lat, lng: v.lng });
-            _map.setZoom(14);
-        }
-        if (_iw) {
-            _iw.setContent(`
-                <div style="padding:14px 18px;min-width:200px;font-family:inherit">
-                    <p style="font-family:Cormorant Garamond,serif;font-size:1.05rem;font-weight:500;color:#1C1C1C;margin:0 0 5px">${v.name}</p>
-                    <p style="font-family:Montserrat,sans-serif;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:rgba(28,28,28,.4);margin:0">${v.area}</p>
-                    <a href="catering.html" style="display:inline-block;margin-top:10px;font-family:Montserrat,sans-serif;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:#C5A059;text-decoration:none">Book this venue →</a>
-                </div>`);
-            _iw.open(_map, _markers[idx]);
-        }
+    if (_markersDesk[idx]) {
+        _markersDesk[idx].setIcon(makeIcon(true));
+        _mapDesk.setView([v.lat, v.lng], 14);
+        _markersDesk[idx].openPopup();
+    }
+    if (_markersMob[idx]) {
+        _markersMob[idx].setIcon(makeIcon(true));
+        _mapMob.setView([v.lat, v.lng], 14);
+        _markersMob[idx].openPopup();
     }
 
     // Highlight list card
     document.querySelectorAll('.venue-card').forEach(el => {
         el.classList.toggle('active', parseInt(el.dataset.idx) === idx);
     });
-    // Scroll into view
     const card = document.querySelector(`.venue-card[data-idx="${idx}"]`);
     if (card) card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
@@ -472,25 +424,11 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => el.classList.add('visible'), 200 + i * 100);
     });
 
-    // Load Google Maps
-    if (GMAPS_KEY && GMAPS_KEY !== 'YOUR_GOOGLE_MAPS_API_KEY') {
-        const s  = document.createElement('script');
-        s.src    = `https://maps.googleapis.com/maps/api/js?key=${GMAPS_KEY}&callback=initMap`;
-        s.async  = true;
-        s.defer  = true;
-        s.onerror = () => showNoKey();
-        document.head.appendChild(s);
-    } else {
-        showNoKey();
-    }
+    // Initialise Leaflet map (no API key needed)
+    initMap();
 });
 
-function showNoKey() {
-    const desk = document.getElementById('no-key-desk');
-    const mob  = document.getElementById('no-key-mobile');
-    if (desk) desk.style.display = 'flex';
-    if (mob)  mob.style.display  = 'flex';
-}
+
 </script>
 </body>
 </html>
