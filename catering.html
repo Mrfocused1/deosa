@@ -550,6 +550,8 @@
                 menuContainer.innerHTML += sectionHTML;
             });
 
+            applyStoredPrices();
+
             gsap.utils.toArray('.menu-section').forEach(section => {
                 gsap.from(section, {
                     y: 40, duration: 0.8,
@@ -610,9 +612,66 @@
 
         function updateAllDisplayedPrices() {
             document.querySelectorAll('.price-display').forEach(el => {
-                const base = parseInt(el.getAttribute('data-base'));
+                const base = parseFloat(el.getAttribute('data-base'));
                 el.textContent = (base * currentGuestMultiplier).toLocaleString();
             });
+        }
+
+        // Normalise a dish name for fuzzy matching
+        function _normName(s) {
+            return s.toLowerCase().replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
+        }
+        function _wordsMatch(a, b) {
+            const wa = a.split(' ').filter(w => w.length > 3);
+            const wb = new Set(b.split(' ').filter(w => w.length > 3));
+            return wa.filter(w => wb.has(w)).length >= Math.min(3, wa.length, wb.size);
+        }
+
+        // Apply prices saved from the admin Menus & Pricing page
+        function applyStoredPrices() {
+            try {
+                const saved = localStorage.getItem('mp_menuCatalogue');
+                if (!saved) return;
+                const catalogue = JSON.parse(saved);
+
+                // Build normalised-name → price map (skip unset prices)
+                const priceMap = new Map();
+                Object.values(catalogue).forEach(items => {
+                    items.forEach(item => {
+                        if (item.price > 0) priceMap.set(_normName(item.name), item.price);
+                    });
+                });
+                if (!priceMap.size) return;
+
+                document.querySelectorAll('.menu-item-row').forEach(row => {
+                    const h4 = row.querySelector('h4');
+                    if (!h4) return;
+                    const rowNorm = _normName(h4.textContent);
+
+                    let price = null;
+                    for (const [crmNorm, crmPrice] of priceMap) {
+                        if (rowNorm === crmNorm || rowNorm.includes(crmNorm) || crmNorm.includes(rowNorm) || _wordsMatch(rowNorm, crmNorm)) {
+                            price = crmPrice;
+                            break;
+                        }
+                    }
+                    if (!price) return;
+
+                    // Update the price-display span's data-base so guest-count changes still work
+                    const display = row.querySelector('.price-display');
+                    if (display) {
+                        display.setAttribute('data-base', price);
+                        display.textContent = (price * currentGuestMultiplier).toLocaleString();
+                    }
+
+                    // Update the addToCart button to use the new price
+                    const btn = row.querySelector('button[onclick]');
+                    if (btn) {
+                        const escaped = h4.textContent.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+                        btn.setAttribute('onclick', `addToCart('${escaped}', ${price})`);
+                    }
+                });
+            } catch(e) {}
         }
 
         // --- CART ---
