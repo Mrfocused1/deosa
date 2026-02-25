@@ -178,11 +178,7 @@
             opacity: 0.3;
             transform: scale(1);
         }
-        #welcome-overlay .btn-glow:hover {
-            box-shadow: 0 0 20px rgba(197, 160, 89, 0.4);
-            border-color: #C5A059;
-            background-color: rgba(197, 160, 89, 0.1);
-        }
+
     </style>
 </head>
 <body class="selection:bg-gold selection:text-white">
@@ -217,12 +213,6 @@
             <div class="text-center overflow-hidden h-32 flex flex-col items-center justify-center">
                 <img id="wl-brand-name" src="images/logo-dark-bg.svg" class="h-16 md:h-24 w-auto opacity-0 translate-y-8" alt="De'Osa">
                 <p id="wl-sub-title" class="font-sans text-xs md:text-sm font-bold tracking-[0.4em] uppercase text-gold mt-4 opacity-0 transform translate-y-4">Catering & Events</p>
-            </div>
-            <!-- Enter Button -->
-            <div class="mt-12 overflow-hidden h-16">
-                <button id="wl-enter-btn" onclick="dismissWelcome()" class="inline-block px-10 py-3 border border-cream/30 text-cream font-sans text-xs uppercase tracking-[0.2em] font-bold rounded-full transition-all duration-500 opacity-0 transform translate-y-full btn-glow z-20 relative cursor-pointer">
-                    Enter Experience
-                </button>
             </div>
         </div>
     </div>
@@ -967,14 +957,7 @@
                     )
                     .to('#wl-brand-name', { y: 0, opacity: 1, duration: 1.2, ease: "power3.out" }, "-=0.5")
                     .to('#wl-sub-title', { y: 0, opacity: 1, duration: 1, ease: "power3.out" }, "-=0.8")
-                    .to('#wl-svg', { opacity: 0.3, scale: 0.9, duration: 1.5 }, "+=0.2")
-                    .call(() => document.getElementById('wl-hero-bg').classList.add('active'), [], "-=1.0")
-                    .to('#wl-enter-btn', { y: 0, opacity: 1, duration: 1, ease: "back.out(1.2)" }, "-=0.5")
                     .call(() => setTimeout(() => dismissWelcome(), 1000));
-                gsap.to('.wl-steam-line', {
-                    y: -5, opacity: 0.5, duration: 2, yoyo: true, repeat: -1,
-                    ease: "sine.inOut", stagger: 0.3, delay: 4
-                });
             }
 
             // --- PROGRESS BAR ---
