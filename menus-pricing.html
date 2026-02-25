@@ -804,8 +804,22 @@
     }
 
     /* ════════════════════════════════════
-       BOOT
+       BOOT — load any saved data first
     ════════════════════════════════════ */
+    try {
+        const ss = localStorage.getItem('mp_serviceStyles');
+        if (ss) { const d = JSON.parse(ss); serviceStyles.length = 0; d.forEach(i => serviceStyles.push(i)); }
+
+        const ao = localStorage.getItem('mp_addOns');
+        if (ao) { const d = JSON.parse(ao); addOns.length = 0; d.forEach(i => addOns.push(i)); }
+
+        const pk = localStorage.getItem('mp_packages');
+        if (pk) { const d = JSON.parse(pk); packages.length = 0; d.forEach(i => packages.push(i)); }
+
+        const mc = localStorage.getItem('mp_menuCatalogue');
+        if (mc) { const d = JSON.parse(mc); Object.keys(d).forEach(k => { menuCatalogue[k] = d[k]; }); }
+    } catch(e) {}
+
     renderServiceStyles();
     renderAddOns();
     renderCoursePills();
