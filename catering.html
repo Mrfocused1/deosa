@@ -201,7 +201,7 @@
             <!-- Type of Event -->
             <div class="w-full">
                 <label class="block font-sans text-xs uppercase tracking-widest text-charcoal font-bold mb-2">Type of Event</label>
-                <select id="event-type" class="w-full border-b border-charcoal/20 py-3 focus:outline-none focus:border-gold font-serif text-xl font-medium text-charcoal cursor-pointer">
+                <select id="event-type" onchange="toggleOtherEvent(this)" class="w-full border-b border-charcoal/20 py-3 focus:outline-none focus:border-gold font-serif text-xl font-medium text-charcoal cursor-pointer">
                     <option value="" disabled selected>Select event...</option>
                     <option>Wedding</option>
                     <option>Engagement Party</option>
@@ -223,6 +223,7 @@
                     <option>School Prom</option>
                     <option>Other</option>
                 </select>
+                <input id="event-type-other" type="text" placeholder="Describe your event…" class="w-full bg-transparent border-b border-gold py-2 mt-2 focus:outline-none font-serif text-lg font-medium text-charcoal placeholder:text-charcoal/40" style="display:none">
             </div>
 
             <!-- Guest Count -->
@@ -627,6 +628,12 @@
         }
 
         // --- FILTERING ---
+        function toggleOtherEvent(sel) {
+            const other = document.getElementById('event-type-other');
+            other.style.display = sel.value === 'Other' ? 'block' : 'none';
+            if (sel.value === 'Other') other.focus();
+        }
+
         function applyFilters() {
             const query = searchInput.value.toLowerCase().trim();
             const selectedType = typeFilter.value.toLowerCase();
