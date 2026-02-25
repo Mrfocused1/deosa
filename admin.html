@@ -1446,6 +1446,8 @@
                             ${_clDetailRow('Timeline', e.timeline)}
                             ${_clDetailRow('Follow-up', e.followUp)}
                             ${_clDetailRow('Comparing', e.comparing)}
+                            ${e.quoteTotal && e.quoteTotal !== '£0' ? `<div class="col-span-2" style="border-top:1px solid rgba(197,160,89,0.2);padding-top:0.75rem;margin-top:0.25rem;"><p class="font-sans text-[10px] uppercase tracking-widest text-gold/60 mb-0.5">Quote Total</p><p class="font-serif text-2xl text-gold">${e.quoteTotal}</p></div>` : ''}
+                            ${e.menuItems && e.menuItems.length ? `<div class="col-span-3"><p class="font-sans text-[10px] uppercase tracking-widest text-cream/30 mb-1">Menu Ordered</p><p class="font-sans text-xs text-cream/65 leading-relaxed">${e.menuItems.map(i => i.name + ' (£' + i.price + 'pp)').join(' · ')}</p></div>` : ''}
                         </div>
                         ${e.summary ? `<div style="border-top:1px solid rgba(253,251,247,0.06);" class="pt-3 mt-1"><p class="font-sans text-[10px] uppercase tracking-widest text-cream/30 mb-1.5">Call Summary</p><p class="font-sans text-xs text-cream/65 leading-relaxed">${e.summary}</p></div>` : ''}
                     </div>
@@ -1456,6 +1458,302 @@
         window.toggleCallDetail = function(id) {
             const el = document.getElementById('cl-detail-' + id);
             if (el) el.classList.toggle('hidden');
+        };
+
+        /* ═══════════════════════════════════════════════════════════
+           MENU CATALOGUE + LIVE QUOTE CALCULATOR
+        ═══════════════════════════════════════════════════════════ */
+
+        const CL_DEFAULT_CATALOGUE = {
+            'Canapés': [
+                { id:101, name:'Jerk chicken skewer and plantain with sweet pepper', price:4 },
+                { id:102, name:'Crispy Breaded King Prawns', price:4 },
+                { id:103, name:'Fried Yam and Plantain Mix with Spicy Sauce', price:4 },
+                { id:104, name:'Ackee and saltfish vol au vent', price:4 },
+                { id:105, name:'Spring Rolls with Sweet Chilli Sauce', price:4 },
+                { id:106, name:'Mini British Fish and Chips', price:4 },
+                { id:107, name:'Chicken wings with warm spicy barbecue sauce', price:4 },
+                { id:108, name:'Spicy gizzard and diced Plantains', price:4 },
+                { id:109, name:'Crispy-fried chicken in butter mayo', price:4 },
+                { id:110, name:'Mini Burgers', price:4 },
+                { id:111, name:'Mini Mixed Meat Pies', price:4 },
+                { id:112, name:'Mini Mixed Patties', price:4 },
+                { id:113, name:'Puff Puff Bites', price:4 },
+                { id:114, name:'Cooked prawns on a bed of lettuce', price:4 }
+            ],
+            'Starters': [
+                { id:201, name:'Puff Puff', price:8 },
+                { id:202, name:'Moyin Moyin', price:8 },
+                { id:203, name:'Spicy gizzard', price:8 },
+                { id:204, name:'Spicy Shish Kebab', price:8 },
+                { id:205, name:'Fried Plantain & Smoked Salmon Sticks', price:8 },
+                { id:206, name:'Assorted Meat or Fish Pepper Soup', price:8 },
+                { id:207, name:'Spring Rolls with sauce', price:8 },
+                { id:208, name:'Fermented oil bean seed (Ugba)', price:8 },
+                { id:209, name:'Crispy Breaded King Prawns', price:8 },
+                { id:210, name:'Cooked prawns on a bed of lettuce', price:8 },
+                { id:211, name:'Chicken wings with warm spicy barbecue sauce', price:8 }
+            ],
+            'Nigerian Mains': [
+                { id:301, name:'Jollof, Fried, Coconut or White Rice (with Plantain & Meat/Fish)', price:22 },
+                { id:302, name:'Egusi, Eforiro, Ewedu, Ogbono, Edikaikong or Banga Soup', price:22 },
+                { id:303, name:'Semolina, Pounded Yam, Garri, Amala or Ground Rice', price:22 },
+                { id:304, name:'Roasted Potatoes with Roasted Lamb, Chicken or Turkey', price:22 },
+                { id:305, name:'Boiled Yam and Tomato Omelette', price:22 },
+                { id:306, name:'Dodo (Fried Plantain) with Omelette', price:22 },
+                { id:307, name:'Asaro (Yam Porridge) and Dodo', price:22 }
+            ],
+            'Ghanaian Mains': [
+                { id:401, name:'Banku with Okro Soup', price:22 },
+                { id:402, name:'Kelewele (Spiced diced fried plantain)', price:22 },
+                { id:403, name:'Fufu with Groundnut Soup', price:22 },
+                { id:404, name:'Ghanaian-style Jollof Rice', price:22 },
+                { id:405, name:'Kenkey (Fermented corn balls)', price:22 },
+                { id:406, name:'Omo Tuo (Mashed rice balls with Sauce)', price:22 },
+                { id:407, name:'Waakye (Rice and beans with Stew)', price:22 },
+                { id:408, name:"Yam 'Ampesi' with De'Osa Sauce", price:22 },
+                { id:409, name:'Shito Chicken Stew / Chicken Curry', price:22 },
+                { id:410, name:'Goat Curry / Beef Stew / Beef Curry', price:22 },
+                { id:411, name:'Fish Stew / Fish Curry (Croaker, Red Snapper or Tilapia)', price:22 }
+            ],
+            'Sierra Leonean': [
+                { id:501, name:'Jollof Rice & stew with choice of meat', price:22 },
+                { id:502, name:'Boneless chicken fried rice / Seafood fried rice', price:22 },
+                { id:503, name:'Rice Sticks with choice of seafood, chicken or meat', price:22 },
+                { id:504, name:'Groundnut stew with steamed rice', price:22 },
+                { id:505, name:'Cassava leaves with meat/fish in palm oil', price:22 },
+                { id:506, name:'Crain Crain with choice of meat/fish', price:22 },
+                { id:507, name:'Potato leaves with choice of meat/fish', price:22 },
+                { id:508, name:"Red palm oil stew with 'check rice'", price:22 },
+                { id:509, name:'Fufu with choice of soup (Palm oil or Crain Crain)', price:22 }
+            ],
+            'Caribbean': [
+                { id:601, name:'Jerk Chicken', price:20 },
+                { id:602, name:'Jerk Chicken Wings', price:20 },
+                { id:603, name:'Jerk Pork', price:20 },
+                { id:604, name:'Curried Chicken', price:20 },
+                { id:605, name:'Brown Stew Chicken', price:20 },
+                { id:606, name:'Oxtail', price:20 },
+                { id:607, name:'Pepper Steak', price:20 },
+                { id:608, name:'Curry Goat', price:20 },
+                { id:609, name:'Stew Shrimp', price:20 },
+                { id:610, name:'Brown Stew Fish', price:20 },
+                { id:611, name:'Escovitch Fish', price:20 },
+                { id:612, name:'Curry Shrimp', price:20 },
+                { id:613, name:'Callaloo', price:24 },
+                { id:614, name:'Ackee & Cod Fish with Steamed Veg and Rice', price:24 }
+            ],
+            'Sides': [
+                { id:701, name:'Plantains', price:5 },
+                { id:702, name:'Fried Dumpling', price:5 },
+                { id:703, name:'Wings', price:5 }
+            ],
+            'Desserts': [
+                { id:801, name:'Fresh tropical fruit salad', price:7 },
+                { id:802, name:'Banana cake and ice cream', price:7 },
+                { id:803, name:'Chocolate Gateau', price:7 },
+                { id:804, name:'Apple Pie with ice cream', price:7 },
+                { id:805, name:'Rum Cake', price:7 },
+                { id:806, name:'Banana Cake', price:7 },
+                { id:807, name:'Chocolate Cake', price:7 },
+                { id:808, name:'Ice Creams', price:7 }
+            ]
+        };
+
+        const CL_SERVICE_RATES = {
+            'Canapés & Drinks Only':  45,
+            'Buffet Service':         65,
+            'Family Style':           75,
+            'Plated Multi-Course':    90,
+            'Fine Dining':            120
+        };
+
+        const CL_ADDONS = [
+            { id:'cl-ao1', name:'Staffing & Service',  price:2250, perEvent:true  },
+            { id:'cl-ao2', name:'Tableware & Rentals', price:1100, perEvent:true  },
+            { id:'cl-ao3', name:'Equipment Hire',      price:650,  perEvent:true  },
+            { id:'cl-ao5', name:'Additional Staff',    price:150,  perEvent:false, unit:'per person', qtyId:'cl-ao5-qty' },
+            { id:'cl-ao4', name:'Travel & Logistics',  price:2.50, perEvent:false, unit:'per mile',   qtyId:'cl-ao4-qty' }
+        ];
+
+        function _loadCatalogue() {
+            try {
+                const s = localStorage.getItem('mp_menuCatalogue');
+                if (s) return JSON.parse(s);
+            } catch (_) {}
+            return CL_DEFAULT_CATALOGUE;
+        }
+
+        function _loadServiceRates() {
+            try {
+                const s = localStorage.getItem('mp_serviceStyles');
+                if (s) {
+                    const arr = JSON.parse(s);
+                    const map = {};
+                    arr.forEach(ss => { if (ss.name && ss.rate != null) map[ss.name] = ss.rate; });
+                    return map;
+                }
+            } catch (_) {}
+            return CL_SERVICE_RATES;
+        }
+
+        function renderMenuSection() {
+            const catalogue = _loadCatalogue();
+            const container = document.getElementById('cl-menu-courses');
+            if (!container) return;
+
+            container.innerHTML = Object.entries(catalogue).map(([course, items]) => {
+                const active = (items || []).filter(i => i.active !== false);
+                const ckey = course.replace(/[^a-z0-9]/gi, '_');
+                return `
+                <div class="rounded-lg overflow-hidden" style="border:1px solid rgba(255,255,255,0.08);">
+                    <button type="button" onclick="toggleCourse('${ckey}')"
+                        class="w-full flex items-center justify-between px-4 py-2.5 text-left transition-colors"
+                        style="background:rgba(255,255,255,0.03);" onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">
+                        <div class="flex items-center gap-3">
+                            <span class="font-sans text-[11px] font-bold uppercase tracking-widest" style="color:rgba(255,255,255,0.75);">${course}</span>
+                            <span class="font-sans text-[10px]" style="color:rgba(255,255,255,0.25);">${active.length} items</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="font-sans text-[10px] text-gold" id="cl-ctotal-${ckey}"></span>
+                            <svg class="w-3 h-3 transition-transform" id="cl-carrow-${ckey}" style="color:rgba(255,255,255,0.25);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                        </div>
+                    </button>
+                    <div class="hidden px-4 pb-2 pt-1" id="cl-citems-${ckey}">
+                        ${active.map(item => `
+                        <label class="flex items-center gap-3 py-1.5 cursor-pointer rounded px-1 -mx-1 transition-colors" style="color:rgba(255,255,255,0.65);"
+                            onmouseover="this.style.color='rgba(255,255,255,0.9)'" onmouseout="this.style.color='rgba(255,255,255,0.65)'">
+                            <input type="checkbox" id="cl-item-${item.id}" class="cl-menu-item w-3.5 h-3.5 shrink-0 accent-[#C5A059]"
+                                data-price="${item.price}" data-course="${course}" data-name="${item.name.replace(/"/g,'&quot;')}"
+                                onchange="updateQuote()">
+                            <span class="font-sans text-xs flex-1 leading-snug">${item.name}</span>
+                            <span class="font-sans text-[10px] shrink-0" style="color:rgba(197,160,89,0.7);">£${item.price}pp</span>
+                        </label>`).join('')}
+                    </div>
+                </div>`;
+            }).join('');
+
+            /* Add-ons */
+            const aoContainer = document.getElementById('cl-addon-list');
+            if (aoContainer) {
+                aoContainer.innerHTML = `
+                <div class="rounded-lg overflow-hidden" style="border:1px solid rgba(255,255,255,0.08);">
+                    <div class="px-4 py-2.5" style="background:rgba(255,255,255,0.03);border-bottom:1px solid rgba(255,255,255,0.07);">
+                        <span class="font-sans text-[11px] font-bold uppercase tracking-widest" style="color:rgba(255,255,255,0.75);">Add-ons</span>
+                    </div>
+                    <div class="px-4 py-3 space-y-3">
+                        ${CL_ADDONS.map(ao => `
+                        <div class="flex items-center gap-3">
+                            <input type="checkbox" id="${ao.id}" class="cl-addon w-3.5 h-3.5 shrink-0 accent-[#C5A059]" onchange="updateQuote()">
+                            <label for="${ao.id}" class="font-sans text-xs flex-1 cursor-pointer" style="color:rgba(255,255,255,0.7);">${ao.name}</label>
+                            ${!ao.perEvent ? `
+                            <div class="flex items-center gap-1.5">
+                                <input type="number" id="${ao.qtyId}" class="cl-input w-16 text-center py-1 px-2 text-xs" placeholder="${ao.unit === 'per mile' ? 'miles' : 'qty'}" min="0" oninput="updateQuote()">
+                                <span class="font-sans text-[10px] whitespace-nowrap" style="color:rgba(255,255,255,0.3);">£${ao.price} ${ao.unit}</span>
+                            </div>` : `<span class="font-sans text-[10px] shrink-0" style="color:rgba(197,160,89,0.7);">£${ao.price.toLocaleString()}</span>`}
+                        </div>`).join('')}
+                    </div>
+                </div>`;
+            }
+
+            /* Wire guest count + service style to calculator */
+            ['cl-guests','cl-service-style'].forEach(function(id) {
+                const el = document.getElementById(id);
+                if (!el) return;
+                el.removeEventListener('input', updateQuote);
+                el.removeEventListener('change', updateQuote);
+                el.addEventListener('input', updateQuote);
+                el.addEventListener('change', updateQuote);
+            });
+        }
+
+        window.toggleCourse = function(ckey) {
+            const panel = document.getElementById('cl-citems-' + ckey);
+            const arrow = document.getElementById('cl-carrow-' + ckey);
+            if (!panel) return;
+            const hidden = panel.classList.toggle('hidden');
+            if (arrow) arrow.style.transform = hidden ? '' : 'rotate(180deg)';
+        };
+
+        window.updateQuote = function() {
+            const guests = parseInt(document.getElementById('cl-guests').value) || 0;
+            const styleVal = document.getElementById('cl-service-style').value;
+            const rates = _loadServiceRates();
+            const serviceRate = rates[styleVal] || 0;
+            const serviceBase = serviceRate * guests;
+
+            /* Ticked menu items */
+            const courseBreakdown = {};
+            document.querySelectorAll('.cl-menu-item:checked').forEach(cb => {
+                const price = parseFloat(cb.dataset.price) || 0;
+                const course = cb.dataset.course;
+                if (!courseBreakdown[course]) courseBreakdown[course] = { count:0, subtotal:0 };
+                courseBreakdown[course].count++;
+                courseBreakdown[course].subtotal += price * guests;
+            });
+            const menuTotal = Object.values(courseBreakdown).reduce((s, c) => s + c.subtotal, 0);
+
+            /* Per-course totals in accordion headers */
+            document.querySelectorAll('[id^="cl-ctotal-"]').forEach(el => { el.textContent = ''; });
+            Object.entries(courseBreakdown).forEach(([course, data]) => {
+                const ckey = course.replace(/[^a-z0-9]/gi, '_');
+                const el = document.getElementById('cl-ctotal-' + ckey);
+                if (el && data.count > 0) el.textContent = data.count + ' × £' + Math.round(data.subtotal).toLocaleString('en-GB');
+            });
+
+            /* Add-ons */
+            let addOnsTotal = 0;
+            const addOnLines = [];
+            CL_ADDONS.forEach(ao => {
+                const cb = document.getElementById(ao.id);
+                if (!cb || !cb.checked) return;
+                let cost = 0;
+                if (!ao.perEvent) {
+                    const qty = parseFloat((document.getElementById(ao.qtyId) || {}).value) || 0;
+                    cost = ao.price * qty;
+                } else {
+                    cost = ao.price;
+                }
+                addOnsTotal += cost;
+                addOnLines.push({ name: ao.name, cost });
+            });
+
+            const grand   = serviceBase + menuTotal + addOnsTotal;
+            const deposit = grand * 0.25;
+            const balance = grand * 0.75;
+            const fmt = n => '£' + Math.round(n).toLocaleString('en-GB');
+
+            document.getElementById('cl-grand-total').textContent = fmt(grand);
+            document.getElementById('cl-deposit').textContent     = fmt(deposit);
+            document.getElementById('cl-balance').textContent     = fmt(balance);
+
+            /* Breakdown lines */
+            const lines = [];
+            if (serviceBase > 0) lines.push([styleVal + ' base (£' + serviceRate + 'pp × ' + guests + ')', fmt(serviceBase)]);
+            Object.entries(courseBreakdown).forEach(([course, d]) =>
+                lines.push([course + ' (' + d.count + ' item' + (d.count > 1 ? 's' : '') + ' × ' + guests + ' guests)', fmt(d.subtotal)]));
+            addOnLines.forEach(l => lines.push([l.name, fmt(l.cost)]));
+
+            const bd = document.getElementById('cl-quote-breakdown');
+            if (lines.length === 0) {
+                bd.innerHTML = '<p class="font-sans text-xs italic" style="color:rgba(255,255,255,0.25);">Select service style, guest count and menu items to generate a quote.</p>';
+            } else {
+                bd.innerHTML = lines.map(([label, val]) =>
+                    `<div class="flex justify-between font-sans text-xs"><span style="color:rgba(255,255,255,0.4);">${label}</span><span style="color:rgba(255,255,255,0.75);">${val}</span></div>`
+                ).join('') +
+                `<div class="flex justify-between font-sans text-xs pt-2 mt-1 font-bold" style="border-top:1px solid rgba(197,160,89,0.2);">
+                    <span style="color:rgba(255,255,255,0.8);">Grand Total</span><span style="color:#C5A059;">${fmt(grand)}</span>
+                </div>
+                <div class="flex justify-between font-sans text-xs"><span style="color:rgba(255,255,255,0.4);">Deposit (25%)</span><span style="color:rgba(255,255,255,0.7);">${fmt(deposit)}</span></div>
+                <div class="flex justify-between font-sans text-xs"><span style="color:rgba(255,255,255,0.4);">Balance Due</span><span style="color:rgba(255,255,255,0.7);">${fmt(balance)}</span></div>`;
+            }
+        };
+
+        window.toggleQuoteBreakdown = function() {
+            const bd  = document.getElementById('cl-quote-breakdown');
+            const btn = document.getElementById('cl-breakdown-toggle');
+            const hidden = bd.classList.toggle('hidden');
+            btn.textContent = hidden ? 'View Breakdown ↓' : 'Hide Breakdown ↑';
         };
 
         /* ── New Call Drawer ── */
@@ -1469,6 +1767,9 @@
                 else el.value = '';
             });
             document.getElementById('cl-summary').style.borderColor = '';
+            // Render menu section and reset quote
+            renderMenuSection();
+            updateQuote();
             // Start elapsed timer
             _callSeconds = 0;
             clearInterval(_callTimer);
@@ -1551,7 +1852,12 @@
                 timeline:       document.getElementById('cl-timeline').value,
                 followUp:       document.getElementById('cl-followup').value,
                 comparing:      document.getElementById('cl-comparing').value,
-                summary, outcome
+                summary, outcome,
+                menuItems: Array.from(document.querySelectorAll('.cl-menu-item:checked')).map(cb => ({
+                    id: cb.id.replace('cl-item-',''), name: cb.dataset.name || '', price: parseFloat(cb.dataset.price), course: cb.dataset.course
+                })),
+                addOnsSelected: CL_ADDONS.filter(ao => document.getElementById(ao.id)?.checked).map(ao => ao.name),
+                quoteTotal: (document.getElementById('cl-grand-total') || {}).textContent || ''
             };
 
             const log = loadCallLog();
@@ -1707,6 +2013,14 @@
                 </div>
             </div>
 
+            <!-- G: Menu Selection -->
+            <div class="cl-section">
+                <p class="cl-section-hd">G — Menu Selection & Quote</p>
+                <p class="font-sans text-[10px] mb-4 -mt-2" style="color:rgba(255,255,255,0.35);">Guest count &amp; service style sync from sections above. Tick items to build a live quote.</p>
+                <div id="cl-menu-courses" class="space-y-1.5"><!-- rendered by JS --></div>
+                <div id="cl-addon-list" class="mt-3 space-y-1.5"><!-- rendered by JS --></div>
+            </div>
+
             <!-- F: Call Summary & Outcome -->
             <div>
                 <p class="cl-section-hd">F — Call Summary & Outcome</p>
@@ -1719,6 +2033,32 @@
             </div>
 
         </div><!-- /form body -->
+
+        <!-- ── Live Quote Panel (always visible) ── -->
+        <div id="cl-quote-panel" class="shrink-0 border-t border-gold/20 px-6 pt-4 pb-3" style="background:rgba(197,160,89,0.06);">
+            <div class="flex items-center justify-between mb-3">
+                <p class="font-sans text-[10px] font-bold uppercase tracking-widest" style="color:#C5A059;">Live Quote</p>
+                <button type="button" onclick="toggleQuoteBreakdown()" id="cl-breakdown-toggle" class="font-sans text-[10px] uppercase tracking-widest transition-colors" style="color:rgba(255,255,255,0.35);">View Breakdown ↓</button>
+            </div>
+            <div class="grid grid-cols-3 gap-4">
+                <div>
+                    <p class="font-sans text-[10px] uppercase tracking-widest mb-1" style="color:rgba(255,255,255,0.3);">Grand Total</p>
+                    <p class="font-serif text-2xl" style="color:#C5A059;" id="cl-grand-total">£0</p>
+                </div>
+                <div>
+                    <p class="font-sans text-[10px] uppercase tracking-widest mb-1" style="color:rgba(255,255,255,0.3);">Deposit (25%)</p>
+                    <p class="font-sans text-base font-semibold" style="color:rgba(255,255,255,0.7);" id="cl-deposit">£0</p>
+                </div>
+                <div>
+                    <p class="font-sans text-[10px] uppercase tracking-widest mb-1" style="color:rgba(255,255,255,0.3);">Balance Due</p>
+                    <p class="font-sans text-base font-semibold" style="color:rgba(255,255,255,0.7);" id="cl-balance">£0</p>
+                </div>
+            </div>
+            <!-- Expandable line-by-line breakdown -->
+            <div id="cl-quote-breakdown" class="hidden mt-3 pt-3 space-y-1 overflow-y-auto" style="border-top:1px solid rgba(197,160,89,0.2);max-height:160px;">
+                <p class="font-sans text-xs italic" style="color:rgba(255,255,255,0.25);">Select service style, guest count and menu items to generate a quote.</p>
+            </div>
+        </div>
 
         <!-- Footer -->
         <div class="p-5 border-t border-cream/10 flex gap-3 shrink-0">
