@@ -510,14 +510,6 @@
     /* ════════ GET EVENT ID FROM URL ════════ */
     const urlParams = new URLSearchParams(window.location.search);
     const evId = parseInt(urlParams.get('id'));
-    if (!evId || isNaN(evId)) {
-        window.location.href = 'event-calendar.html';
-    }
-
-    let ev = events.find(e => e.id === evId);
-    if (!ev) {
-        window.location.href = 'event-calendar.html';
-    }
 
     /* ════════ NORMALISE EVENT (v1 → v2) ════════ */
     function normaliseEvent(e) {
@@ -525,11 +517,19 @@
             email: '', phone: '', order: [], addOnIds: [], packageId: null
         }, e);
     }
-    ev = normaliseEvent(ev);
+
+    const _rawEv = (evId && !isNaN(evId)) ? events.find(e => e.id === evId) : null;
+    if (!_rawEv) {
+        // Event not found — go back to calendar without running any more code
+        document.body.innerHTML = '';
+        window.location.replace('event-calendar.html');
+    }
+
+    let ev = _rawEv ? normaliseEvent(_rawEv) : null;
 
     /* ════════ STATE ════════ */
     let saveTimer = null;
-    let currentStatus = ev.status || 'confirmed';
+    let currentStatus = ev ? (ev.status || 'confirmed') : 'confirmed';
 
     /* ════════ POPULATE FORM ════════ */
     function populateForm() {
@@ -827,11 +827,13 @@
     }
 
     /* ════════ BOOT ════════ */
-    populateForm();
-    renderMenuCourses();
-    renderAddOns();
-    updateFinancials();
     applyTheme(localStorage.getItem('admin-theme') || 'dark');
+    if (ev) {
+        populateForm();
+        renderMenuCourses();
+        renderAddOns();
+        updateFinancials();
+    }
     </script>
 </body>
 </html>

@@ -656,6 +656,8 @@
     renderStats();
     renderCalendar();
     applyTheme(localStorage.getItem('admin-theme') || 'dark');
+    // Persist default events to localStorage so booking-detail.html can find them
+    if (!localStorage.getItem('ec_events')) saveData();
     </script>
 </body>
 </html>
