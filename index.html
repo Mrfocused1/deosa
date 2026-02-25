@@ -517,33 +517,59 @@
     </section>
 
     <!-- SECTION 2: OUR STORY (Pinned Scroll Chapter) -->
-    <section id="story" class="relative h-auto md:h-screen bg-cream flex items-center py-20 overflow-hidden">
-        <div class="container mx-auto px-6 lg:px-12 flex flex-col md:flex-row items-center justify-between h-full gap-12">
-            <!-- Left Text -->
-            <div class="w-full md:w-1/2 flex flex-col justify-center pr-0 md:pr-12">
-                <h2 class="font-serif text-4xl md:text-6xl text-charcoal mb-6 story-title">A Legacy Rooted in Culture, Served with Excellence</h2>
-                <svg class="w-24 h-4 mb-8" viewBox="0 0 100 10">
-                    <path class="svg-line draw-on-scroll" d="M0,5 L100,5" />
-                </svg>
-                <p class="font-sans text-lg text-charcoal/80 font-light leading-relaxed mb-8 story-text">
-                    What began as a passionate pursuit of authentic flavor has blossomed into a multi-award-winning business. We bring the vibrant, deeply rooted heritage of African and Caribbean cuisine to London's most prestigious luxury weddings, serving each dish with elegance, heart, and unparalleled attention to detail.
-                </p>
-                <div class="flex gap-12 story-stats">
-                    <div>
-                        <span class="block font-serif text-5xl text-gold mb-2"><span id="count-clients">0</span>+</span>
-                        <span class="font-sans text-xs tracking-widest uppercase text-charcoal/60">Couples Served</span>
-                    </div>
-                    <div>
-                        <span class="block font-serif text-5xl text-gold mb-2"><span id="count-guests">0</span>k+</span>
-                        <span class="font-sans text-xs tracking-widest uppercase text-charcoal/60">Guests Delighted</span>
-                    </div>
+    <section id="story" class="relative h-auto md:h-screen bg-charcoal overflow-hidden flex flex-col justify-center py-20 md:py-0">
+
+        <!-- Noise texture -->
+        <div class="absolute inset-0 img-texture pointer-events-none z-0"></div>
+
+        <div class="container mx-auto px-6 lg:px-16 relative z-10 h-full flex flex-col justify-center gap-10 md:gap-12">
+
+            <!-- Top row: title left, body right -->
+            <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-8 md:gap-16">
+                <div class="md:max-w-xl">
+                    <p class="font-sans text-[0.6rem] tracking-[0.3em] uppercase text-gold/60 mb-5 story-text">Our Heritage</p>
+                    <h2 class="font-serif text-5xl md:text-6xl lg:text-[5.5rem] text-cream story-title leading-none">
+                        A Legacy<br>Rooted in <span class="italic text-gold">Culture</span>,<br>Served with<br>Excellence
+                    </h2>
+                </div>
+                <div class="md:max-w-xs story-text shrink-0">
+                    <svg class="w-20 h-4 mb-5" viewBox="0 0 100 10">
+                        <path class="svg-line draw-on-scroll" d="M0,5 L100,5" />
+                    </svg>
+                    <p class="font-sans text-sm text-cream/60 font-light leading-relaxed">
+                        What began as a passionate pursuit of authentic flavour has blossomed into a multi-award-winning business — bringing the vibrant heritage of African and Caribbean cuisine to London's most prestigious luxury weddings.
+                    </p>
                 </div>
             </div>
 
-            <!-- Right Images Crossfade (Pinned visual) -->
-            <div class="w-full md:w-1/2 h-full relative img-texture overflow-hidden hidden md:block story-img-container">
-                <img src="images/food.webp" class="absolute inset-0 w-full h-full object-cover story-img img-1" alt="Fine Dining Prep" />
-                <img src="images/food3.webp" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover story-img img-2 opacity-0" alt="Beautiful Presentation" />
+            <!-- Bottom row: image + stats -->
+            <div class="flex flex-col md:flex-row gap-6 md:gap-10 items-stretch">
+
+                <!-- Crossfade image -->
+                <div class="relative w-full md:w-[62%] h-56 md:h-72 img-texture overflow-hidden story-img-container">
+                    <img src="images/food.webp" class="absolute inset-0 w-full h-full object-cover story-img img-1" alt="Fine Dining Prep" />
+                    <img src="images/food3.webp" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover story-img img-2 opacity-0" alt="Beautiful Presentation" />
+                    <div class="absolute inset-0 bg-gradient-to-t from-charcoal/40 to-transparent pointer-events-none"></div>
+                </div>
+
+                <!-- Stats column -->
+                <div class="w-full md:w-[38%] flex flex-col justify-between story-stats">
+                    <div class="border-t border-gold/20 pt-6">
+                        <span class="block font-serif text-6xl md:text-7xl text-gold leading-none mb-2"><span id="count-clients">0</span>+</span>
+                        <span class="font-sans text-[0.65rem] tracking-widest uppercase text-cream/40">Couples Served</span>
+                    </div>
+                    <div class="border-t border-gold/20 pt-6">
+                        <span class="block font-serif text-6xl md:text-7xl text-gold leading-none mb-2"><span id="count-guests">0</span>k+</span>
+                        <span class="font-sans text-[0.65rem] tracking-widest uppercase text-cream/40">Guests Delighted</span>
+                    </div>
+                    <div class="border-t border-gold/20 pt-6">
+                        <a href="story.html" class="inline-flex items-center gap-3 font-sans text-xs tracking-[0.2em] uppercase text-gold/70 hover:text-gold transition-colors duration-300">
+                            <span>Read Our Story</span>
+                            <span class="w-8 h-px bg-gold/40"></span>
+                        </a>
+                    </div>
+                </div>
+
             </div>
         </div>
     </section>
