@@ -95,8 +95,43 @@
         }
         .cuisine-tab:hover { color: rgba(28,28,28,0.7); }
         .cuisine-tab.active-tab { color: #1C1C1C; border-bottom-color: #C5A059; }
-        .cuisine-panel { display: none; }
-        .cuisine-panel.active-panel { display: block; }
+
+        /* Desktop: tab panel show/hide */
+        @media (min-width: 768px) {
+            .cuisine-panel { display: none; }
+            .cuisine-panel.active-panel { display: block; }
+        }
+
+        /* Mobile: horizontal scroll-snap carousel */
+        @media (max-width: 767px) {
+            #cuisine-carousel {
+                display: flex;
+                overflow-x: auto;
+                scroll-snap-type: x mandatory;
+                -webkit-overflow-scrolling: touch;
+            }
+            .cuisine-panel {
+                display: block;
+                min-width: 100vw;
+                flex-shrink: 0;
+                scroll-snap-align: start;
+            }
+        }
+
+        /* Dot indicators */
+        .cuisine-dot {
+            height: 6px;
+            width: 6px;
+            border-radius: 10px;
+            background: rgba(28,28,28,0.2);
+            border: none;
+            cursor: pointer;
+            transition: width 0.3s, background 0.3s;
+        }
+        .cuisine-dot.active-dot {
+            background: #C5A059;
+            width: 20px;
+        }
         .ai-live-glow { animation: pulse-glow 1.5s infinite alternate; }
 
         /* Navbar scrolled state */
@@ -712,9 +747,9 @@
             <h2 class="font-serif text-5xl md:text-6xl text-charcoal">African & Caribbean Cuisine, Elevated</h2>
         </div>
 
-        <!-- Tab Navigation -->
-        <div class="overflow-x-auto">
-            <div class="flex border-b border-charcoal/10 px-6 md:px-12">
+        <!-- Tab Navigation — desktop only -->
+        <div class="hidden md:block overflow-x-auto">
+            <div class="flex border-b border-charcoal/10 px-12">
                 <button class="cuisine-tab active-tab" data-tab="1">Nigerian Heritage</button>
                 <button class="cuisine-tab" data-tab="2">Ghanaian Traditions</button>
                 <button class="cuisine-tab" data-tab="3">Sierra Leonean Flavors</button>
@@ -723,97 +758,178 @@
             </div>
         </div>
 
-        <!-- Tab 1: Nigerian Heritage -->
-        <div class="cuisine-panel active-panel" id="tab-1">
-            <div class="flex flex-col md:flex-row">
-                <div class="w-full md:w-[58%] h-[52vh] md:h-[58vh] relative overflow-hidden shrink-0">
+        <!-- Panels: horizontal scroll-snap on mobile, tab-switched on desktop -->
+        <div id="cuisine-carousel">
+
+            <!-- Panel 1: Nigerian Heritage -->
+            <div class="cuisine-panel active-panel" id="tab-1">
+                <!-- Mobile: full-bleed cinematic card -->
+                <div class="md:hidden relative h-[72vh] overflow-hidden">
                     <img src="images/nigerian-heritage.webp" class="absolute inset-0 w-full h-full object-cover" alt="Nigerian Heritage" />
+                    <div class="absolute inset-0 bg-gradient-to-t from-charcoal via-charcoal/45 to-transparent"></div>
+                    <div class="absolute bottom-0 left-0 right-0 p-8 pb-12 z-10">
+                        <h3 class="font-serif text-4xl text-cream mb-1">Nigerian Heritage</h3>
+                        <svg class="w-10 h-2 my-5" viewBox="0 0 100 10"><path class="svg-line" stroke="#FDFBF7" d="M0,5 L100,5" /></svg>
+                        <ul class="font-sans font-light text-cream/80 space-y-3 text-sm">
+                            <li>Smoky Party Jollof Rice</li>
+                            <li>Rich Egusi, Okra & Banga Soups</li>
+                            <li>Pounded Yam & Sweet Asaro</li>
+                        </ul>
+                    </div>
                 </div>
-                <div class="flex-1 px-8 md:px-14 py-10 md:py-0 flex flex-col justify-center md:min-h-[58vh]">
-                    <h3 class="font-serif text-4xl md:text-5xl text-charcoal mb-1">Nigerian Heritage</h3>
-                    <svg class="w-12 h-2 my-6" viewBox="0 0 100 10"><path class="svg-line" d="M0,5 L100,5" /></svg>
-                    <ul class="font-sans font-light text-charcoal/70 space-y-4 text-base md:text-lg">
-                        <li>Smoky Party Jollof Rice</li>
-                        <li>Rich Egusi, Okra & Banga Soups</li>
-                        <li>Pounded Yam & Sweet Asaro</li>
-                    </ul>
+                <!-- Desktop: split-screen -->
+                <div class="hidden md:flex">
+                    <div class="w-[58%] h-[58vh] relative overflow-hidden shrink-0">
+                        <img src="images/nigerian-heritage.webp" class="absolute inset-0 w-full h-full object-cover" alt="Nigerian Heritage" />
+                    </div>
+                    <div class="flex-1 px-14 flex flex-col justify-center min-h-[58vh]">
+                        <h3 class="font-serif text-5xl text-charcoal mb-1">Nigerian Heritage</h3>
+                        <svg class="w-12 h-2 my-6" viewBox="0 0 100 10"><path class="svg-line" d="M0,5 L100,5" /></svg>
+                        <ul class="font-sans font-light text-charcoal/70 space-y-4 text-lg">
+                            <li>Smoky Party Jollof Rice</li>
+                            <li>Rich Egusi, Okra & Banga Soups</li>
+                            <li>Pounded Yam & Sweet Asaro</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Tab 2: Ghanaian Traditions -->
-        <div class="cuisine-panel" id="tab-2">
-            <div class="flex flex-col md:flex-row">
-                <div class="w-full md:w-[58%] h-[52vh] md:h-[58vh] relative overflow-hidden shrink-0">
+            <!-- Panel 2: Ghanaian Traditions -->
+            <div class="cuisine-panel" id="tab-2">
+                <div class="md:hidden relative h-[72vh] overflow-hidden">
                     <img src="images/ghanaian-traditions.webp" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover" alt="Ghanaian Traditions" />
+                    <div class="absolute inset-0 bg-gradient-to-t from-charcoal via-charcoal/45 to-transparent"></div>
+                    <div class="absolute bottom-0 left-0 right-0 p-8 pb-12 z-10">
+                        <h3 class="font-serif text-4xl text-cream mb-1">Ghanaian Traditions</h3>
+                        <svg class="w-10 h-2 my-5" viewBox="0 0 100 10"><path class="svg-line" stroke="#FDFBF7" d="M0,5 L100,5" /></svg>
+                        <ul class="font-sans font-light text-cream/80 space-y-3 text-sm">
+                            <li>Traditional Banku & Okro</li>
+                            <li>Aromatic Waakye</li>
+                            <li>Spiced Kelewele</li>
+                        </ul>
+                    </div>
                 </div>
-                <div class="flex-1 px-8 md:px-14 py-10 md:py-0 flex flex-col justify-center md:min-h-[58vh]">
-                    <h3 class="font-serif text-4xl md:text-5xl text-charcoal mb-1">Ghanaian Traditions</h3>
-                    <svg class="w-12 h-2 my-6" viewBox="0 0 100 10"><path class="svg-line" d="M0,5 L100,5" /></svg>
-                    <ul class="font-sans font-light text-charcoal/70 space-y-4 text-base md:text-lg">
-                        <li>Traditional Banku & Okro</li>
-                        <li>Aromatic Waakye</li>
-                        <li>Spiced Kelewele</li>
-                    </ul>
+                <div class="hidden md:flex">
+                    <div class="w-[58%] h-[58vh] relative overflow-hidden shrink-0">
+                        <img src="images/ghanaian-traditions.webp" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover" alt="Ghanaian Traditions" />
+                    </div>
+                    <div class="flex-1 px-14 flex flex-col justify-center min-h-[58vh]">
+                        <h3 class="font-serif text-5xl text-charcoal mb-1">Ghanaian Traditions</h3>
+                        <svg class="w-12 h-2 my-6" viewBox="0 0 100 10"><path class="svg-line" d="M0,5 L100,5" /></svg>
+                        <ul class="font-sans font-light text-charcoal/70 space-y-4 text-lg">
+                            <li>Traditional Banku & Okro</li>
+                            <li>Aromatic Waakye</li>
+                            <li>Spiced Kelewele</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Tab 3: Sierra Leonean Flavors -->
-        <div class="cuisine-panel" id="tab-3">
-            <div class="flex flex-col md:flex-row">
-                <div class="w-full md:w-[58%] h-[52vh] md:h-[58vh] relative overflow-hidden shrink-0">
+            <!-- Panel 3: Sierra Leonean Flavors -->
+            <div class="cuisine-panel" id="tab-3">
+                <div class="md:hidden relative h-[72vh] overflow-hidden">
                     <img src="images/sierra-leone.webp" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover" alt="Sierra Leonean Flavors" />
+                    <div class="absolute inset-0 bg-gradient-to-t from-charcoal via-charcoal/45 to-transparent"></div>
+                    <div class="absolute bottom-0 left-0 right-0 p-8 pb-12 z-10">
+                        <h3 class="font-serif text-4xl text-cream mb-1">Sierra Leonean Flavors</h3>
+                        <svg class="w-10 h-2 my-5" viewBox="0 0 100 10"><path class="svg-line" stroke="#FDFBF7" d="M0,5 L100,5" /></svg>
+                        <ul class="font-sans font-light text-cream/80 space-y-3 text-sm">
+                            <li>Savory Fried Rice</li>
+                            <li>Hearty Groundnut Stew</li>
+                            <li>Delicate Cassava Leaves</li>
+                        </ul>
+                    </div>
                 </div>
-                <div class="flex-1 px-8 md:px-14 py-10 md:py-0 flex flex-col justify-center md:min-h-[58vh]">
-                    <h3 class="font-serif text-4xl md:text-5xl text-charcoal mb-1">Sierra Leonean Flavors</h3>
-                    <svg class="w-12 h-2 my-6" viewBox="0 0 100 10"><path class="svg-line" d="M0,5 L100,5" /></svg>
-                    <ul class="font-sans font-light text-charcoal/70 space-y-4 text-base md:text-lg">
-                        <li>Savory Fried Rice</li>
-                        <li>Hearty Groundnut Stew</li>
-                        <li>Delicate Cassava Leaves</li>
-                    </ul>
+                <div class="hidden md:flex">
+                    <div class="w-[58%] h-[58vh] relative overflow-hidden shrink-0">
+                        <img src="images/sierra-leone.webp" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover" alt="Sierra Leonean Flavors" />
+                    </div>
+                    <div class="flex-1 px-14 flex flex-col justify-center min-h-[58vh]">
+                        <h3 class="font-serif text-5xl text-charcoal mb-1">Sierra Leonean Flavors</h3>
+                        <svg class="w-12 h-2 my-6" viewBox="0 0 100 10"><path class="svg-line" d="M0,5 L100,5" /></svg>
+                        <ul class="font-sans font-light text-charcoal/70 space-y-4 text-lg">
+                            <li>Savory Fried Rice</li>
+                            <li>Hearty Groundnut Stew</li>
+                            <li>Delicate Cassava Leaves</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Tab 4: Caribbean Cuisine -->
-        <div class="cuisine-panel" id="tab-4">
-            <div class="flex flex-col md:flex-row">
-                <div class="w-full md:w-[58%] h-[52vh] md:h-[58vh] relative overflow-hidden shrink-0">
+            <!-- Panel 4: Caribbean Cuisine -->
+            <div class="cuisine-panel" id="tab-4">
+                <div class="md:hidden relative h-[72vh] overflow-hidden">
                     <img src="https://deosacatering.co.uk/ehusteeg/2024/01/ca3bc7fb-aba6-489e-bc33-4949733afce5.jpg" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover" alt="Caribbean Cuisine" />
+                    <div class="absolute inset-0 bg-gradient-to-t from-charcoal via-charcoal/45 to-transparent"></div>
+                    <div class="absolute bottom-0 left-0 right-0 p-8 pb-12 z-10">
+                        <h3 class="font-serif text-4xl text-cream mb-1">Caribbean Cuisine</h3>
+                        <svg class="w-10 h-2 my-5" viewBox="0 0 100 10"><path class="svg-line" stroke="#FDFBF7" d="M0,5 L100,5" /></svg>
+                        <ul class="font-sans font-light text-cream/80 space-y-3 text-sm">
+                            <li>Slow-cooked Oxtail & Jerk Chicken</li>
+                            <li>Ackee & Saltfish with Rice and Peas</li>
+                            <li>Curry Goat & Stew Shrimp</li>
+                        </ul>
+                    </div>
                 </div>
-                <div class="flex-1 px-8 md:px-14 py-10 md:py-0 flex flex-col justify-center md:min-h-[58vh]">
-                    <h3 class="font-serif text-4xl md:text-5xl text-charcoal mb-1">Caribbean Cuisine</h3>
-                    <svg class="w-12 h-2 my-6" viewBox="0 0 100 10"><path class="svg-line" d="M0,5 L100,5" /></svg>
-                    <ul class="font-sans font-light text-charcoal/70 space-y-4 text-base md:text-lg">
-                        <li>Slow-cooked Oxtail & Jerk Chicken</li>
-                        <li>Ackee & Saltfish with Rice and Peas</li>
-                        <li>Curry Goat & Stew Shrimp</li>
-                    </ul>
+                <div class="hidden md:flex">
+                    <div class="w-[58%] h-[58vh] relative overflow-hidden shrink-0">
+                        <img src="https://deosacatering.co.uk/ehusteeg/2024/01/ca3bc7fb-aba6-489e-bc33-4949733afce5.jpg" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover" alt="Caribbean Cuisine" />
+                    </div>
+                    <div class="flex-1 px-14 flex flex-col justify-center min-h-[58vh]">
+                        <h3 class="font-serif text-5xl text-charcoal mb-1">Caribbean Cuisine</h3>
+                        <svg class="w-12 h-2 my-6" viewBox="0 0 100 10"><path class="svg-line" d="M0,5 L100,5" /></svg>
+                        <ul class="font-sans font-light text-charcoal/70 space-y-4 text-lg">
+                            <li>Slow-cooked Oxtail & Jerk Chicken</li>
+                            <li>Ackee & Saltfish with Rice and Peas</li>
+                            <li>Curry Goat & Stew Shrimp</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Tab 5: Starters & Sweet Endings -->
-        <div class="cuisine-panel" id="tab-5">
-            <div class="flex flex-col md:flex-row">
-                <div class="w-full md:w-[58%] h-[52vh] md:h-[58vh] relative overflow-hidden shrink-0">
+            <!-- Panel 5: Starters & Sweet Endings -->
+            <div class="cuisine-panel" id="tab-5">
+                <div class="md:hidden relative h-[72vh] overflow-hidden">
                     <img src="images/starters-sweet-endings.webp" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover" alt="Starters & Sweet Endings" />
+                    <div class="absolute inset-0 bg-gradient-to-t from-charcoal via-charcoal/45 to-transparent"></div>
+                    <div class="absolute bottom-0 left-0 right-0 p-8 pb-12 z-10">
+                        <h3 class="font-serif text-4xl text-cream mb-1">Starters & Sweet Endings</h3>
+                        <svg class="w-10 h-2 my-5" viewBox="0 0 100 10"><path class="svg-line" stroke="#FDFBF7" d="M0,5 L100,5" /></svg>
+                        <ul class="font-sans font-light text-cream/80 space-y-3 text-sm">
+                            <li>Golden Puff Puff & Moyin Moyin</li>
+                            <li>Tropical Fruit Medleys</li>
+                            <li>Warm Banana Cake & Vanilla Bean Ice Cream</li>
+                        </ul>
+                    </div>
                 </div>
-                <div class="flex-1 px-8 md:px-14 py-10 md:py-0 flex flex-col justify-center md:min-h-[58vh]">
-                    <h3 class="font-serif text-4xl md:text-5xl text-charcoal mb-1">Starters & Sweet Endings</h3>
-                    <svg class="w-12 h-2 my-6" viewBox="0 0 100 10"><path class="svg-line" d="M0,5 L100,5" /></svg>
-                    <ul class="font-sans font-light text-charcoal/70 space-y-4 text-base md:text-lg">
-                        <li>Golden Puff Puff & Moyin Moyin</li>
-                        <li>Tropical Fruit Medleys</li>
-                        <li>Warm Banana Cake & Vanilla Bean Ice Cream</li>
-                    </ul>
+                <div class="hidden md:flex">
+                    <div class="w-[58%] h-[58vh] relative overflow-hidden shrink-0">
+                        <img src="images/starters-sweet-endings.webp" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover" alt="Starters & Sweet Endings" />
+                    </div>
+                    <div class="flex-1 px-14 flex flex-col justify-center min-h-[58vh]">
+                        <h3 class="font-serif text-5xl text-charcoal mb-1">Starters & Sweet Endings</h3>
+                        <svg class="w-12 h-2 my-6" viewBox="0 0 100 10"><path class="svg-line" d="M0,5 L100,5" /></svg>
+                        <ul class="font-sans font-light text-charcoal/70 space-y-4 text-lg">
+                            <li>Golden Puff Puff & Moyin Moyin</li>
+                            <li>Tropical Fruit Medleys</li>
+                            <li>Warm Banana Cake & Vanilla Bean Ice Cream</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
+
         </div>
 
-        <div class="pb-20 md:pb-24"></div>
+        <!-- Dot indicators — mobile only -->
+        <div class="flex justify-center items-center gap-2 py-7 md:hidden">
+            <button class="cuisine-dot active-dot" data-index="0"></button>
+            <button class="cuisine-dot" data-index="1"></button>
+            <button class="cuisine-dot" data-index="2"></button>
+            <button class="cuisine-dot" data-index="3"></button>
+            <button class="cuisine-dot" data-index="4"></button>
+        </div>
+
+        <div class="hidden md:block pb-24"></div>
     </section>
 
     <!-- SECTION 6: VENUES & SCALE -->
@@ -1181,7 +1297,7 @@
 
             });
 
-            // --- CUISINE TABS ---
+            // --- CUISINE TABS (desktop) ---
             document.querySelectorAll('.cuisine-tab').forEach(tab => {
                 tab.addEventListener('click', () => {
                     document.querySelectorAll('.cuisine-tab').forEach(t => t.classList.remove('active-tab'));
@@ -1190,6 +1306,21 @@
                     document.getElementById('tab-' + tab.dataset.tab).classList.add('active-panel');
                 });
             });
+
+            // --- CUISINE CAROUSEL (mobile) ---
+            const cuisineCarousel = document.getElementById('cuisine-carousel');
+            const cuisineDots = document.querySelectorAll('.cuisine-dot');
+            if (cuisineCarousel && cuisineDots.length) {
+                cuisineCarousel.addEventListener('scroll', () => {
+                    const idx = Math.round(cuisineCarousel.scrollLeft / cuisineCarousel.offsetWidth);
+                    cuisineDots.forEach((d, i) => d.classList.toggle('active-dot', i === idx));
+                }, { passive: true });
+                cuisineDots.forEach(dot => {
+                    dot.addEventListener('click', () => {
+                        cuisineCarousel.scrollTo({ left: parseInt(dot.dataset.index) * cuisineCarousel.offsetWidth, behavior: 'smooth' });
+                    });
+                });
+            }
 
 
             // --- TESTIMONIALS ---
