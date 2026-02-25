@@ -641,42 +641,68 @@
         </div>
     </section>
 
-    <!-- SECTION 3: MEET MARY -->
+    <!-- SECTION 3: QUOTE DEMO -->
     <section id="experience" class="py-16 md:py-32 bg-sand relative z-10">
-        <div class="container mx-auto px-6 lg:px-12 text-center max-w-4xl mb-10 md:mb-24">
-            <p class="font-sans text-[0.6rem] tracking-[0.3em] uppercase text-gold/70 mb-4 fade-up">Try our new instant quote service · Available 24/7</p>
-            <h2 class="font-serif text-5xl md:text-6xl text-charcoal mb-6 fade-up">Meet Our Personal<br class="hidden md:block"><span class="italic">Wedding Consultant</span></h2>
+        <div class="container mx-auto px-6 lg:px-12 text-center max-w-4xl mb-10 md:mb-16">
+            <p class="font-sans text-[0.6rem] tracking-[0.3em] uppercase text-gold/70 mb-4 fade-up">Build your menu live · Pricing updates instantly · No commitment</p>
+            <h2 class="font-serif text-5xl md:text-6xl text-charcoal mb-6 fade-up">Get your quote<br class="hidden md:block"><span class="italic">estimate now</span></h2>
             <svg class="w-24 h-4 mx-auto mb-8" viewBox="0 0 100 10">
                 <path class="svg-line draw-on-scroll mx-auto" d="M0,5 L100,5" />
             </svg>
-            <p class="font-sans text-lg text-charcoal/80 font-light fade-up">Skip the emails and waiting. Speak to our admin assistant and receive a fully itemised quote — built live as you talk — sent straight to your phone before the call ends.</p>
+            <p class="font-sans text-lg text-charcoal/80 font-light fade-up">Select your dishes, set your guest count, and watch your full itemised quote build in real time — right on the page.</p>
         </div>
 
-        <div class="container mx-auto px-6 lg:px-12 grid grid-cols-1 md:grid-cols-3 gap-8">
-            <!-- Card 1 -->
-            <div class="bg-cream p-12 text-center shadow-sm hover:shadow-xl transition-shadow duration-500 exp-card border border-gold/10 group cursor-pointer">
-                <div class="w-12 h-12 rounded-full border border-gold flex items-center justify-center mx-auto mb-8 group-hover:bg-gold group-hover:text-charcoal transition-colors duration-500">
-                    <span class="font-serif italic text-xl">1</span>
+        <!-- Animated demo window -->
+        <div class="container mx-auto px-4 md:px-6 lg:px-12 max-w-3xl">
+            <div class="rounded-2xl overflow-hidden shadow-[0_24px_64px_rgba(28,28,28,0.13)] border border-charcoal/10">
+                <!-- Browser chrome -->
+                <div class="flex items-center gap-2 px-4 py-3 bg-charcoal">
+                    <span class="w-2.5 h-2.5 rounded-full bg-red-400/60 shrink-0"></span>
+                    <span class="w-2.5 h-2.5 rounded-full bg-yellow-400/60 shrink-0"></span>
+                    <span class="w-2.5 h-2.5 rounded-full bg-green-400/60 shrink-0"></span>
+                    <div class="mx-auto flex items-center gap-1.5 px-4 py-1.5 rounded bg-white/[0.07] text-cream/35 font-sans text-[11px]">
+                        <svg class="w-2.5 h-2.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                        deosacatering.co.uk/catering
+                    </div>
                 </div>
-                <h3 class="font-serif text-2xl mb-4 text-charcoal">Press the Button</h3>
-                <p class="font-sans text-sm font-light text-charcoal/70 leading-relaxed">Hit the pulsing gold button anywhere on the site. Our admin assistant answers instantly — no hold music, no wait times, any time of day or night.</p>
-            </div>
-            <!-- Card 2 -->
-            <div class="bg-cream p-12 text-center shadow-sm hover:shadow-xl transition-shadow duration-500 exp-card border border-gold/10 group cursor-pointer">
-                <div class="w-12 h-12 rounded-full border border-gold flex items-center justify-center mx-auto mb-8 group-hover:bg-gold group-hover:text-charcoal transition-colors duration-500">
-                    <span class="font-serif italic text-xl">2</span>
+                <!-- Catering page view -->
+                <div id="demo-page" class="bg-cream relative overflow-hidden" style="height:420px">
+                    <!-- Filter bar -->
+                    <div class="flex flex-wrap items-center gap-4 px-5 py-3.5 border-b border-charcoal/10" style="background:rgba(245,240,232,0.7)">
+                        <div class="flex items-center gap-1.5">
+                            <span class="font-sans text-[9px] uppercase tracking-widest text-charcoal/35">Guests</span>
+                            <span class="font-serif text-sm font-medium text-charcoal border-b border-charcoal/25 px-1 pb-px">50</span>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <span class="font-sans text-[9px] uppercase tracking-widest text-charcoal/35">Venue</span>
+                            <span class="font-serif text-sm font-medium text-charcoal border-b border-charcoal/25 px-1 pb-px">Hylands House</span>
+                        </div>
+                        <div class="ml-auto font-sans text-[9px] uppercase tracking-[0.2em] text-gold">African Heritage</div>
+                    </div>
+                    <!-- Menu items — populated by demo JS -->
+                    <div id="demo-menu-items" class="px-5"></div>
+                    <!-- Cart drawer (slides up from bottom) -->
+                    <div id="demo-cart" class="absolute bottom-0 left-0 right-0 bg-charcoal text-cream z-20" style="transform:translateY(100%);transition:transform 0.45s cubic-bezier(0.16,1,0.3,1)">
+                        <div id="demo-cart-hdr" class="flex items-center justify-between px-5 py-3 border-b border-cream/10">
+                            <div class="flex items-center gap-2">
+                                <svg class="w-3.5 h-3.5 text-gold shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+                                <span class="font-sans text-[10px] uppercase tracking-widest text-cream/60">Your Selection</span>
+                                <span id="d-count" class="font-sans text-[9px] tracking-wider font-medium bg-gold text-charcoal px-2 py-0.5 rounded-sm">0 items</span>
+                            </div>
+                            <div class="flex items-center gap-2.5">
+                                <span id="d-total-mini" class="font-serif text-sm font-bold text-gold">£0</span>
+                                <svg id="d-arrow" class="w-3 h-3 text-gold/50 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/></svg>
+                            </div>
+                        </div>
+                        <div id="demo-cart-body" class="px-5 overflow-hidden" style="max-height:0;transition:max-height 0.4s ease"></div>
+                    </div>
+                    <!-- Animated cursor -->
+                    <div id="demo-cursor" class="absolute z-30 pointer-events-none" style="top:120px;left:80%;opacity:0;transition:top 0.55s cubic-bezier(0.16,1,0.3,1),left 0.55s cubic-bezier(0.16,1,0.3,1),opacity 0.3s ease">
+                        <svg width="18" height="22" viewBox="0 0 18 22" fill="none"><path d="M1 1L1 17.5L5 13L7.5 20.5L10 19.5L7.5 12H13L1 1Z" fill="#1C1C1C" stroke="white" stroke-width="1.2" stroke-linejoin="round"/></svg>
+                    </div>
                 </div>
-                <h3 class="font-serif text-2xl mb-4 text-charcoal">Build Your Menu</h3>
-                <p class="font-sans text-sm font-light text-charcoal/70 leading-relaxed">Tell our assistant your guest count, venue, and the dishes you want. Your order is built live on screen as you speak — adding and adjusting in real time.</p>
             </div>
-            <!-- Card 3 -->
-            <div class="bg-cream p-12 text-center shadow-sm hover:shadow-xl transition-shadow duration-500 exp-card border border-gold/10 group cursor-pointer">
-                <div class="w-12 h-12 rounded-full border border-gold flex items-center justify-center mx-auto mb-8 group-hover:bg-gold group-hover:text-charcoal transition-colors duration-500">
-                    <span class="font-serif italic text-xl">3</span>
-                </div>
-                <h3 class="font-serif text-2xl mb-4 text-charcoal">Receive Your Quote</h3>
-                <p class="font-sans text-sm font-light text-charcoal/70 leading-relaxed">Before the call ends, our assistant takes your details and sends a full itemised invoice to your phone and email — instantly, no waiting.</p>
-            </div>
+            <p class="text-center font-sans text-[0.6rem] tracking-widest uppercase text-charcoal/25 mt-4">Live demo · Pricing updates instantly with guest count</p>
         </div>
 
         <!-- CTA -->
@@ -1409,6 +1435,134 @@
                 setTimeout(() => msg.style.opacity = 1, 50);
             }, 1500);
         });
+
+        // ─── QUOTE DEMO ANIMATION ─────────────────────────────────────────────
+        (function () {
+            const GUESTS = 50;
+            const ITEMS = [
+                { id: 0, name: 'Jollof Rice & Smokey Chicken', price: 22 },
+                { id: 1, name: 'Puff Puff',                    price: 8  },
+                { id: 2, name: 'Spicy Jerk Chicken',           price: 20 },
+                { id: 3, name: 'Fried Plantain',               price: 7  },
+            ];
+            let cart = [];
+
+            function $id(id) { return document.getElementById(id); }
+
+            function buildItems() {
+                const c = $id('demo-menu-items');
+                if (!c) return;
+                c.innerHTML = ITEMS.map(item => `
+                    <div class="flex items-center justify-between py-4 border-b border-charcoal/10">
+                        <div class="pr-4 min-w-0">
+                            <p class="font-serif text-base md:text-lg text-charcoal font-medium leading-snug">${item.name}</p>
+                            <p class="font-sans text-xs text-charcoal/40 mt-0.5">Est. <span class="text-charcoal/65 font-medium">£${(item.price * GUESTS).toLocaleString()}</span> · ${GUESTS} guests</p>
+                        </div>
+                        <div id="d-btn-${item.id}" class="w-8 h-8 shrink-0 border border-charcoal/30 rounded-full flex items-center justify-center text-charcoal/50 text-lg font-light" style="transition:background 0.2s,border-color 0.2s,color 0.2s,transform 0.2s">+</div>
+                    </div>`).join('');
+            }
+
+            function getPos(el) {
+                const page = $id('demo-page');
+                if (!el || !page) return null;
+                const r = el.getBoundingClientRect(), pr = page.getBoundingClientRect();
+                return { top: r.top - pr.top + r.height / 2, left: r.left - pr.left + r.width / 2 };
+            }
+
+            function moveCursor(top, left) {
+                const cur = $id('demo-cursor');
+                if (!cur) return;
+                cur.style.top     = top  + 'px';
+                cur.style.left    = left + 'px';
+                cur.style.opacity = '1';
+            }
+
+            function flashBtn(id) {
+                const btn = $id('d-btn-' + id);
+                if (!btn) return;
+                Object.assign(btn.style, { background:'#C9A84C', borderColor:'#C9A84C', color:'#1C1C1C', transform:'scale(0.80)' });
+                setTimeout(() => Object.assign(btn.style, { background:'', borderColor:'', color:'', transform:'' }), 280);
+            }
+
+            function renderCart() {
+                const drawer = $id('demo-cart'), count = $id('d-count'), mini = $id('d-total-mini');
+                if (!drawer || !count || !mini) return;
+                const total = cart.reduce((s, i) => s + i.price * GUESTS, 0);
+                count.textContent = `${cart.length} item${cart.length !== 1 ? 's' : ''}`;
+                mini.textContent  = `£${total.toLocaleString()}`;
+                drawer.style.transform = cart.length ? 'translateY(0)' : 'translateY(100%)';
+            }
+
+            function expandCart() {
+                const body = $id('demo-cart-body'), arrow = $id('d-arrow');
+                if (!body) return;
+                const grouped = {};
+                cart.forEach(i => { if (grouped[i.name]) grouped[i.name].qty++; else grouped[i.name] = { ...i, qty: 1 }; });
+                const total = cart.reduce((s, i) => s + i.price * GUESTS, 0);
+                body.innerHTML = Object.values(grouped).map(i => {
+                    const t = i.price * GUESTS * i.qty;
+                    return `<div class="flex justify-between items-center py-2.5 border-b border-cream/10">
+                        <p class="font-serif text-sm font-light text-cream leading-snug">${i.qty > 1 ? `<span class="font-sans text-[9px] bg-gold text-charcoal px-1.5 py-0.5 mr-1 rounded-sm">×${i.qty}</span>` : ''}${i.name}</p>
+                        <p class="font-sans text-xs text-gold/80 shrink-0 ml-4">£${t.toLocaleString()}</p>
+                    </div>`;
+                }).join('') + `<div class="flex justify-between items-center py-3">
+                    <span class="font-sans text-[9px] uppercase tracking-widest text-cream/40">Estimated Total</span>
+                    <span class="font-serif text-base font-bold text-gold">£${total.toLocaleString()}</span>
+                </div>`;
+                body.style.maxHeight = '180px';
+                if (arrow) arrow.style.transform = 'rotate(180deg)';
+            }
+
+            function resetDemo() {
+                cart = [];
+                const el = (id) => $id(id);
+                const drawer = el('demo-cart'), cur = el('demo-cursor');
+                const body   = el('demo-cart-body'), arrow = el('d-arrow');
+                if (drawer) drawer.style.transform = 'translateY(100%)';
+                if (cur)    cur.style.opacity = '0';
+                if (body)   { body.style.maxHeight = '0'; body.innerHTML = ''; }
+                if (arrow)  arrow.style.transform = '';
+                const count = el('d-count'), mini = el('d-total-mini');
+                if (count) count.textContent = '0 items';
+                if (mini)  mini.textContent  = '£0';
+                ITEMS.forEach(i => {
+                    const btn = el('d-btn-' + i.id);
+                    if (btn) Object.assign(btn.style, { background:'', borderColor:'', color:'', transform:'' });
+                });
+            }
+
+            const wait = ms => new Promise(r => setTimeout(r, ms));
+
+            async function loop() {
+                while (true) {
+                    await wait(900);
+                    for (let i = 0; i < 3; i++) {
+                        const btn = $id('d-btn-' + i);
+                        if (!btn) continue;
+                        const pos = getPos(btn);
+                        if (pos) moveCursor(pos.top, pos.left);
+                        await wait(750);
+                        flashBtn(i);
+                        cart.push(ITEMS[i]);
+                        renderCart();
+                        await wait(950);
+                    }
+                    // Move cursor to cart header
+                    const hdr = $id('demo-cart-hdr');
+                    if (hdr) { const pos = getPos(hdr); if (pos) moveCursor(pos.top, pos.left); }
+                    await wait(750);
+                    expandCart();
+                    await wait(3400);
+                    resetDemo();
+                    await wait(700);
+                }
+            }
+
+            function init() { buildItems(); loop(); }
+            if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+            else init();
+        })();
+
     </script>    <script src="js/voice.js"></script>
 </body>
 </html>
