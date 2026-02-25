@@ -164,6 +164,9 @@
 </div>
 
 <!-- Mobile list -->
+<div class="md:hidden venue-card" onclick="viewAll()" style="border-left:3px solid transparent">
+    <p class="font-sans text-[9px] uppercase tracking-widest text-gold">View All</p>
+</div>
 <div class="md:hidden" id="list-mob"></div>
 
 <!-- ══════════════════════════════════════════
@@ -177,6 +180,9 @@
         <div class="px-8 py-6 border-b border-charcoal/8 bg-cream sticky top-[80px] z-20">
             <input id="search-desk" type="search" placeholder="Search venues…" class="vs-input">
             <p id="count-desk" class="font-sans text-[9px] uppercase tracking-widest text-charcoal/35 mt-3">45 venues</p>
+        </div>
+        <div class="venue-card" onclick="viewAll()" style="border-left:3px solid transparent">
+            <p class="font-sans text-[9px] uppercase tracking-widest text-gold">View All</p>
         </div>
         <div id="list-desk"></div>
     </div>
@@ -380,6 +386,22 @@ function renderList(containerId, list) {
             </div>
         </div>`;
     }).join('');
+}
+
+// ── View all (reset search + map) ─────────────────────────────────────────
+function viewAll() {
+    ['search-desk','search-mob'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+    });
+    filterVenues('');
+    if (_activeIdx >= 0) {
+        if (_markersDesk[_activeIdx]) _markersDesk[_activeIdx].setIcon(makeIcon(false));
+        if (_markersMob[_activeIdx])  _markersMob[_activeIdx].setIcon(makeIcon(false));
+        _activeIdx = -1;
+    }
+    if (_mapDesk) { _mapDesk.closePopup(); _mapDesk.setView([51.52, -0.12], 9); }
+    if (_mapMob)  { _mapMob.closePopup();  _mapMob.setView([51.52, -0.12], 9); }
 }
 
 // ── Search / filter ───────────────────────────────────────────────────────
