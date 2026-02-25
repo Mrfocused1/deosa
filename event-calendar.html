@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="images/logo-light.svg">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Calendar | De'Osa CRM</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cream: '#FDFBF7', charcoal: '#1C1C1C', gold: '#C5A059', 'gold-light': '#E8D3A2', sand: '#F4F1EA'
+                    },
+                    fontFamily: {
+                        serif: ['"Cormorant Garamond"', 'serif'],
+                        sans:  ['Montserrat', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root { --cream:#FDFBF7; --charcoal:#1C1C1C; --gold:#C5A059; }
+        * { box-sizing:border-box; }
+        body { background-color:var(--charcoal); color:var(--cream); overflow-x:hidden; -webkit-font-smoothing:antialiased; }
+        * { scrollbar-width:none; } ::-webkit-scrollbar { display:none; }
+
+        .noise::before { content:""; position:fixed; inset:0; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E"); pointer-events:none; z-index:0; }
+
+        .nav-active   { background:rgba(197,160,89,0.12); color:var(--gold); border:1px solid rgba(197,160,89,0.25); }
+        .nav-inactive { color:rgba(253,251,247,0.45); border:1px solid transparent; }
+        .nav-inactive:hover { color:rgba(253,251,247,0.85); background:rgba(253,251,247,0.05); }
+
+        .dash-card { background:rgba(253,251,247,0.04); border:1px solid rgba(253,251,247,0.1); border-radius:.75rem; }
+
+        /* Calendar grid */
+        .cal-grid { display:grid; grid-template-columns:repeat(7,1fr); }
+        .cal-cell { min-height:100px; border-right:1px solid rgba(253,251,247,0.06); border-bottom:1px solid rgba(253,251,247,0.06); padding:.5rem .5rem .4rem; cursor:pointer; transition:background .15s; }
+        .cal-cell:hover { background:rgba(253,251,247,0.03); }
+        .cal-cell:nth-child(7n) { border-right:none; }
+        .cal-cell.outside { opacity:.3; pointer-events:none; }
+        .cal-cell.today .day-num { background:var(--gold); color:var(--charcoal); border-radius:50%; width:1.5rem; height:1.5rem; display:flex; align-items:center; justify-content:center; }
+
+        /* Event pills */
+        .ev-pill { display:block; width:100%; margin-bottom:2px; padding:2px 6px; border-radius:3px; font-family:'Montserrat',sans-serif; font-size:9px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; cursor:pointer; transition:opacity .15s; }
+        .ev-pill:hover { opacity:.8; }
+        .ev-confirmed { background:rgba(197,160,89,0.25); color:#E8D3A2; border-left:2px solid #C5A059; }
+        .ev-pending   { background:rgba(245,158,11,0.2);  color:#FCD34D; border-left:2px solid #F59E0B; }
+        .ev-enquiry   { background:rgba(96,165,250,0.2);  color:#93C5FD; border-left:2px solid #60A5FA; }
+        .ev-cancelled { background:rgba(248,113,113,0.15);color:#FCA5A5; border-left:2px solid #F87171; text-decoration:line-through; }
+
+        /* Status badges */
+        .badge { display:inline-flex; align-items:center; padding:.2rem .65rem; border-radius:9999px; font-size:.6rem; font-weight:700; text-transform:uppercase; letter-spacing:.08em; font-family:'Montserrat',sans-serif; }
+        .badge-confirmed { background:rgba(197,160,89,0.2);  color:#E8D3A2; border:1px solid rgba(197,160,89,0.4); }
+        .badge-pending   { background:rgba(245,158,11,0.15); color:#FCD34D; border:1px solid rgba(245,158,11,0.35); }
+        .badge-enquiry   { background:rgba(96,165,250,0.15); color:#93C5FD; border:1px solid rgba(96,165,250,0.3); }
+        .badge-cancelled { background:rgba(248,113,113,0.1);color:#FCA5A5; border:1px solid rgba(248,113,113,0.25); }
+
+        /* Drawer */
+        .drawer { position:fixed; top:0; right:0; height:100%; width:420px; max-width:100vw; background:#1a1a1a; border-left:1px solid rgba(253,251,247,0.1); z-index:100; transform:translateX(100%); transition:transform .3s cubic-bezier(.4,0,.2,1); display:flex; flex-direction:column; }
+        .drawer.open { transform:translateX(0); }
+        .drawer-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:99; display:none; }
+        .drawer-overlay.show { display:block; }
+
+        /* Form inputs */
+        .field-input { width:100%; background:rgba(253,251,247,0.05); border:1px solid rgba(253,251,247,0.1); border-radius:.375rem; padding:.6rem .9rem; font-family:'Montserrat',sans-serif; font-size:.8rem; color:var(--cream); outline:none; transition:border-color .2s; }
+        .field-input:focus { border-color:var(--gold); }
+        .field-input option { background:#1a1a1a; color:var(--cream); }
+        .field-label { display:block; font-family:'Montserrat',sans-serif; font-size:.65rem; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:rgba(253,251,247,0.4); margin-bottom:.4rem; }
+
+        /* View toggle */
+        .view-btn { padding:.4rem 1rem; font-family:'Montserrat',sans-serif; font-size:.65rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; border:1px solid rgba(253,251,247,0.12); color:rgba(253,251,247,0.4); transition:all .2s; border-radius:.25rem; }
+        .view-btn.active { background:rgba(197,160,89,0.12); color:var(--gold); border-color:rgba(197,160,89,0.3); }
+
+        /* List event row */
+        .list-row { display:flex; align-items:center; gap:1rem; padding:1rem 1.25rem; border-bottom:1px solid rgba(253,251,247,0.07); transition:background .15s; cursor:pointer; border-radius:.375rem; }
+        .list-row:hover { background:rgba(253,251,247,0.03); }
+
+        /* Toast */
+        #toast { position:fixed; bottom:2rem; left:50%; transform:translateX(-50%) translateY(4rem); background:rgba(197,160,89,0.95); color:#1C1C1C; padding:.65rem 1.5rem; border-radius:.5rem; font-family:'Montserrat',sans-serif; font-size:.75rem; font-weight:600; z-index:200; transition:transform .3s; pointer-events:none; }
+        #toast.show { transform:translateX(-50%) translateY(0); }
+
+        /* ─── Light Mode ─── */
+        html[data-theme="light"] body         { background:#F0EDE6; color:#1C1C1C; }
+        html[data-theme="light"] aside        { background:#FDFBF7!important; border-right-color:rgba(28,28,28,.1)!important; }
+        html[data-theme="light"] main         { background:#F0EDE6; }
+        html[data-theme="light"] main > header { border-bottom-color:rgba(28,28,28,.1)!important; }
+        html[data-theme="light"] .nav-inactive { color:rgba(28,28,28,.5)!important; }
+        html[data-theme="light"] .nav-inactive:hover { color:rgba(28,28,28,.85)!important; background:rgba(28,28,28,.05)!important; }
+        html[data-theme="light"] .nav-active  { background:rgba(197,160,89,.12)!important; color:#C5A059!important; border-color:rgba(197,160,89,.25)!important; }
+        html[data-theme="light"] .dash-card   { background:rgba(253,251,247,.85)!important; border-color:rgba(28,28,28,.09)!important; }
+        html[data-theme="light"] .text-cream  { color:#1C1C1C!important; }
+        html[data-theme="light"] .text-cream\/80  { color:rgba(28,28,28,.8)!important; }
+        html[data-theme="light"] .text-cream\/40  { color:rgba(28,28,28,.4)!important; }
+        html[data-theme="light"] .text-cream\/30  { color:rgba(28,28,28,.3)!important; }
+        html[data-theme="light"] .border-cream\/10 { border-color:rgba(28,28,28,.1)!important; }
+        html[data-theme="light"] .cal-cell    { border-color:rgba(28,28,28,.08)!important; }
+        html[data-theme="light"] .cal-cell:hover { background:rgba(28,28,28,.03)!important; }
+        html[data-theme="light"] .drawer      { background:#FDFBF7!important; border-left-color:rgba(28,28,28,.1)!important; }
+        html[data-theme="light"] .field-input { background:rgba(28,28,28,.04)!important; border-color:rgba(28,28,28,.12)!important; color:#1C1C1C!important; }
+        html[data-theme="light"] .field-input:focus { border-color:#C5A059!important; }
+        html[data-theme="light"] .field-input option { background:#FDFBF7!important; color:#1C1C1C!important; }
+        html[data-theme="light"] .field-label { color:rgba(28,28,28,.4)!important; }
+        html[data-theme="light"] .view-btn    { border-color:rgba(28,28,28,.12)!important; color:rgba(28,28,28,.4)!important; }
+        html[data-theme="light"] .view-btn.active { color:#C5A059!important; background:rgba(197,160,89,.1)!important; border-color:rgba(197,160,89,.3)!important; }
+        html[data-theme="light"] .list-row    { border-color:rgba(28,28,28,.07)!important; }
+        html[data-theme="light"] .list-row:hover { background:rgba(28,28,28,.03)!important; }
+        html[data-theme="light"] #mobile-menu { background:#FDFBF7!important; }
+    </style>
+</head>
+<body class="noise selection:bg-gold selection:text-charcoal flex h-screen overflow-hidden">
+
+    <!-- Sidebar -->
+    <aside class="w-64 flex-col hidden md:flex shrink-0 z-20 border-r border-cream/10 relative" style="background:var(--charcoal);">
+        <div class="p-8 border-b border-cream/10">
+            <a href="index.html"><img id="sidebar-logo" src="images/logo-dark-bg.svg" alt="De'Osa" class="h-8 w-auto"></a>
+            <p class="font-sans text-[10px] tracking-[0.25em] uppercase text-cream/40 mt-3">Staff Dashboard</p>
+        </div>
+        <nav class="flex-1 px-4 py-8 space-y-1 font-sans text-xs font-medium">
+            <a href="admin.html" class="flex items-center gap-4 px-4 py-3 rounded-lg nav-inactive transition-all">
+                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                <span class="tracking-widest uppercase text-[10px]">Home</span>
+            </a>
+            <a href="admin.html" class="flex items-center gap-4 px-4 py-3 rounded-lg nav-inactive transition-all">
+                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                <span class="tracking-widest uppercase text-[10px]">Call CRM</span>
+            </a>
+            <a href="menus-pricing.html" class="flex items-center gap-4 px-4 py-3 rounded-lg nav-inactive transition-all">
+                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                <span class="tracking-widest uppercase text-[10px]">Menus & Pricing</span>
+            </a>
+            <a href="event-calendar.html" class="flex items-center gap-4 px-4 py-3 rounded-lg nav-active transition-all">
+                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                <span class="tracking-widest uppercase text-[10px]">Event Calendar</span>
+            </a>
+            <a href="#" class="flex items-center gap-4 px-4 py-3 rounded-lg nav-inactive transition-all">
+                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                <span class="tracking-widests uppercase text-[10px]">Settings</span>
+            </a>
+        </nav>
+        <div class="p-5 border-t border-cream/10 flex items-center gap-3">
+            <div class="w-9 h-9 rounded-full bg-gold flex items-center justify-center text-charcoal font-serif text-lg shrink-0">D</div>
+            <div>
+                <p class="font-sans text-xs font-semibold text-cream">De'Osa Admin</p>
+                <p class="font-sans text-[10px] text-cream/40 tracking-widest uppercase">Director</p>
+            </div>
+            <a href="login.html" class="ml-auto text-cream/30 hover:text-gold transition-colors" title="Sign out">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="fixed inset-0 z-50 flex flex-col justify-center items-center gap-6 transition-all duration-500 opacity-0 pointer-events-none" style="background:#111111;">
+        <button onclick="toggleMobileMenu()" class="absolute top-6 right-6 font-sans text-xs font-bold tracking-widest uppercase text-cream/50 hover:text-gold transition-colors border border-cream/10 px-4 py-2 rounded-full">Close</button>
+        <img id="mobile-logo" src="images/logo-dark-bg.svg" alt="De'Osa" class="h-10 w-auto">
+        <a href="admin.html" onclick="toggleMobileMenu()" class="w-full flex items-center gap-4 px-6 py-4 rounded-xl nav-inactive transition-all justify-center">
+            <span class="font-sans text-xs font-bold tracking-widest uppercase">Call CRM</span>
+        </a>
+        <a href="menus-pricing.html" onclick="toggleMobileMenu()" class="w-full flex items-center gap-4 px-6 py-4 rounded-xl nav-inactive transition-all justify-center">
+            <span class="font-sans text-xs font-bold tracking-widest uppercase">Menus & Pricing</span>
+        </a>
+        <a href="event-calendar.html" onclick="toggleMobileMenu()" class="w-full flex items-center gap-4 px-6 py-4 rounded-xl nav-active transition-all justify-center">
+            <span class="font-sans text-xs font-bold tracking-widest uppercase">Event Calendar</span>
+        </a>
+    </div>
+
+    <!-- Main -->
+    <main class="flex-1 flex flex-col h-screen overflow-hidden relative z-10">
+
+        <!-- Topbar -->
+        <header class="border-b border-cream/10 h-16 md:h-20 flex items-center justify-between px-5 md:px-8 shrink-0">
+            <div class="flex items-center gap-3 md:hidden">
+                <button onclick="toggleMobileMenu()" class="text-cream/60 hover:text-gold transition-colors p-1">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                </button>
+                <span class="font-serif text-xl tracking-widest text-gold">De'Osa</span>
+            </div>
+            <div class="hidden md:block">
+                <h2 class="font-serif text-3xl text-cream">Event Calendar</h2>
+            </div>
+            <div class="flex items-center gap-3 ml-auto">
+                <button onclick="openNewDrawer(null)" class="flex items-center gap-2 px-4 py-2 bg-gold text-charcoal font-sans text-[10px] font-bold uppercase tracking-widest rounded-sm hover:bg-gold-light transition-colors">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v14M5 12h14"/></svg>
+                    Add Event
+                </button>
+                <button id="theme-toggle" onclick="toggleTheme()" class="p-2 text-cream/40 hover:text-gold transition-colors">
+                    <svg id="theme-icon-moon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+                    <svg id="theme-icon-sun" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m8.66-9h-1M4.34 12h-1m15.07-6.07-.71.71M6.34 17.66l-.71.71m12.73 0-.71-.71M6.34 6.34l-.71-.71M12 5a7 7 0 100 14A7 7 0 0012 5z"/></svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- Scrollable content -->
+        <div class="flex-1 overflow-y-auto px-6 md:px-8 py-8 space-y-6">
+
+            <!-- Stats row -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="dash-card p-5">
+                    <p class="font-sans text-[10px] uppercase tracking-widest text-cream/30 mb-1">This Month</p>
+                    <p id="stat-month" class="font-serif text-3xl text-cream">0</p>
+                </div>
+                <div class="dash-card p-5">
+                    <p class="font-sans text-[10px] uppercase tracking-widest text-cream/30 mb-1">Confirmed</p>
+                    <p id="stat-confirmed" class="font-serif text-3xl text-gold">0</p>
+                </div>
+                <div class="dash-card p-5">
+                    <p class="font-sans text-[10px] uppercase tracking-widest text-cream/30 mb-1">Pending</p>
+                    <p id="stat-pending" class="font-serif text-3xl text-cream">0</p>
+                </div>
+                <div class="dash-card p-5">
+                    <p class="font-sans text-[10px] uppercase tracking-widest text-cream/30 mb-1">Est. Revenue</p>
+                    <p id="stat-revenue" class="font-serif text-3xl text-gold">£0</p>
+                </div>
+            </div>
+
+            <!-- Month nav + view toggle -->
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <button onclick="changeMonth(-1)" class="w-8 h-8 flex items-center justify-center border border-cream/15 text-cream/50 hover:border-gold/40 hover:text-gold transition-all rounded">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                    </button>
+                    <h3 id="month-label" class="font-serif text-2xl text-cream w-48 text-center"></h3>
+                    <button onclick="changeMonth(1)" class="w-8 h-8 flex items-center justify-center border border-cream/15 text-cream/50 hover:border-gold/40 hover:text-gold transition-all rounded">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                    </button>
+                    <button onclick="goToToday()" class="px-3 py-1.5 border border-cream/15 text-cream/40 font-sans text-[10px] font-bold uppercase tracking-widest rounded hover:border-gold/40 hover:text-gold transition-all">Today</button>
+                </div>
+                <div class="flex gap-1">
+                    <button id="btn-cal" class="view-btn active" onclick="setView('calendar')">Calendar</button>
+                    <button id="btn-list" class="view-btn" onclick="setView('list')">List</button>
+                </div>
+            </div>
+
+            <!-- Calendar view -->
+            <div id="view-calendar">
+                <div class="dash-card overflow-hidden">
+                    <!-- Day headers -->
+                    <div class="cal-grid border-b border-cream/10">
+                        <div class="py-3 text-center font-sans text-[10px] font-bold uppercase tracking-widest text-cream/30">Sun</div>
+                        <div class="py-3 text-center font-sans text-[10px] font-bold uppercase tracking-widest text-cream/30">Mon</div>
+                        <div class="py-3 text-center font-sans text-[10px] font-bold uppercase tracking-widest text-cream/30">Tue</div>
+                        <div class="py-3 text-center font-sans text-[10px] font-bold uppercase tracking-widest text-cream/30">Wed</div>
+                        <div class="py-3 text-center font-sans text-[10px] font-bold uppercase tracking-widest text-cream/30">Thu</div>
+                        <div class="py-3 text-center font-sans text-[10px] font-bold uppercase tracking-widest text-cream/30">Fri</div>
+                        <div class="py-3 text-center font-sans text-[10px] font-bold uppercase tracking-widest text-cream/30">Sat</div>
+                    </div>
+                    <div id="cal-body" class="cal-grid"></div>
+                </div>
+            </div>
+
+            <!-- List view -->
+            <div id="view-list" class="hidden space-y-3">
+                <div id="list-body"></div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Drawer overlay -->
+    <div id="drawer-overlay" class="drawer-overlay" onclick="closeDrawer()"></div>
+
+    <!-- Event Drawer -->
+    <div id="event-drawer" class="drawer">
+        <div class="flex items-center justify-between px-6 py-5 border-b border-cream/10 shrink-0">
+            <h3 id="drawer-title" class="font-serif text-2xl text-cream">New Event</h3>
+            <button onclick="closeDrawer()" class="text-cream/30 hover:text-cream transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+        <div class="flex-1 overflow-y-auto px-6 py-5 space-y-4">
+            <input type="hidden" id="f-id">
+            <div>
+                <label class="field-label">Event Title</label>
+                <input id="f-title" type="text" placeholder="e.g. Smith Wedding" class="field-input">
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="field-label">Date</label>
+                    <input id="f-date" type="date" class="field-input">
+                </div>
+                <div>
+                    <label class="field-label">Time</label>
+                    <input id="f-time" type="time" class="field-input">
+                </div>
+            </div>
+            <div>
+                <label class="field-label">Client Name</label>
+                <input id="f-client" type="text" placeholder="Full name" class="field-input">
+            </div>
+            <div>
+                <label class="field-label">Event Type</label>
+                <select id="f-type" class="field-input">
+                    <option value="Wedding">Wedding</option>
+                    <option value="Birthday">Birthday</option>
+                    <option value="Corporate">Corporate</option>
+                    <option value="Anniversary">Anniversary</option>
+                    <option value="Private Dining">Private Dining</option>
+                    <option value="Gala">Gala</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+            <div>
+                <label class="field-label">Venue</label>
+                <input id="f-venue" type="text" placeholder="Venue name" class="field-input">
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="field-label">Guests</label>
+                    <input id="f-guests" type="number" min="1" placeholder="0" class="field-input">
+                </div>
+                <div>
+                    <label class="field-label">Est. Value (£)</label>
+                    <input id="f-value" type="number" min="0" step="50" placeholder="0" class="field-input">
+                </div>
+            </div>
+            <div>
+                <label class="field-label">Service Style</label>
+                <select id="f-service" class="field-input">
+                    <option value="Canapés & Drinks Only">Canapés & Drinks Only</option>
+                    <option value="Buffet Service">Buffet Service</option>
+                    <option value="Family Style">Family Style</option>
+                    <option value="Plated Multi-Course">Plated Multi-Course</option>
+                    <option value="Fine Dining">Fine Dining</option>
+                </select>
+            </div>
+            <div>
+                <label class="field-label">Status</label>
+                <select id="f-status" class="field-input">
+                    <option value="confirmed">Confirmed</option>
+                    <option value="pending">Pending</option>
+                    <option value="enquiry">Enquiry</option>
+                    <option value="cancelled">Cancelled</option>
+                </select>
+            </div>
+            <div>
+                <label class="field-label">Notes</label>
+                <textarea id="f-notes" rows="3" placeholder="Any additional notes..." class="field-input resize-none"></textarea>
+            </div>
+        </div>
+        <div class="px-6 py-4 border-t border-cream/10 flex gap-3 shrink-0">
+            <button onclick="saveEvent()" class="flex-1 py-2.5 bg-gold text-charcoal font-sans text-[10px] font-bold uppercase tracking-widest rounded-sm hover:bg-gold-light transition-colors">Save Event</button>
+            <button id="btn-delete" onclick="deleteEvent()" class="px-4 py-2.5 bg-red-500/10 border border-red-500/20 text-red-400 font-sans text-[10px] rounded-sm hover:bg-red-500/20 transition-all hidden">Delete</button>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast"></div>
+
+    <script>
+    /* ════════ DATA ════════ */
+    function loadData(key, fallback) {
+        try { return JSON.parse(localStorage.getItem(key)) || fallback; } catch(e) { return fallback; }
+    }
+
+    let events = loadData('ec_events', [
+        { id:1, title:"Williams Birthday",    client:"Marcus Williams",  type:"Birthday",    date:"2026-02-28", time:"18:00", venue:"Meridian Grand",           guests:200, value:18000, service:"Buffet Service",       status:"confirmed", notes:"" },
+        { id:2, title:"Morgan Anniversary",   client:"Sandra Morgan",    type:"Anniversary", date:"2026-02-27", time:"19:30", venue:"Hylands House",            guests:40,  value:3600,  service:"Fine Dining",          status:"confirmed", notes:"Intimate anniversary dinner" },
+        { id:3, title:"Johnson Corporate",    client:"TechFlow Ltd",     type:"Corporate",   date:"2026-03-07", time:"12:00", venue:"Battersea Arts Centre",    guests:80,  value:7200,  service:"Plated Multi-Course",  status:"confirmed", notes:"Lunch presentation event" },
+        { id:4, title:"Smith Wedding",        client:"James & Aisha Smith", type:"Wedding",  date:"2026-03-14", time:"14:00", venue:"Syon Park",                guests:120, value:14400, service:"Plated Multi-Course",  status:"confirmed", notes:"Full day catering" },
+        { id:5, title:"Davies Anniversary",   client:"Patricia Davies",  type:"Anniversary", date:"2026-03-21", time:"20:00", venue:"Chelsea Harbour Hotel",   guests:60,  value:5400,  service:"Family Style",         status:"pending",   notes:"Awaiting deposit" },
+        { id:6, title:"Brown Sweet 16",       client:"Claire Brown",     type:"Birthday",    date:"2026-03-28", time:"17:00", venue:"Porchester Hall",          guests:100, value:6000,  service:"Buffet Service",       status:"enquiry",   notes:"Initial enquiry — follow up" },
+        { id:7, title:"Patel Wedding",        client:"Priya & Dev Patel",type:"Wedding",     date:"2026-04-11", time:"13:00", venue:"Froyle Park",              guests:180, value:21600, service:"Fine Dining",          status:"confirmed", notes:"5-course tasting menu" },
+        { id:8, title:"Thompson Corporate",   client:"Apex Group",       type:"Corporate",   date:"2026-04-18", time:"11:00", venue:"Grand Sapphire Croydon",  guests:50,  value:3750,  service:"Canapés & Drinks Only",status:"pending",   notes:"Networking drinks reception" },
+        { id:9, title:"Clark Wedding",        client:"Olivia & Ben Clark",type:"Wedding",    date:"2026-04-25", time:"14:00", venue:"Boreham House",            guests:150, value:18000, service:"Plated Multi-Course",  status:"confirmed", notes:"" },
+        { id:10,title:"Adeyemi Gala",         client:"Adeyemi Foundation",type:"Gala",       date:"2026-05-09", time:"19:00", venue:"Guildhall London",         guests:300, value:36000, service:"Fine Dining",          status:"confirmed", notes:"Annual charity gala" },
+    ]);
+
+    /* ════════ STATE ════════ */
+    const today  = new Date();
+    let curYear  = today.getFullYear();
+    let curMonth = today.getMonth();
+    let viewMode = 'calendar';
+    let editingId = null;
+
+    const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+    const LOGOS  = { dark:'images/logo-dark-bg.svg', light:'images/logo-light.svg' };
+
+    /* ════════ STATS ════════ */
+    function renderStats() {
+        const monthEvents = events.filter(e => {
+            const d = new Date(e.date);
+            return d.getFullYear() === curYear && d.getMonth() === curMonth;
+        });
+        document.getElementById('stat-month').textContent     = monthEvents.length;
+        document.getElementById('stat-confirmed').textContent = monthEvents.filter(e => e.status === 'confirmed').length;
+        document.getElementById('stat-pending').textContent   = monthEvents.filter(e => e.status === 'pending').length;
+        const rev = monthEvents.filter(e => e.status === 'confirmed').reduce((s,e) => s + (e.value||0), 0);
+        document.getElementById('stat-revenue').textContent   = '£' + rev.toLocaleString();
+        document.getElementById('month-label').textContent    = MONTHS[curMonth] + ' ' + curYear;
+    }
+
+    /* ════════ CALENDAR VIEW ════════ */
+    function renderCalendar() {
+        const firstDay   = new Date(curYear, curMonth, 1).getDay();
+        const daysInMonth = new Date(curYear, curMonth + 1, 0).getDate();
+        const daysInPrev  = new Date(curYear, curMonth, 0).getDate();
+
+        const todayStr = today.toISOString().split('T')[0];
+        const body = document.getElementById('cal-body');
+        let html = '';
+
+        // Leading days from prev month
+        for (let i = firstDay - 1; i >= 0; i--) {
+            const d = daysInPrev - i;
+            html += `<div class="cal-cell outside"><span class="day-num font-sans text-xs text-cream/30">${d}</span></div>`;
+        }
+
+        // Current month days
+        for (let d = 1; d <= daysInMonth; d++) {
+            const dateStr = `${curYear}-${String(curMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+            const isToday = dateStr === todayStr;
+            const dayEvents = events.filter(e => e.date === dateStr);
+
+            const pills = dayEvents.map(e =>
+                `<span class="ev-pill ev-${e.status}" onclick="event.stopPropagation(); openEditDrawer(${e.id})" title="${e.title} — ${e.client}">${e.title}</span>`
+            ).join('');
+
+            html += `
+                <div class="cal-cell ${isToday ? 'today' : ''}" onclick="openNewDrawer('${dateStr}')">
+                    <span class="day-num font-sans text-xs ${isToday ? 'font-bold' : 'text-cream/50'} mb-1 block">${d}</span>
+                    ${pills}
+                </div>`;
+        }
+
+        // Trailing days
+        const totalCells = firstDay + daysInMonth;
+        const trailing = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
+        for (let d = 1; d <= trailing; d++) {
+            html += `<div class="cal-cell outside"><span class="day-num font-sans text-xs text-cream/30">${d}</span></div>`;
+        }
+
+        body.innerHTML = html;
+    }
+
+    /* ════════ LIST VIEW ════════ */
+    function renderList() {
+        const monthEvents = events
+            .filter(e => { const d = new Date(e.date); return d.getFullYear() === curYear && d.getMonth() === curMonth; })
+            .sort((a,b) => a.date.localeCompare(b.date));
+
+        const body = document.getElementById('list-body');
+        if (!monthEvents.length) {
+            body.innerHTML = `<div class="text-center py-16"><p class="font-serif text-2xl text-cream/30">No events this month</p><p class="font-sans text-xs text-cream/20 mt-2">Click + Add Event to create one</p></div>`;
+            return;
+        }
+
+        // Group by date
+        const grouped = {};
+        monthEvents.forEach(e => { if (!grouped[e.date]) grouped[e.date] = []; grouped[e.date].push(e); });
+
+        let html = '';
+        Object.entries(grouped).forEach(([date, dayEvs]) => {
+            const d = new Date(date + 'T12:00:00');
+            const label = d.toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long' });
+            html += `<p class="font-sans text-[10px] uppercase tracking-widests text-cream/30 mb-2 px-1">${label}</p>`;
+            dayEvs.forEach(e => {
+                html += `
+                    <div class="list-row dash-card mb-2" onclick="openEditDrawer(${e.id})">
+                        <div class="w-1 self-stretch rounded-full ev-${e.status}" style="min-width:4px; background:currentColor; opacity:.7"></div>
+                        <div class="flex-1 min-w-0">
+                            <p class="font-serif text-lg text-cream leading-tight">${e.title}</p>
+                            <p class="font-sans text-xs text-cream/45 mt-0.5">${e.client} · ${e.venue}</p>
+                        </div>
+                        <div class="text-right shrink-0">
+                            <span class="badge badge-${e.status}">${e.status}</span>
+                            <p class="font-sans text-[10px] text-cream/35 mt-1">${e.guests} guests</p>
+                        </div>
+                        <div class="text-right shrink-0 ml-2">
+                            <p class="font-serif text-lg text-gold">£${(e.value||0).toLocaleString()}</p>
+                            <p class="font-sans text-[10px] text-cream/35">${e.time || ''}</p>
+                        </div>
+                    </div>`;
+            });
+            html += `<div class="mb-4"></div>`;
+        });
+        body.innerHTML = html;
+    }
+
+    /* ════════ VIEW TOGGLE ════════ */
+    function setView(v) {
+        viewMode = v;
+        document.getElementById('view-calendar').classList.toggle('hidden', v !== 'calendar');
+        document.getElementById('view-list').classList.toggle('hidden', v !== 'list');
+        document.getElementById('btn-cal').classList.toggle('active', v === 'calendar');
+        document.getElementById('btn-list').classList.toggle('active', v === 'list');
+        if (v === 'list') renderList();
+    }
+
+    /* ════════ MONTH NAV ════════ */
+    function changeMonth(dir) {
+        curMonth += dir;
+        if (curMonth > 11) { curMonth = 0; curYear++; }
+        if (curMonth < 0)  { curMonth = 11; curYear--; }
+        renderStats();
+        renderCalendar();
+        if (viewMode === 'list') renderList();
+    }
+    function goToToday() {
+        curYear  = today.getFullYear();
+        curMonth = today.getMonth();
+        renderStats();
+        renderCalendar();
+        if (viewMode === 'list') renderList();
+    }
+
+    /* ════════ DRAWER ════════ */
+    function openNewDrawer(dateStr) {
+        editingId = null;
+        document.getElementById('drawer-title').textContent = 'New Event';
+        document.getElementById('btn-delete').classList.add('hidden');
+        // Clear form
+        ['f-id','f-title','f-client','f-venue','f-guests','f-value','f-notes'].forEach(id => document.getElementById(id).value = '');
+        document.getElementById('f-date').value    = dateStr || '';
+        document.getElementById('f-time').value    = '14:00';
+        document.getElementById('f-type').value    = 'Wedding';
+        document.getElementById('f-service').value = 'Plated Multi-Course';
+        document.getElementById('f-status').value  = 'confirmed';
+        openDrawer();
+    }
+
+    function openEditDrawer(id) {
+        const ev = events.find(e => e.id === id);
+        if (!ev) return;
+        editingId = id;
+        document.getElementById('drawer-title').textContent = 'Edit Event';
+        document.getElementById('btn-delete').classList.remove('hidden');
+        document.getElementById('f-id').value      = ev.id;
+        document.getElementById('f-title').value   = ev.title;
+        document.getElementById('f-client').value  = ev.client;
+        document.getElementById('f-date').value    = ev.date;
+        document.getElementById('f-time').value    = ev.time || '';
+        document.getElementById('f-type').value    = ev.type;
+        document.getElementById('f-venue').value   = ev.venue;
+        document.getElementById('f-guests').value  = ev.guests;
+        document.getElementById('f-value').value   = ev.value || '';
+        document.getElementById('f-service').value = ev.service || 'Plated Multi-Course';
+        document.getElementById('f-status').value  = ev.status;
+        document.getElementById('f-notes').value   = ev.notes || '';
+        openDrawer();
+    }
+
+    function openDrawer() {
+        document.getElementById('event-drawer').classList.add('open');
+        document.getElementById('drawer-overlay').classList.add('show');
+    }
+    function closeDrawer() {
+        document.getElementById('event-drawer').classList.remove('open');
+        document.getElementById('drawer-overlay').classList.remove('show');
+    }
+
+    function saveEvent() {
+        const title = document.getElementById('f-title').value.trim();
+        if (!title) { showToast('Please enter an event title'); return; }
+        const date  = document.getElementById('f-date').value;
+        if (!date)  { showToast('Please select a date'); return; }
+
+        const ev = {
+            id:      editingId || Date.now(),
+            title,
+            client:  document.getElementById('f-client').value.trim(),
+            type:    document.getElementById('f-type').value,
+            date,
+            time:    document.getElementById('f-time').value,
+            venue:   document.getElementById('f-venue').value.trim(),
+            guests:  parseInt(document.getElementById('f-guests').value) || 0,
+            value:   parseFloat(document.getElementById('f-value').value) || 0,
+            service: document.getElementById('f-service').value,
+            status:  document.getElementById('f-status').value,
+            notes:   document.getElementById('f-notes').value.trim(),
+        };
+
+        if (editingId) {
+            const idx = events.findIndex(e => e.id === editingId);
+            if (idx > -1) events[idx] = ev;
+        } else {
+            events.push(ev);
+        }
+
+        saveData();
+        closeDrawer();
+        renderStats();
+        renderCalendar();
+        if (viewMode === 'list') renderList();
+        showToast(editingId ? 'Event updated' : 'Event added');
+    }
+
+    function deleteEvent() {
+        if (!editingId) return;
+        events = events.filter(e => e.id !== editingId);
+        saveData();
+        closeDrawer();
+        renderStats();
+        renderCalendar();
+        if (viewMode === 'list') renderList();
+        showToast('Event deleted');
+    }
+
+    function saveData() {
+        try { localStorage.setItem('ec_events', JSON.stringify(events)); } catch(e) {}
+    }
+
+    /* ════════ TOAST ════════ */
+    function showToast(msg) {
+        const t = document.getElementById('toast');
+        t.textContent = msg;
+        t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 2500);
+    }
+
+    /* ════════ THEME ════════ */
+    function applyTheme(theme) {
+        const isLight = theme === 'light';
+        document.documentElement.setAttribute('data-theme', theme);
+        document.getElementById('theme-icon-moon').classList.toggle('hidden', isLight);
+        document.getElementById('theme-icon-sun').classList.toggle('hidden', !isLight);
+        const logo = isLight ? LOGOS.light : LOGOS.dark;
+        document.getElementById('sidebar-logo').src = logo;
+        document.getElementById('mobile-logo').src  = logo;
+        localStorage.setItem('admin-theme', theme);
+    }
+    function toggleTheme() {
+        const cur = document.documentElement.getAttribute('data-theme') || 'dark';
+        applyTheme(cur === 'light' ? 'dark' : 'light');
+    }
+
+    /* ════════ MOBILE MENU ════════ */
+    function toggleMobileMenu() {
+        const menu = document.getElementById('mobile-menu');
+        const isOpen = !menu.classList.contains('opacity-0');
+        menu.classList.toggle('opacity-0', isOpen);
+        menu.classList.toggle('pointer-events-none', isOpen);
+    }
+
+    /* ════════ BOOT ════════ */
+    renderStats();
+    renderCalendar();
+    applyTheme(localStorage.getItem('admin-theme') || 'dark');
+    </script>
+</body>
+</html>
