@@ -620,7 +620,7 @@
                         const checked = ev.order.some(o => o.itemId === item.id);
                         return `
                         <div class="menu-item-row" onclick="toggleMenuItem(${item.id}, '${course.replace(/'/g,"\\'")}', ${item.price})">
-                            <input type="checkbox" ${checked ? 'checked' : ''} id="item-${item.id}" onclick="event.stopPropagation()">
+                            <input type="checkbox" ${checked ? 'checked' : ''} id="item-${item.id}" onclick="event.stopPropagation(); toggleMenuItem(${item.id}, '${course.replace(/'/g,"\\'")}', ${item.price})">
                             <span class="flex-1 font-sans text-xs text-cream/70">${item.name}</span>
                             <span class="font-sans text-xs text-gold/70 shrink-0">£${item.price}pp</span>
                         </div>`;
