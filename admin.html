@@ -808,7 +808,12 @@
                 const safeName = row.customer.name.replace(/'/g, "\\'");
 
                 const tr = document.createElement('tr');
-                tr.className = 'hover:bg-cream/[0.03] transition-colors cursor-default';
+                tr.className = 'hover:bg-cream/[0.03] transition-colors cursor-pointer';
+                tr.addEventListener('click', e => {
+                    if (e.target.closest('button')) return;
+                    localStorage.setItem('crm_client', JSON.stringify(row));
+                    window.location.href = 'client-profile.html';
+                });
                 tr.innerHTML = `
                     <td class="p-4 align-top">
                         <p class="font-serif text-lg text-cream">${row.customer.name}</p>

@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="images/logo-light.svg">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Profile | De'Osa CRM</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cream: '#FDFBF7', charcoal: '#1C1C1C', gold: '#C5A059',
+                        'gold-light': '#E8D3A2', sand: '#F4F1EA',
+                    },
+                    fontFamily: {
+                        serif: ['"Cormorant Garamond"', 'serif'],
+                        sans: ['Montserrat', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root { --cream:#FDFBF7; --charcoal:#1C1C1C; --gold:#C5A059; }
+        * { box-sizing: border-box; }
+        body { background-color: var(--charcoal); color: var(--cream); overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+        * { scrollbar-width: none; }
+        ::-webkit-scrollbar { display: none; }
+
+        .noise::before { content:""; position:fixed; inset:0; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.04'/%3E%3C/svg%3E"); pointer-events:none; z-index:0; }
+
+        .dash-card { background:rgba(253,251,247,0.04); border:1px solid rgba(253,251,247,0.1); border-radius:0.75rem; transition:border-color 0.3s; }
+        .dash-card:hover { border-color:rgba(197,160,89,0.2); }
+
+        .nav-active   { background:rgba(197,160,89,0.12); color:var(--gold); border:1px solid rgba(197,160,89,0.25); }
+        .nav-inactive { color:rgba(253,251,247,0.45); border:1px solid transparent; }
+        .nav-inactive:hover { color:rgba(253,251,247,0.85); background:rgba(253,251,247,0.05); }
+
+        .badge { display:inline-flex; align-items:center; padding:.25rem .75rem; border-radius:9999px; font-size:.65rem; font-weight:700; text-transform:uppercase; letter-spacing:.1em; }
+        .badge-paid    { background:rgba(46,92,58,.25);   color:#6FCF97; border:1px solid rgba(46,92,58,.5); }
+        .badge-pending { background:rgba(197,160,89,.15); color:var(--gold); border:1px solid rgba(197,160,89,.35); }
+        .badge-sent    { background:rgba(99,179,237,.15); color:#90CDF4; border:1px solid rgba(99,179,237,.3); }
+        .badge-neutral { background:rgba(253,251,247,.08); color:rgba(253,251,247,.4); border:1px solid rgba(253,251,247,.15); }
+        .badge-confirmed { background:rgba(46,92,58,.2); color:#6FCF97; border:1px solid rgba(46,92,58,.4); }
+        .badge-gold    { background:rgba(197,160,89,.15); color:var(--gold); border:1px solid rgba(197,160,89,.35); }
+
+        .drawer-open   { transform:translateX(0%); }
+        .drawer-closed { transform:translateX(100%); }
+
+        /* Editable inline fields */
+        .editable { border-bottom:1px solid transparent; outline:none; transition:border-color .2s; cursor:text; display:inline-block; min-width:2rem; }
+        .editable:hover  { border-bottom-color:rgba(253,251,247,.2); }
+        .editable:focus  { border-bottom-color:var(--gold); }
+        /* Order number inputs */
+        .order-input { background:transparent; border:none; border-bottom:1px solid rgba(253,251,247,.15); outline:none; color:rgba(253,251,247,.75); font-family:'Montserrat',sans-serif; font-size:.75rem; padding:2px 2px 2px 0; transition:border-color .2s,color .2s; -moz-appearance:textfield; }
+        .order-input::-webkit-inner-spin-button, .order-input::-webkit-outer-spin-button { -webkit-appearance:none; margin:0; }
+        .order-input:focus { border-bottom-color:var(--gold); color:rgba(253,251,247,.95); }
+
+        /* Timeline */
+        .timeline-dot { width:10px; height:10px; border-radius:50%; background:var(--gold); border:2px solid var(--charcoal); flex-shrink:0; }
+        .timeline-dot-dim { background:rgba(253,251,247,.15); }
+        .timeline-line-v { position:absolute; left:4px; top:14px; bottom:0; width:2px; background:rgba(253,251,247,.07); }
+
+        /* Live call */
+        .live-pulse { animation:livePulse 1.4s infinite; }
+        @keyframes livePulse { 0%,100%{opacity:1;} 50%{opacity:.35;} }
+        .call-timer { font-variant-numeric:tabular-nums; }
+
+        /* Transcript bubbles */
+        .bubble-agent  { background:rgba(253,251,247,.06); border:1px solid rgba(253,251,247,.1); border-radius:1rem 1rem 1rem .25rem; }
+        .bubble-client { background:rgba(197,160,89,.12); border:1px solid rgba(197,160,89,.25); border-radius:1rem 1rem .25rem 1rem; }
+
+        /* Menu item chip */
+        .menu-chip { display:flex; align-items:center; gap:.5rem; padding:.35rem .75rem; background:rgba(253,251,247,.05); border:1px solid rgba(253,251,247,.1); border-radius:.375rem; font-family:'Cormorant Garamond',serif; font-size:.95rem; transition:background .15s; }
+        .menu-chip:hover { background:rgba(253,251,247,.08); }
+
+        /* Audio player */
+        .audio-track { height:4px; background:rgba(253,251,247,.12); border-radius:2px; overflow:hidden; cursor:pointer; }
+        .audio-fill  { height:100%; background:var(--gold); border-radius:2px; width:0%; transition:width .1s; }
+
+        /* ─── Light Mode ─── */
+        html[data-theme="light"] body { background-color:#F0EDE6; color:#1C1C1C; }
+        html[data-theme="light"] aside { background-color:#FDFBF7; border-right-color:rgba(28,28,28,.1) !important; }
+        html[data-theme="light"] aside .border-b { border-color:rgba(28,28,28,.08) !important; }
+        html[data-theme="light"] .nav-inactive { color:rgba(28,28,28,.5) !important; border-color:transparent !important; }
+        html[data-theme="light"] .nav-inactive:hover { color:rgba(28,28,28,.85) !important; background:rgba(28,28,28,.05) !important; }
+        html[data-theme="light"] .nav-active { background:rgba(197,160,89,.12) !important; color:#C5A059 !important; border-color:rgba(197,160,89,.25) !important; }
+        html[data-theme="light"] main > header { border-bottom-color:rgba(28,28,28,.1) !important; }
+        html[data-theme="light"] #mobile-menu { background:#FDFBF7 !important; }
+        html[data-theme="light"] .dash-card { background:rgba(253,251,247,.85) !important; border-color:rgba(28,28,28,.09) !important; }
+        html[data-theme="light"] .dash-card:hover { border-color:rgba(197,160,89,.3) !important; }
+        html[data-theme="light"] .badge-neutral { background:rgba(28,28,28,.06) !important; color:rgba(28,28,28,.5) !important; border-color:rgba(28,28,28,.12) !important; }
+        html[data-theme="light"] .text-cream { color:#1C1C1C !important; }
+        html[data-theme="light"] .text-cream\/80 { color:rgba(28,28,28,.8) !important; }
+        html[data-theme="light"] .text-cream\/60 { color:rgba(28,28,28,.6) !important; }
+        html[data-theme="light"] .text-cream\/50 { color:rgba(28,28,28,.5) !important; }
+        html[data-theme="light"] .text-cream\/40 { color:rgba(28,28,28,.4) !important; }
+        html[data-theme="light"] .text-cream\/35 { color:rgba(28,28,28,.35) !important; }
+        html[data-theme="light"] .text-cream\/30 { color:rgba(28,28,28,.3) !important; }
+        html[data-theme="light"] .border-cream\/10 { border-color:rgba(28,28,28,.1) !important; }
+        html[data-theme="light"] .border-cream\/15 { border-color:rgba(28,28,28,.15) !important; }
+        html[data-theme="light"] .bg-cream\/5 { background-color:rgba(28,28,28,.05) !important; }
+        html[data-theme="light"] .editable:hover { border-bottom-color:rgba(28,28,28,.25) !important; }
+        html[data-theme="light"] .order-input { color:rgba(28,28,28,.75) !important; border-bottom-color:rgba(28,28,28,.15) !important; }
+        html[data-theme="light"] .order-input:focus { color:rgba(28,28,28,.95) !important; }
+        html[data-theme="light"] .menu-chip { background:rgba(28,28,28,.04) !important; border-color:rgba(28,28,28,.1) !important; }
+        html[data-theme="light"] .bubble-agent  { background:rgba(28,28,28,.04) !important; border-color:rgba(28,28,28,.1) !important; }
+        html[data-theme="light"] .timeline-line-v { background:rgba(28,28,28,.1) !important; }
+        html[data-theme="light"] .timeline-dot-dim { background:rgba(28,28,28,.2) !important; }
+        html[data-theme="light"] #live-call-panel { background:rgba(28,28,28,.03) !important; border-color:rgba(28,28,28,.1) !important; }
+        html[data-theme="light"] .audio-track { background:rgba(28,28,28,.12) !important; }
+    </style>
+</head>
+<body class="noise selection:bg-gold selection:text-charcoal flex h-screen overflow-hidden">
+
+    <!-- Sidebar -->
+    <aside class="w-64 flex-col hidden md:flex shrink-0 z-20 border-r border-cream/10 relative">
+        <div class="p-8 border-b border-cream/10">
+            <a href="index.html"><img id="sidebar-logo" src="images/logo-dark-bg.svg" alt="De'Osa" class="h-8 w-auto"></a>
+            <p class="font-sans text-[10px] tracking-[0.25em] uppercase text-cream/40 mt-3">Staff Dashboard</p>
+        </div>
+        <nav class="flex-1 px-4 py-8 space-y-1 font-sans text-xs font-medium">
+            <a href="index.html" class="flex items-center gap-4 px-4 py-3 rounded-lg nav-inactive transition-all">
+                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                <span class="tracking-widest uppercase text-[10px]">Home</span>
+            </a>
+            <a href="admin.html" class="flex items-center gap-4 px-4 py-3 rounded-lg nav-active transition-all">
+                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                <span class="tracking-widest uppercase text-[10px]">Call CRM</span>
+            </a>
+            <a href="#" class="flex items-center gap-4 px-4 py-3 rounded-lg nav-inactive transition-all">
+                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                <span class="tracking-widest uppercase text-[10px]">Menus & Pricing</span>
+            </a>
+            <a href="#" class="flex items-center gap-4 px-4 py-3 rounded-lg nav-inactive transition-all">
+                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                <span class="tracking-widest uppercase text-[10px]">Event Calendar</span>
+            </a>
+            <a href="#" class="flex items-center gap-4 px-4 py-3 rounded-lg nav-inactive transition-all">
+                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                <span class="tracking-widest uppercase text-[10px]">Settings</span>
+            </a>
+        </nav>
+        <div class="p-5 border-t border-cream/10 flex items-center gap-3">
+            <div class="w-9 h-9 rounded-full bg-gold flex items-center justify-center text-charcoal font-serif text-lg shrink-0">D</div>
+            <div>
+                <p class="font-sans text-xs font-semibold text-cream">De'Osa Admin</p>
+                <p class="font-sans text-[10px] text-cream/40 tracking-widest uppercase">Director</p>
+            </div>
+            <a href="login.html" class="ml-auto text-cream/30 hover:text-gold transition-colors" title="Sign out">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu" class="fixed inset-0 z-50 flex flex-col justify-center items-center gap-8 transition-all duration-500 opacity-0 pointer-events-none" style="background:#111111;">
+        <button onclick="toggleMobileMenu()" class="absolute top-6 right-6 font-sans text-xs font-bold tracking-widest uppercase text-cream/50 hover:text-gold transition-colors border border-cream/10 px-4 py-2 rounded-full">Close</button>
+        <div class="text-center mb-4">
+            <img id="mobile-logo" src="images/logo-dark-bg.svg" alt="De'Osa" class="h-10 w-auto mx-auto">
+            <p class="font-sans text-[10px] tracking-[0.25em] uppercase text-cream/30 mt-3">Staff Dashboard</p>
+        </div>
+        <nav class="flex flex-col items-center gap-3 w-full max-w-xs">
+            <a href="index.html" class="w-full flex items-center gap-4 px-6 py-4 rounded-xl nav-inactive transition-all justify-center">
+                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                <span class="font-sans text-xs font-bold tracking-widest uppercase">Home</span>
+            </a>
+            <a href="admin.html" class="w-full flex items-center gap-4 px-6 py-4 rounded-xl nav-active transition-all text-center justify-center">
+                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                <span class="font-sans text-xs font-bold tracking-widest uppercase">Call CRM</span>
+            </a>
+        </nav>
+        <a href="login.html" class="font-sans text-xs font-bold tracking-widest uppercase text-cream/30 hover:text-gold transition-colors mt-4 flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+            Sign Out
+        </a>
+    </div>
+
+    <!-- Main -->
+    <main class="flex-1 flex flex-col h-screen overflow-hidden relative z-10">
+
+        <!-- Topbar -->
+        <header class="border-b border-cream/10 h-16 md:h-20 flex items-center justify-between px-5 md:px-8 shrink-0 gap-4">
+            <div class="flex items-center gap-3 md:gap-4 shrink-0">
+                <button onclick="toggleMobileMenu()" class="text-cream/60 hover:text-gold transition-colors p-1 md:hidden">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                </button>
+                <a href="admin.html" class="flex items-center gap-2 text-cream/50 hover:text-gold transition-colors font-sans text-xs font-bold uppercase tracking-widest">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                    <span class="hidden sm:inline">All Clients</span>
+                </a>
+                <span class="text-cream/20 hidden sm:block">|</span>
+                <span id="topbar-name" class="font-serif text-xl md:text-2xl text-cream hidden sm:block"></span>
+            </div>
+            <div class="flex items-center gap-2 md:gap-3">
+                <span id="topbar-outcome-badge" class="badge hidden sm:inline-flex"></span>
+                <button onclick="saveAll()" class="px-4 py-2 bg-gold hover:bg-gold-light text-charcoal font-sans text-[10px] font-bold uppercase tracking-widest rounded-sm transition-colors">
+                    Save All
+                </button>
+                <button onclick="toggleTheme()" class="p-2 text-cream/40 hover:text-gold transition-colors" title="Toggle theme">
+                    <svg id="theme-icon-moon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+                    <svg id="theme-icon-sun" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m8.66-9h-1M4.34 12h-1m15.07-6.07-.71.71M6.34 17.66l-.71.71m12.73 0-.71-.71M6.34 6.34l-.71-.71M12 5a7 7 0 100 14A7 7 0 0012 5z"/></svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- Scrollable Content -->
+        <div class="flex-1 overflow-y-auto">
+
+            <!-- Page Header -->
+            <div class="px-6 md:px-10 pt-8 pb-6 border-b border-cream/10 flex flex-col sm:flex-row sm:items-center gap-5">
+                <div id="client-avatar" class="w-16 h-16 rounded-full bg-gold flex items-center justify-center font-serif text-2xl text-charcoal shrink-0 font-bold"></div>
+                <div class="flex-1">
+                    <p class="font-sans text-[10px] uppercase tracking-widest text-gold mb-1">Client Profile</p>
+                    <h1 id="profile-name" class="font-serif text-4xl md:text-5xl text-cream leading-tight"></h1>
+                    <div class="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2 font-sans text-xs text-cream/45">
+                        <span id="profile-event"></span>
+                        <span class="text-cream/20">·</span>
+                        <span id="profile-venue"></span>
+                        <span class="text-cream/20">·</span>
+                        <span id="profile-date" class="text-gold/70"></span>
+                    </div>
+                </div>
+                <div class="flex gap-2 flex-wrap">
+                    <button onclick="openCommsAction('text')" class="px-4 py-2 bg-cream/5 border border-cream/15 text-cream/60 font-sans text-[10px] font-bold uppercase tracking-widest rounded-sm hover:border-cream/30 hover:text-cream transition-all">Send Text</button>
+                    <button onclick="openCommsAction('email')" class="px-4 py-2 bg-cream/5 border border-cream/15 text-cream/60 font-sans text-[10px] font-bold uppercase tracking-widest rounded-sm hover:border-cream/30 hover:text-cream transition-all">Send Email</button>
+                    <button onclick="openInvoiceDrawer()" class="px-4 py-2 bg-gold/15 border border-gold/35 text-gold font-sans text-[10px] font-bold uppercase tracking-widest rounded-sm hover:bg-gold hover:text-charcoal transition-all">View Invoice</button>
+                </div>
+            </div>
+
+            <!-- Main Grid -->
+            <div class="px-6 md:px-10 py-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+                <!-- LEFT COLUMN (col-span-2) -->
+                <div class="lg:col-span-2 space-y-6">
+
+                    <!-- Order Details -->
+                    <div class="dash-card p-6">
+                        <div class="flex items-center justify-between mb-5 pb-4 border-b border-cream/10">
+                            <h2 class="font-serif text-2xl text-cream">Order Details</h2>
+                            <span class="font-sans text-[10px] text-cream/25 uppercase tracking-widest">Tap values to edit</span>
+                        </div>
+                        <div class="space-y-4 mb-5 pb-5 border-b border-cream/10">
+                            <!-- Catering line -->
+                            <div>
+                                <p class="font-sans text-[10px] uppercase tracking-widest text-cream/30 font-bold mb-2">Catering</p>
+                                <div class="flex justify-between items-center">
+                                    <div class="flex items-center gap-1 font-sans text-xs text-cream/45">
+                                        <input id="o-guests" type="number" value="150" min="1" class="order-input w-14 text-right">
+                                        <span>guests &times; £</span>
+                                        <input id="o-pp" type="number" value="90" min="0" step="5" class="order-input w-12 text-right">
+                                        <span>pp</span>
+                                    </div>
+                                    <span id="o-catering" class="font-sans text-sm text-cream/60 tabular-nums">£13,500.00</span>
+                                </div>
+                            </div>
+                            <!-- Service lines -->
+                            <div id="o-lines" class="space-y-3"></div>
+                            <!-- Add line -->
+                            <button onclick="addOrderLine()" class="flex items-center gap-2 text-[10px] font-sans uppercase tracking-widest text-cream/30 hover:text-gold transition-colors mt-1">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v14M5 12h14"/></svg>
+                                Add Line
+                            </button>
+                        </div>
+                        <!-- Totals -->
+                        <div class="space-y-2 mb-5">
+                            <div class="flex justify-between font-sans text-sm text-cream/50">
+                                <span>Subtotal</span><span id="o-subtotal" class="tabular-nums"></span>
+                            </div>
+                            <div class="flex justify-between font-sans text-xs text-cream/30">
+                                <span>Deposit (25%)</span><span id="o-deposit" class="tabular-nums text-green-400/70"></span>
+                            </div>
+                            <div class="flex justify-between pt-2 border-t border-cream/10">
+                                <span class="font-sans text-sm font-bold text-cream">Balance Due</span>
+                                <span id="o-balance" class="font-serif text-xl text-gold tabular-nums"></span>
+                            </div>
+                        </div>
+                        <!-- Invoice status -->
+                        <div class="flex items-center justify-between pt-3 border-t border-cream/10">
+                            <span class="font-sans text-[10px] uppercase tracking-widest text-cream/30">Invoice Status</span>
+                            <select id="o-invoice-status" class="bg-transparent border border-cream/15 text-cream/60 font-sans text-xs px-3 py-1.5 rounded-md focus:outline-none focus:border-gold/50 transition-colors" style="-webkit-appearance:none;">
+                                <option>Paid</option><option>Sent</option><option>To Be Sent</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Menu -->
+                    <div class="dash-card p-6">
+                        <div class="flex items-center justify-between mb-5 pb-4 border-b border-cream/10">
+                            <h2 class="font-serif text-2xl text-cream">Menu Selection</h2>
+                            <span class="font-sans text-[10px] text-cream/25 uppercase tracking-widest">Editable</span>
+                        </div>
+                        <div id="menu-sections" class="space-y-6"></div>
+                    </div>
+
+                    <!-- Call Record -->
+                    <div class="dash-card p-6">
+                        <div class="flex items-center justify-between mb-5 pb-4 border-b border-cream/10">
+                            <h2 class="font-serif text-2xl text-cream">Call Record</h2>
+                            <span id="call-outcome-badge" class="badge"></span>
+                        </div>
+                        <!-- Call meta -->
+                        <div class="grid grid-cols-3 gap-4 mb-6">
+                            <div>
+                                <p class="font-sans text-[10px] uppercase tracking-widest text-cream/30 mb-1">Date</p>
+                                <p id="call-date-display" class="font-sans text-sm text-cream/70"></p>
+                            </div>
+                            <div>
+                                <p class="font-sans text-[10px] uppercase tracking-widest text-cream/30 mb-1">Duration</p>
+                                <p id="call-duration-display" class="font-sans text-sm text-cream/70 font-medium"></p>
+                            </div>
+                            <div>
+                                <p class="font-sans text-[10px] uppercase tracking-widest text-cream/30 mb-1">Outcome</p>
+                                <p id="call-outcome-display" class="font-sans text-sm text-cream/70"></p>
+                            </div>
+                        </div>
+                        <!-- Audio player -->
+                        <div class="mb-6 p-4 rounded-lg border border-cream/10 bg-cream/[0.02]">
+                            <p class="font-sans text-[10px] uppercase tracking-widest text-cream/30 mb-3">Recording</p>
+                            <div class="flex items-center gap-4">
+                                <button id="play-btn" onclick="toggleAudio()" class="w-10 h-10 rounded-full bg-gold/20 border border-gold/40 flex items-center justify-center text-gold hover:bg-gold hover:text-charcoal transition-all shrink-0">
+                                    <svg id="play-icon" class="w-4 h-4 ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                    <svg id="pause-icon" class="w-4 h-4 hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                                </button>
+                                <div class="flex-1">
+                                    <div class="audio-track" onclick="seekAudio(event)" id="audio-track">
+                                        <div class="audio-fill" id="audio-fill"></div>
+                                    </div>
+                                    <div class="flex justify-between mt-1.5">
+                                        <span id="audio-current" class="font-sans text-[10px] text-cream/30 tabular-nums">0:00</span>
+                                        <span id="audio-duration-label" class="font-sans text-[10px] text-cream/30 tabular-nums">—</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <audio id="call-audio" class="hidden"></audio>
+                        </div>
+                        <!-- Transcript -->
+                        <div id="call-transcript-section">
+                            <p class="font-sans text-[10px] uppercase tracking-widest text-cream/30 mb-3">Transcript</p>
+                            <div id="call-transcript-messages" class="space-y-3 max-h-64 overflow-y-auto pr-1"></div>
+                        </div>
+                    </div>
+
+                    <!-- Live Call Panel -->
+                    <div id="live-call-panel" class="dash-card p-6 border border-cream/10">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-3">
+                                <div id="live-dot" class="w-2.5 h-2.5 rounded-full bg-cream/20"></div>
+                                <h2 class="font-serif text-2xl text-cream">Live Call</h2>
+                                <span id="live-status-label" class="font-sans text-[10px] uppercase tracking-widest text-cream/30">Standby</span>
+                            </div>
+                            <span id="call-timer-display" class="call-timer font-sans text-sm text-cream/30 hidden">0:00</span>
+                        </div>
+
+                        <!-- Idle state -->
+                        <div id="live-idle" class="py-6 text-center">
+                            <div class="w-12 h-12 rounded-full bg-cream/5 border border-cream/10 flex items-center justify-center mx-auto mb-3">
+                                <svg class="w-5 h-5 text-cream/25" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+                            </div>
+                            <p class="font-sans text-xs text-cream/35 mb-1">Awaiting call connection</p>
+                            <p class="font-sans text-[10px] text-cream/20">This panel activates automatically when a live call connects via <code class="text-gold/60">window.DeOsaCRM.startCall()</code></p>
+                        </div>
+
+                        <!-- Active state (hidden until call starts) -->
+                        <div id="live-active" class="hidden space-y-4">
+                            <!-- Quick field chips -->
+                            <div>
+                                <p class="font-sans text-[10px] uppercase tracking-widest text-cream/30 mb-2">Quick Update</p>
+                                <div class="flex flex-wrap gap-2">
+                                    <button onclick="DeOsaCRM.promptField('guests')" class="px-3 py-1.5 text-[10px] font-sans font-bold uppercase tracking-widest border border-cream/15 text-cream/50 rounded-md hover:border-gold/40 hover:text-gold transition-all">Guest Count</button>
+                                    <button onclick="DeOsaCRM.promptField('venue')" class="px-3 py-1.5 text-[10px] font-sans font-bold uppercase tracking-widest border border-cream/15 text-cream/50 rounded-md hover:border-gold/40 hover:text-gold transition-all">Venue</button>
+                                    <button onclick="DeOsaCRM.promptField('date')" class="px-3 py-1.5 text-[10px] font-sans font-bold uppercase tracking-widest border border-cream/15 text-cream/50 rounded-md hover:border-gold/40 hover:text-gold transition-all">Event Date</button>
+                                    <button onclick="DeOsaCRM.promptField('outcome')" class="px-3 py-1.5 text-[10px] font-sans font-bold uppercase tracking-widest border border-cream/15 text-cream/50 rounded-md hover:border-gold/40 hover:text-gold transition-all">Outcome</button>
+                                </div>
+                            </div>
+                            <!-- Live transcript feed -->
+                            <div>
+                                <p class="font-sans text-[10px] uppercase tracking-widest text-cream/30 mb-2">Live Transcript</p>
+                                <div id="live-transcript" class="space-y-2 max-h-40 overflow-y-auto pr-1 min-h-[3rem] border border-cream/10 rounded-lg p-3 bg-cream/[0.02]"></div>
+                            </div>
+                            <!-- End call -->
+                            <button onclick="DeOsaCRM.endCall()" class="w-full py-2.5 bg-red-500/15 border border-red-500/30 text-red-400 font-sans text-xs font-bold uppercase tracking-widest rounded-sm hover:bg-red-500/25 transition-all">
+                                End Call
+                            </button>
+                        </div>
+
+                        <!-- Notes area (always visible) -->
+                        <div class="mt-4 pt-4 border-t border-cream/10">
+                            <p class="font-sans text-[10px] uppercase tracking-widest text-cream/30 mb-2">Call Notes</p>
+                            <textarea id="call-notes" rows="4" placeholder="Notes from this call..." class="w-full bg-cream/[0.03] border border-cream/10 rounded-lg p-3 font-sans text-xs text-cream/70 placeholder-cream/20 focus:outline-none focus:border-gold/40 resize-none transition-colors"></textarea>
+                        </div>
+                    </div>
+
+                </div><!-- /LEFT COLUMN -->
+
+                <!-- RIGHT COLUMN -->
+                <div class="space-y-6">
+
+                    <!-- Contact -->
+                    <div class="dash-card p-6">
+                        <h2 class="font-serif text-xl text-cream mb-4 pb-3 border-b border-cream/10">Contact</h2>
+                        <div class="space-y-3">
+                            <div>
+                                <p class="font-sans text-[10px] uppercase tracking-widest text-cream/30 mb-1">Name</p>
+                                <span id="c-name" contenteditable="true" spellcheck="false" class="editable font-serif text-lg text-cream block"></span>
+                            </div>
+                            <div>
+                                <p class="font-sans text-[10px] uppercase tracking-widest text-cream/30 mb-1">Email</p>
+                                <span id="c-email" contenteditable="true" spellcheck="false" class="editable font-sans text-sm text-cream/70 block"></span>
+                            </div>
+                            <div>
+                                <p class="font-sans text-[10px] uppercase tracking-widest text-cream/30 mb-1">Event</p>
+                                <span id="c-event" contenteditable="true" spellcheck="false" class="editable font-sans text-sm text-cream/70 block"></span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <p class="font-sans text-[10px] uppercase tracking-widest text-cream/30 mb-1">Venue</p>
+                                    <span id="c-venue" contenteditable="true" spellcheck="false" class="editable font-sans text-xs text-cream/60 block"></span>
+                                </div>
+                                <div>
+                                    <p class="font-sans text-[10px] uppercase tracking-widest text-cream/30 mb-1">Date</p>
+                                    <span id="c-date" contenteditable="true" spellcheck="false" class="editable font-sans text-xs text-cream/60 block"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="font-sans text-[10px] text-cream/20 mt-4">Click any field to edit</p>
+                    </div>
+
+                    <!-- Invoice Summary -->
+                    <div class="dash-card p-6">
+                        <h2 class="font-serif text-xl text-cream mb-4 pb-3 border-b border-cream/10">Invoice</h2>
+                        <div class="space-y-2 mb-4 font-sans text-sm">
+                            <div class="flex justify-between text-cream/50">
+                                <span>Subtotal</span>
+                                <span id="inv-subtotal-display" class="tabular-nums"></span>
+                            </div>
+                            <div class="flex justify-between text-green-400/70 text-xs">
+                                <span>Deposit (25%)</span>
+                                <span id="inv-deposit-display" class="tabular-nums"></span>
+                            </div>
+                            <div class="flex justify-between pt-2 border-t border-cream/10">
+                                <span class="font-bold text-cream text-sm">Balance Due</span>
+                                <span id="inv-balance-display" class="font-serif text-lg text-gold tabular-nums"></span>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="font-sans text-[10px] uppercase tracking-widest text-cream/30">Status</span>
+                            <span id="inv-status-badge" class="badge"></span>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="openInvoiceDrawer()" class="flex-1 py-2.5 bg-cream/5 border border-cream/15 text-cream/60 font-sans text-[10px] font-bold uppercase tracking-widest rounded-sm hover:border-cream/30 hover:text-cream transition-all">View</button>
+                            <button onclick="showToast('Invoice sent to client')" class="flex-1 py-2.5 bg-gold/15 border border-gold/35 text-gold font-sans text-[10px] font-bold uppercase tracking-widest rounded-sm hover:bg-gold hover:text-charcoal transition-all">Send</button>
+                        </div>
+                    </div>
+
+                    <!-- Activity Timeline -->
+                    <div class="dash-card p-6">
+                        <h2 class="font-serif text-xl text-cream mb-4 pb-3 border-b border-cream/10">Activity</h2>
+                        <div id="activity-timeline" class="relative space-y-5 pl-6">
+                            <div class="timeline-line-v"></div>
+                        </div>
+                        <!-- Add note -->
+                        <div class="mt-5 pt-4 border-t border-cream/10 flex gap-2">
+                            <input id="new-note-input" type="text" placeholder="Add a note..." class="flex-1 bg-cream/5 border border-cream/10 rounded-md px-3 py-2 font-sans text-xs text-cream/70 placeholder-cream/25 focus:outline-none focus:border-gold/40 transition-colors">
+                            <button onclick="addActivityNote()" class="px-3 py-2 bg-gold/15 border border-gold/30 text-gold font-sans text-[10px] font-bold uppercase tracking-widest rounded-md hover:bg-gold hover:text-charcoal transition-all">Add</button>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="dash-card p-6">
+                        <h2 class="font-serif text-xl text-cream mb-4 pb-3 border-b border-cream/10">Quick Actions</h2>
+                        <div class="space-y-2">
+                            <button onclick="markConfirmed()" class="w-full py-2.5 bg-green-500/10 border border-green-500/25 text-green-400 font-sans text-[10px] font-bold uppercase tracking-widest rounded-sm hover:bg-green-500/20 transition-all">Mark as Confirmed</button>
+                            <button onclick="showToast('Payment request sent')" class="w-full py-2.5 bg-cream/5 border border-cream/15 text-cream/55 font-sans text-[10px] font-bold uppercase tracking-widest rounded-sm hover:border-cream/30 hover:text-cream transition-all">Request Payment</button>
+                            <button onclick="openCommsAction('text')" class="w-full py-2.5 bg-cream/5 border border-cream/15 text-cream/55 font-sans text-[10px] font-bold uppercase tracking-widest rounded-sm hover:border-cream/30 hover:text-cream transition-all">Send Text Message</button>
+                            <button onclick="openCommsAction('email')" class="w-full py-2.5 bg-cream/5 border border-cream/15 text-cream/55 font-sans text-[10px] font-bold uppercase tracking-widest rounded-sm hover:border-cream/30 hover:text-cream transition-all">Send Email</button>
+                        </div>
+                    </div>
+
+                </div><!-- /RIGHT COLUMN -->
+            </div><!-- /grid -->
+        </div><!-- /scrollable -->
+    </main>
+
+    <!-- Invoice Overlay -->
+    <div id="invoice-overlay" class="fixed inset-0 bg-charcoal/70 z-40 hidden opacity-0 transition-opacity backdrop-blur-sm" onclick="closeInvoiceDrawer()"></div>
+
+    <!-- Invoice Drawer -->
+    <div id="invoice-drawer" class="fixed top-0 right-0 h-full w-full max-w-lg z-50 drawer-closed transition-transform duration-300 flex flex-col border-l border-charcoal/10 overflow-y-auto" style="background:#FDFBF7;">
+        <div class="p-6 border-b border-charcoal/10 flex justify-between items-center shrink-0">
+            <div>
+                <h3 class="font-serif text-2xl text-charcoal">Invoice</h3>
+                <p id="inv-ref" class="font-sans text-xs text-charcoal mt-1">#DOC-2026-001</p>
+            </div>
+            <button onclick="closeInvoiceDrawer()" class="p-2 rounded-full text-charcoal hover:text-gold hover:bg-charcoal/5 transition-colors border border-charcoal/15">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+        <div class="p-6 space-y-6 flex-1">
+            <div class="flex justify-between items-start">
+                <img src="images/logo-light.svg" alt="De'Osa" class="h-8 w-auto">
+                <div class="text-right font-sans text-xs text-charcoal">
+                    <p>Issued: <span id="inv-issued">15 January 2026</span></p>
+                    <p class="mt-0.5">Due: <span id="inv-due">12 July 2026</span></p>
+                </div>
+            </div>
+            <div class="p-4 rounded-lg" style="background:rgba(28,28,28,0.04);border:1px solid rgba(28,28,28,0.08);">
+                <p class="font-sans text-[10px] uppercase tracking-widest text-gold mb-2">Bill To</p>
+                <p id="inv-client-name" class="font-serif text-lg text-charcoal"></p>
+                <p id="inv-client-email" class="font-sans text-xs text-charcoal mt-1"></p>
+            </div>
+            <div class="p-4 rounded-lg" style="background:rgba(28,28,28,0.04);border:1px solid rgba(28,28,28,0.08);">
+                <p class="font-sans text-[10px] uppercase tracking-widest text-charcoal mb-2">Event</p>
+                <p id="inv-event-detail" class="font-serif text-base text-charcoal"></p>
+                <p id="inv-venue-detail" class="font-sans text-xs text-charcoal mt-1"></p>
+            </div>
+            <div>
+                <p class="font-sans text-[10px] uppercase tracking-widest text-charcoal mb-3">Order Summary</p>
+                <div id="inv-line-items" class="divide-y divide-charcoal/10"></div>
+            </div>
+            <div class="p-4 rounded-lg space-y-2" style="background:rgba(28,28,28,0.04);border:1px solid rgba(28,28,28,0.08);">
+                <div class="flex justify-between font-sans text-sm text-charcoal">
+                    <span>Subtotal</span><span id="inv-drawer-subtotal" class="tabular-nums"></span>
+                </div>
+                <div class="flex justify-between font-sans text-sm text-green-600">
+                    <span>Deposit (25%)</span><span id="inv-drawer-deposit" class="tabular-nums"></span>
+                </div>
+                <div class="flex justify-between pt-2 border-t border-charcoal/10">
+                    <span class="font-sans text-sm font-bold text-charcoal">Balance Due</span>
+                    <span id="inv-drawer-balance" class="font-serif text-xl text-gold tabular-nums"></span>
+                </div>
+                <p id="inv-terms" class="font-sans text-[10px] text-charcoal"></p>
+            </div>
+            <div class="flex gap-3 pb-4">
+                <button onclick="showToast('Invoice downloaded')" class="flex-1 py-3 bg-charcoal/5 border border-charcoal/15 text-charcoal rounded-lg font-sans text-[10px] font-bold uppercase tracking-widest hover:border-charcoal/30 transition-all">Download PDF</button>
+                <button onclick="showToast('Invoice emailed to client'); closeInvoiceDrawer();" class="flex-1 py-3 bg-gold/20 border border-gold/40 text-gold rounded-lg font-sans text-[10px] font-bold uppercase tracking-widest hover:bg-gold hover:text-charcoal transition-all">Email to Client</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    /* ════════════════════════════════════════
+       DATA & INIT
+    ════════════════════════════════════════ */
+    const client = (function() {
+        try { return JSON.parse(localStorage.getItem('crm_client') || 'null'); } catch(e) { return null; }
+    })();
+    if (!client) { window.location.href = 'admin.html'; }
+
+    // Parse guest count from order.details string
+    function parseGuests(details) {
+        const m = details.match(/(\d+)\s*Guests?/i);
+        return m ? parseInt(m[1]) : 100;
+    }
+
+    // Derive per-person rate from billing subtotal + guests
+    function derivePP(subtotal, guests) {
+        const raw = parseFloat((subtotal || '').replace(/[^0-9.]/g, '')) || 0;
+        const staffing = 2250, tableware = 1100;
+        const catering = raw - staffing - tableware;
+        if (guests > 0 && catering > 0) return Math.round(catering / guests);
+        return 90;
+    }
+
+    const guests0 = parseGuests(client.order.details);
+    const pp0     = derivePP(client.billing.subtotal, guests0);
+
+    // Mutable order state
+    const orderState = {
+        guests:    guests0,
+        pp:        pp0,
+        lines: [
+            { label: 'Staffing & Service', amount: 2250 },
+            { label: 'Tableware Rentals',  amount: 1100 }
+        ]
+    };
+
+    // Menu state
+    const menuState = {
+        'Canapés':     ['Jerk chicken skewer and plantain with sweet pepper', 'Crispy Breaded King Prawns', 'Fried Yam and Plantain Mix with Spicy Sauce'],
+        'Starters':    ['Spicy gizzard and diced Plantains', 'Cooked prawns, on a bed of lettuce'],
+        'Main Course': ['Smoky Party Jollof Rice with Roasted Lamb', 'Egusi Soup with Pounded Yam & Assorted Meat'],
+        'Desserts':    []
+    };
+
+    // Activity log
+    const activityLog = [];
+
+    /* ════════════════════════════════════════
+       FORMATTING
+    ════════════════════════════════════════ */
+    function fmtGBP(n) {
+        return '£' + Number(n).toLocaleString('en-GB', { minimumFractionDigits:2, maximumFractionDigits:2 });
+    }
+    function fmtDate(iso) {
+        if (!iso) return '—';
+        try {
+            const d = new Date(iso);
+            return d.toLocaleString('en-GB', { weekday:'short', day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit', hour12:true, timeZone:'Europe/London' });
+        } catch(e) { return iso; }
+    }
+    function fmtShort(iso) {
+        if (!iso) return '—';
+        try {
+            return new Date(iso).toLocaleString('en-GB', { day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit', hour12:true, timeZone:'Europe/London' });
+        } catch(e) { return iso; }
+    }
+    function getInitials(name) {
+        return (name||'').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+    }
+
+    /* ════════════════════════════════════════
+       POPULATE PAGE
+    ════════════════════════════════════════ */
+    function populatePage() {
+        const c = client;
+        // Topbar + header
+        document.getElementById('topbar-name').textContent = c.customer.name;
+        document.getElementById('profile-name').textContent = c.customer.name;
+        document.getElementById('profile-event').textContent = c.order.details;
+        document.getElementById('profile-venue').textContent = c.order.venue;
+        document.getElementById('profile-date').textContent  = c.order.date;
+        document.getElementById('client-avatar').textContent = getInitials(c.customer.name);
+
+        // Topbar outcome badge
+        const outcomeBadge = document.getElementById('topbar-outcome-badge');
+        outcomeBadge.className = 'badge hidden sm:inline-flex ' + outcomeBadgeClass(c.call.outcome);
+        outcomeBadge.textContent = c.call.outcome;
+
+        // Contact panel
+        document.getElementById('c-name').textContent  = c.customer.name;
+        document.getElementById('c-email').textContent = c.customer.email;
+        document.getElementById('c-event').textContent = c.order.details;
+        document.getElementById('c-venue').textContent = c.order.venue;
+        document.getElementById('c-date').textContent  = c.order.date;
+
+        // Order inputs
+        document.getElementById('o-guests').value = orderState.guests;
+        document.getElementById('o-pp').value     = orderState.pp;
+        document.getElementById('o-invoice-status').value = c.billing.invoiceStatus;
+
+        // Call record
+        document.getElementById('call-date-display').textContent     = fmtDate(c.call.callDate);
+        document.getElementById('call-duration-display').textContent = c.call.time;
+        document.getElementById('call-outcome-display').textContent  = c.call.outcome;
+        const cobBadge = document.getElementById('call-outcome-badge');
+        cobBadge.className = 'badge ' + outcomeBadgeClass(c.call.outcome);
+        cobBadge.textContent = c.call.outcome;
+
+        // Invoice drawer
+        document.getElementById('inv-ref').textContent          = '#DOC-2026-00' + c.id;
+        document.getElementById('inv-client-name').textContent  = c.customer.name;
+        document.getElementById('inv-client-email').textContent = c.customer.email;
+        document.getElementById('inv-event-detail').textContent = c.order.details;
+        document.getElementById('inv-venue-detail').textContent = c.order.venue + ' · ' + c.order.date;
+        document.getElementById('inv-terms').textContent        = c.billing.terms;
+
+        // Invoice status badge
+        const invBadge = document.getElementById('inv-status-badge');
+        invBadge.className = 'badge ' + invoiceBadgeClass(c.billing.invoiceStatus);
+        invBadge.textContent = c.billing.invoiceStatus;
+
+        renderOrderLines();
+        recalcOrder();
+        renderMenu();
+        renderTranscript();
+        renderActivity();
+    }
+
+    function outcomeBadgeClass(outcome) {
+        if (!outcome) return 'badge-neutral';
+        if (outcome.includes('Confirmed')) return 'badge-confirmed';
+        if (outcome.includes('Requested') || outcome.includes('Scheduled')) return 'badge-gold';
+        return 'badge-neutral';
+    }
+    function invoiceBadgeClass(status) {
+        if (status === 'Paid')       return 'badge-paid';
+        if (status === 'Sent')       return 'badge-sent';
+        return 'badge-pending';
+    }
+
+    /* ════════════════════════════════════════
+       ORDER RECALC
+    ════════════════════════════════════════ */
+    function recalcOrder() {
+        const guests = Math.max(0, parseInt(document.getElementById('o-guests').value) || 0);
+        const pp     = Math.max(0, parseFloat(document.getElementById('o-pp').value)   || 0);
+        const catering = guests * pp;
+        const extras = orderState.lines.reduce((s, l) => s + (parseFloat(l.amount)||0), 0);
+        const total  = catering + extras;
+        const deposit = total * 0.25;
+        const balance = total - deposit;
+
+        document.getElementById('o-catering').textContent    = fmtGBP(catering);
+        document.getElementById('o-subtotal').textContent    = fmtGBP(total);
+        document.getElementById('o-deposit').textContent     = '– ' + fmtGBP(deposit);
+        document.getElementById('o-balance').textContent     = fmtGBP(balance);
+        document.getElementById('inv-subtotal-display').textContent = fmtGBP(total);
+        document.getElementById('inv-deposit-display').textContent  = '– ' + fmtGBP(deposit);
+        document.getElementById('inv-balance-display').textContent  = fmtGBP(balance);
+        document.getElementById('inv-drawer-subtotal').textContent  = fmtGBP(total);
+        document.getElementById('inv-drawer-deposit').textContent   = '– ' + fmtGBP(deposit);
+        document.getElementById('inv-drawer-balance').textContent   = fmtGBP(balance);
+
+        // Invoice line items
+        const lineItemsEl = document.getElementById('inv-line-items');
+        const cateringLine = [{ name: 'Catering Service', detail: guests + ' guests × £' + pp + ' per person', amount: catering }];
+        const allLines = [...cateringLine, ...orderState.lines.map(l => ({ name: l.label, detail: '', amount: parseFloat(l.amount)||0 }))];
+        lineItemsEl.innerHTML = allLines.map(item => `
+            <div class="flex justify-between py-3 font-sans text-sm">
+                <div><p class="text-charcoal">${item.name}</p>${item.detail ? `<p class="text-charcoal text-xs mt-0.5">${item.detail}</p>` : ''}</div>
+                <span class="text-charcoal font-medium">${fmtGBP(item.amount)}</span>
+            </div>`).join('');
+    }
+
+    function renderOrderLines() {
+        const el = document.getElementById('o-lines');
+        el.innerHTML = '';
+        orderState.lines.forEach((line, i) => {
+            const row = document.createElement('div');
+            row.className = 'flex justify-between items-center';
+            row.innerHTML = `
+                <input type="text" value="${line.label}" class="order-input flex-1 mr-3 text-cream/55 text-xs" data-line-label="${i}">
+                <div class="flex items-center gap-0.5">
+                    <span class="font-sans text-xs text-cream/30">£</span>
+                    <input type="number" value="${line.amount}" min="0" step="50" class="order-input w-20 text-right" data-line-amount="${i}">
+                </div>
+                <button onclick="removeOrderLine(${i})" class="ml-3 text-cream/20 hover:text-red-400 transition-colors">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>`;
+            el.appendChild(row);
+        });
+        // Attach listeners
+        el.querySelectorAll('[data-line-label]').forEach(inp => {
+            inp.addEventListener('input', () => {
+                orderState.lines[inp.dataset.lineLabel].label = inp.value;
+            });
+        });
+        el.querySelectorAll('[data-line-amount]').forEach(inp => {
+            inp.addEventListener('input', () => {
+                orderState.lines[inp.dataset.lineAmount].amount = parseFloat(inp.value)||0;
+                recalcOrder();
+            });
+        });
+    }
+
+    function addOrderLine() {
+        orderState.lines.push({ label: 'Additional Service', amount: 0 });
+        renderOrderLines();
+        recalcOrder();
+    }
+    function removeOrderLine(i) {
+        orderState.lines.splice(i, 1);
+        renderOrderLines();
+        recalcOrder();
+    }
+
+    document.getElementById('o-guests').addEventListener('input', recalcOrder);
+    document.getElementById('o-pp').addEventListener('input', recalcOrder);
+
+    /* ════════════════════════════════════════
+       MENU
+    ════════════════════════════════════════ */
+    function renderMenu() {
+        const el = document.getElementById('menu-sections');
+        el.innerHTML = '';
+        Object.entries(menuState).forEach(([course, items]) => {
+            const section = document.createElement('div');
+            section.innerHTML = `
+                <div class="flex items-center justify-between mb-3">
+                    <span class="font-sans text-[10px] uppercase tracking-widest font-bold px-3 py-1 rounded-sm ${
+                        course === 'Canapés'
+                            ? 'text-gold/70 bg-gold/10 border border-gold/20'
+                            : 'text-cream/40 bg-cream/5 border border-cream/10'
+                    }">${course}</span>
+                    <span class="font-sans text-[10px] text-cream/25">${items.length} item${items.length!==1?'s':''}</span>
+                </div>
+                <div class="space-y-2 mb-3" id="menu-course-${course.replace(/\s/g,'-')}"></div>
+                <div class="flex gap-2">
+                    <input type="text" placeholder="Add item..." data-course="${course}"
+                        class="flex-1 bg-transparent border-b border-cream/10 focus:border-gold/50 outline-none font-sans text-xs text-cream/60 placeholder-cream/20 py-1 transition-colors">
+                    <button data-add-course="${course}" class="text-[10px] font-sans font-bold uppercase tracking-widest text-gold/60 hover:text-gold transition-colors px-2">Add</button>
+                </div>`;
+            el.appendChild(section);
+            const list = section.querySelector('#menu-course-' + course.replace(/\s/g,'-'));
+            items.forEach((item, idx) => {
+                const chip = document.createElement('div');
+                chip.className = 'menu-chip';
+                chip.innerHTML = `<span class="flex-1 text-cream/80">${item}</span>
+                    <button onclick="removeMenuItem('${course}', ${idx})" class="text-cream/20 hover:text-red-400 transition-colors shrink-0">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>`;
+                list.appendChild(chip);
+            });
+        });
+        // Add item listeners
+        el.querySelectorAll('[data-add-course]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const course = btn.dataset.addCourse;
+                const input = btn.previousElementSibling;
+                const val = input.value.trim();
+                if (val) { menuState[course].push(val); input.value = ''; renderMenu(); }
+            });
+        });
+        el.querySelectorAll('input[data-course]').forEach(inp => {
+            inp.addEventListener('keydown', e => {
+                if (e.key === 'Enter') {
+                    const val = inp.value.trim();
+                    if (val) { menuState[inp.dataset.course].push(val); inp.value = ''; renderMenu(); }
+                }
+            });
+        });
+    }
+    function removeMenuItem(course, idx) {
+        menuState[course].splice(idx, 1);
+        renderMenu();
+    }
+
+    /* ════════════════════════════════════════
+       CALL TRANSCRIPT (placeholder)
+    ════════════════════════════════════════ */
+    const placeholderTranscript = [
+        { role:'agent',  text:'Good afternoon! Thank you for calling De\'Osa Luxury Catering. How can I help you today?' },
+        { role:'client', text:'Hi, I\'m calling about catering for my wedding next August.' },
+        { role:'agent',  text:'Wonderful! Congratulations. Could I take your name and the date of the event?' },
+        { role:'client', text:'It\'s ' + client.customer.name + ', and the date is ' + client.order.date + '.' },
+        { role:'agent',  text:'Perfect. And how many guests are you expecting?' },
+        { role:'client', text:'Around ' + parseGuests(client.order.details) + ' guests, possibly a few more.' },
+        { role:'agent',  text:'That\'s great. We\'d recommend our plated multi-course service for that size. I\'ll get a proposal over to you today.' },
+    ];
+
+    function renderTranscript() {
+        const el = document.getElementById('call-transcript-messages');
+        el.innerHTML = placeholderTranscript.map(m => `
+            <div class="flex ${m.role==='agent' ? 'justify-start' : 'justify-end'}">
+                <div class="max-w-[85%] px-3.5 py-2 font-sans text-xs leading-relaxed ${m.role==='agent' ? 'bubble-agent text-cream/70' : 'bubble-client text-cream/80'}">
+                    ${m.text}
+                </div>
+            </div>`).join('');
+    }
+
+    /* ════════════════════════════════════════
+       ACTIVITY TIMELINE
+    ════════════════════════════════════════ */
+    function buildDefaultActivity() {
+        const c = client;
+        activityLog.length = 0;
+        activityLog.push({ icon:'call', label:'Call ' + c.call.outcome, sub: fmtShort(c.call.callDate) + ' · ' + c.call.time, gold:true, iso: c.call.callDate });
+        if (c.comms.textSent && c.comms.textTime) {
+            activityLog.push({ icon:'text', label:'Text sent', sub: fmtShort(c.comms.textTime), gold:false, iso: c.comms.textTime });
+        }
+        activityLog.push({ icon:'email', label:'Email sent', sub: fmtShort(c.comms.textTime || c.call.callDate), gold:false, iso: c.comms.textTime || c.call.callDate });
+        activityLog.push({ icon:'invoice', label:'Invoice ' + c.billing.invoiceStatus, sub: c.billing.terms.split('·')[0].trim(), gold: c.billing.invoiceStatus === 'Paid', iso: c.call.callDate });
+        activityLog.sort((a,b) => new Date(b.iso) - new Date(a.iso));
+    }
+
+    const iconSVG = {
+        call:    `<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>`,
+        text:    `<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>`,
+        email:   `<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>`,
+        invoice: `<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>`,
+        note:    `<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>`,
+    };
+
+    function renderActivity() {
+        const el = document.getElementById('activity-timeline');
+        el.innerHTML = '<div class="timeline-line-v"></div>';
+        activityLog.forEach(entry => {
+            const item = document.createElement('div');
+            item.className = 'relative flex items-start gap-3';
+            item.innerHTML = `
+                <div class="timeline-dot ${entry.gold ? '' : 'timeline-dot-dim'} mt-0.5 z-10 flex items-center justify-center text-charcoal" style="color:${entry.gold?'#1C1C1C':'transparent'};">
+                </div>
+                <div class="flex-1 min-w-0 pb-1">
+                    <div class="flex items-center gap-1.5 text-cream/60">
+                        ${iconSVG[entry.icon] || ''}
+                        <p class="font-sans text-xs font-medium">${entry.label}</p>
+                    </div>
+                    <p class="font-sans text-[10px] text-cream/30 mt-0.5">${entry.sub}</p>
+                </div>`;
+            el.appendChild(item);
+        });
+    }
+
+    function addActivityNote() {
+        const inp = document.getElementById('new-note-input');
+        const val = inp.value.trim();
+        if (!val) return;
+        activityLog.unshift({ icon:'note', label: val, sub: fmtShort(new Date().toISOString()), gold:false, iso: new Date().toISOString() });
+        inp.value = '';
+        renderActivity();
+        showToast('Note added');
+    }
+
+    /* ════════════════════════════════════════
+       INVOICE DRAWER
+    ════════════════════════════════════════ */
+    function openInvoiceDrawer() {
+        document.getElementById('invoice-overlay').classList.remove('hidden');
+        requestAnimationFrame(() => {
+            document.getElementById('invoice-overlay').classList.remove('opacity-0');
+            const d = document.getElementById('invoice-drawer');
+            d.classList.remove('drawer-closed'); d.classList.add('drawer-open');
+        });
+    }
+    function closeInvoiceDrawer() {
+        const d = document.getElementById('invoice-drawer');
+        d.classList.remove('drawer-open'); d.classList.add('drawer-closed');
+        document.getElementById('invoice-overlay').classList.add('opacity-0');
+        setTimeout(() => document.getElementById('invoice-overlay').classList.add('hidden'), 300);
+    }
+
+    /* ════════════════════════════════════════
+       AUDIO PLAYER (placeholder)
+    ════════════════════════════════════════ */
+    let audioPlaying = false;
+    let audioFakeTimer = null;
+    let audioFakePos = 0;
+    const totalFakeDuration = parseDurationSecs(client.call.time);
+
+    function parseDurationSecs(str) {
+        const m = (str||'').match(/(\d+)m\s*(\d+)s/);
+        return m ? parseInt(m[1])*60 + parseInt(m[2]) : 180;
+    }
+    function fmtSecs(s) {
+        const m = Math.floor(s/60), sec = Math.floor(s%60);
+        return m + ':' + String(sec).padStart(2,'0');
+    }
+
+    document.getElementById('audio-duration-label').textContent = fmtSecs(totalFakeDuration);
+
+    function toggleAudio() {
+        audioPlaying = !audioPlaying;
+        document.getElementById('play-icon').classList.toggle('hidden', audioPlaying);
+        document.getElementById('pause-icon').classList.toggle('hidden', !audioPlaying);
+        if (audioPlaying) {
+            audioFakeTimer = setInterval(() => {
+                audioFakePos = Math.min(audioFakePos + 1, totalFakeDuration);
+                document.getElementById('audio-fill').style.width = (audioFakePos/totalFakeDuration*100)+'%';
+                document.getElementById('audio-current').textContent = fmtSecs(audioFakePos);
+                if (audioFakePos >= totalFakeDuration) { audioPlaying=false; clearInterval(audioFakeTimer); document.getElementById('play-icon').classList.remove('hidden'); document.getElementById('pause-icon').classList.add('hidden'); }
+            }, 1000);
+        } else { clearInterval(audioFakeTimer); }
+    }
+    function seekAudio(e) {
+        const bar = document.getElementById('audio-track');
+        const pct = Math.max(0, Math.min(1, (e.clientX - bar.getBoundingClientRect().left) / bar.offsetWidth));
+        audioFakePos = Math.round(pct * totalFakeDuration);
+        document.getElementById('audio-fill').style.width = (pct*100)+'%';
+        document.getElementById('audio-current').textContent = fmtSecs(audioFakePos);
+    }
+
+    /* ════════════════════════════════════════
+       LIVE CALL API  —  window.DeOsaCRM
+    ════════════════════════════════════════ */
+    let liveCallActive = false;
+    let liveCallSeconds = 0;
+    let liveCallTimer = null;
+
+    window.DeOsaCRM = {
+        /**
+         * Start a live call session.
+         * Call from your phone system: window.DeOsaCRM.startCall()
+         */
+        startCall: function() {
+            if (liveCallActive) return;
+            liveCallActive = true;
+            liveCallSeconds = 0;
+            document.getElementById('live-idle').classList.add('hidden');
+            document.getElementById('live-active').classList.remove('hidden');
+            document.getElementById('live-dot').className = 'w-2.5 h-2.5 rounded-full bg-green-400 live-pulse';
+            document.getElementById('live-status-label').textContent = 'Live';
+            document.getElementById('live-status-label').className = 'font-sans text-[10px] uppercase tracking-widest text-green-400';
+            document.getElementById('call-timer-display').classList.remove('hidden');
+            liveCallTimer = setInterval(() => {
+                liveCallSeconds++;
+                document.getElementById('call-timer-display').textContent = fmtSecs(liveCallSeconds);
+            }, 1000);
+            this.addTranscript('system', 'Call connected');
+        },
+
+        /**
+         * End the live call.
+         * window.DeOsaCRM.endCall()
+         */
+        endCall: function() {
+            if (!liveCallActive) return;
+            liveCallActive = false;
+            clearInterval(liveCallTimer);
+            document.getElementById('live-idle').classList.remove('hidden');
+            document.getElementById('live-active').classList.add('hidden');
+            document.getElementById('live-dot').className = 'w-2.5 h-2.5 rounded-full bg-cream/20';
+            document.getElementById('live-status-label').textContent = 'Ended · ' + fmtSecs(liveCallSeconds);
+            document.getElementById('live-status-label').className = 'font-sans text-[10px] uppercase tracking-widest text-cream/40';
+            activityLog.unshift({ icon:'call', label:'Live call · ' + fmtSecs(liveCallSeconds), sub: fmtShort(new Date().toISOString()), gold:true, iso:new Date().toISOString() });
+            renderActivity();
+            showToast('Call ended · ' + fmtSecs(liveCallSeconds));
+        },
+
+        /**
+         * Add a transcript line to the live feed.
+         * window.DeOsaCRM.addTranscript('agent', 'How many guests?')
+         * window.DeOsaCRM.addTranscript('client', '150 guests')
+         */
+        addTranscript: function(role, text) {
+            const feed = document.getElementById('live-transcript');
+            if (!feed) return;
+            const div = document.createElement('div');
+            div.className = 'flex ' + (role==='agent'||role==='system' ? 'justify-start' : 'justify-end');
+            const safe = String(text).replace(/</g,'&lt;').replace(/>/g,'&gt;');
+            div.innerHTML = `<div class="max-w-[90%] px-3 py-2 rounded-lg font-sans text-xs leading-relaxed ${
+                role==='system' ? 'text-cream/25 italic' : role==='agent' ? 'bubble-agent text-cream/70' : 'bubble-client text-cream/80'
+            }">${safe}</div>`;
+            feed.appendChild(div);
+            feed.scrollTop = feed.scrollHeight;
+        },
+
+        /**
+         * Update a CRM field from call data.
+         * window.DeOsaCRM.updateField('guests', 200)
+         * window.DeOsaCRM.updateField('venue', 'Syon Park')
+         * window.DeOsaCRM.updateField('outcome', 'Booking Confirmed')
+         * window.DeOsaCRM.updateField('email', 'client@email.com')
+         * window.DeOsaCRM.updateField('note', 'Client prefers jerk chicken')
+         */
+        updateField: function(field, value) {
+            switch(field) {
+                case 'guests':
+                    document.getElementById('o-guests').value = value; recalcOrder();
+                    document.getElementById('c-event').textContent = client.order.details.replace(/\d+ Guests?/i, value + ' Guests');
+                    break;
+                case 'venue':
+                    document.getElementById('c-venue').textContent = value;
+                    document.getElementById('profile-venue').textContent = value;
+                    break;
+                case 'date':
+                    document.getElementById('c-date').textContent = value;
+                    document.getElementById('profile-date').textContent = value;
+                    break;
+                case 'outcome':
+                    document.getElementById('call-outcome-display').textContent = value;
+                    document.getElementById('call-outcome-badge').textContent = value;
+                    document.getElementById('call-outcome-badge').className = 'badge ' + outcomeBadgeClass(value);
+                    document.getElementById('topbar-outcome-badge').textContent = value;
+                    document.getElementById('topbar-outcome-badge').className = 'badge hidden sm:inline-flex ' + outcomeBadgeClass(value);
+                    break;
+                case 'email':
+                    document.getElementById('c-email').textContent = value;
+                    break;
+                case 'note':
+                    const notes = document.getElementById('call-notes');
+                    notes.value = (notes.value ? notes.value + '\n' : '') + value;
+                    break;
+            }
+            this.addTranscript('system', 'Field updated: ' + field + ' → ' + value);
+            showToast('Updated: ' + field);
+        },
+
+        /**
+         * Prompt staff to manually enter a field value.
+         * window.DeOsaCRM.promptField('guests')
+         */
+        promptField: function(field) {
+            const labels = { guests:'Guest Count', venue:'Venue', date:'Event Date', outcome:'Call Outcome' };
+            const val = prompt('Enter ' + (labels[field]||field) + ':');
+            if (val !== null && val.trim()) this.updateField(field, val.trim());
+        },
+
+        /**
+         * Add a note directly.
+         * window.DeOsaCRM.addNote('Client prefers vegetarian options')
+         */
+        addNote: function(text) {
+            this.updateField('note', text);
+        }
+    };
+
+    /* ════════════════════════════════════════
+       SAVE ALL
+    ════════════════════════════════════════ */
+    function saveAll() {
+        // Merge edits back into client object
+        client.customer.name  = document.getElementById('c-name').textContent.trim();
+        client.customer.email = document.getElementById('c-email').textContent.trim();
+        client.order.details  = document.getElementById('c-event').textContent.trim();
+        client.order.venue    = document.getElementById('c-venue').textContent.trim();
+        client.order.date     = document.getElementById('c-date').textContent.trim();
+        client.call.outcome   = document.getElementById('call-outcome-display').textContent.trim();
+        client.billing.invoiceStatus = document.getElementById('o-invoice-status').value;
+        client.billing.notes  = document.getElementById('call-notes').value;
+        localStorage.setItem('crm_client', JSON.stringify(client));
+        // Also update the entry in crm_all if it exists
+        try {
+            const all = JSON.parse(localStorage.getItem('crm_all') || '[]');
+            const idx = all.findIndex(r => r.id === client.id);
+            if (idx >= 0) { all[idx] = client; localStorage.setItem('crm_all', JSON.stringify(all)); }
+        } catch(e) {}
+        showToast('All changes saved');
+    }
+
+    /* ════════════════════════════════════════
+       QUICK ACTIONS
+    ════════════════════════════════════════ */
+    function markConfirmed() {
+        window.DeOsaCRM.updateField('outcome', 'Booking Confirmed');
+        showToast('Marked as Confirmed');
+    }
+    function openCommsAction(type) {
+        showToast(type === 'text' ? 'Opening text message...' : 'Opening email...');
+    }
+
+    /* ════════════════════════════════════════
+       MOBILE MENU
+    ════════════════════════════════════════ */
+    function toggleMobileMenu() {
+        const menu = document.getElementById('mobile-menu');
+        const isOpen = !menu.classList.contains('opacity-0');
+        menu.classList.toggle('opacity-0', isOpen);
+        menu.classList.toggle('pointer-events-none', isOpen);
+    }
+
+    /* ════════════════════════════════════════
+       TOAST
+    ════════════════════════════════════════ */
+    function showToast(msg) {
+        const existing = document.getElementById('crm-toast');
+        if (existing) existing.remove();
+        const t = document.createElement('div');
+        t.id = 'crm-toast';
+        t.style.cssText = 'position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);z-index:9999;background:#C5A059;color:#1C1C1C;font-family:Montserrat,sans-serif;font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;padding:.65rem 1.25rem;border-radius:2px;box-shadow:0 8px 32px rgba(0,0,0,.4);white-space:nowrap;';
+        t.textContent = msg;
+        document.body.appendChild(t);
+        t.animate([{opacity:0,transform:'translateX(-50%) translateY(12px)'},{opacity:1,transform:'translateX(-50%) translateY(0)'}],{duration:300,fill:'forwards'});
+        setTimeout(() => { t.animate([{opacity:1},{opacity:0}],{duration:200,fill:'forwards'}).onfinish = ()=>t.remove(); }, 3000);
+    }
+
+    /* ════════════════════════════════════════
+       THEME
+    ════════════════════════════════════════ */
+    function applyTheme(theme) {
+        const isLight = theme === 'light';
+        document.documentElement.setAttribute('data-theme', theme);
+        document.getElementById('theme-icon-moon').classList.toggle('hidden', isLight);
+        document.getElementById('theme-icon-sun').classList.toggle('hidden', !isLight);
+        const logo = isLight ? 'images/logo-light.svg' : 'images/logo-dark-bg.svg';
+        document.getElementById('sidebar-logo').src = logo;
+        document.getElementById('mobile-logo').src  = logo;
+        localStorage.setItem('admin-theme', theme);
+    }
+    function toggleTheme() {
+        applyTheme(document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light');
+    }
+
+    /* ════════════════════════════════════════
+       BOOT
+    ════════════════════════════════════════ */
+    buildDefaultActivity();
+    populatePage();
+    applyTheme(localStorage.getItem('admin-theme') || 'dark');
+    </script>
+</body>
+</html>
