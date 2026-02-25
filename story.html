@@ -113,8 +113,8 @@
     <!-- Navigation -->
     <nav class="fixed top-0 w-full z-50 transition-all duration-500 py-6 px-8 flex justify-between items-center" id="navbar">
         <a href="index.html" class="flex-shrink-0">
-            <img id="nav-logo-dark" src="images/logo-dark-bg.svg" class="h-9 w-auto" alt="De'Osa">
-            <img id="nav-logo-light" src="images/logo-light.svg" class="h-9 w-auto hidden" alt="De'Osa">
+            <img id="nav-logo-dark" decoding="async" src="images/logo-dark-bg.svg" class="h-9 w-auto" alt="De'Osa">
+            <img id="nav-logo-light" decoding="async" src="images/logo-light.svg" class="h-9 w-auto hidden" alt="De'Osa">
         </a>
         <div id="nav-links" class="hidden md:flex gap-8 font-sans text-sm tracking-widest uppercase text-cream">
             <a href="index.html" class="hover:text-gold transition-colors">Home</a>
@@ -136,7 +136,7 @@
 
         <!-- Header -->
         <div class="relative z-10 flex justify-between items-center px-6 py-6" style="border-bottom:1px solid rgba(253,251,247,0.06);">
-            <a href="index.html"><img src="images/logo-dark-bg.svg" class="h-9 w-auto" alt="De'Osa"></a>
+            <a href="index.html"><img decoding="async" src="images/logo-dark-bg.svg" class="h-9 w-auto" alt="De'Osa"></a>
             <button onclick="toggleMobileMenu()" class="w-10 h-10 flex items-center justify-center rounded-sm transition-colors" style="border:1px solid rgba(253,251,247,0.12);color:rgba(253,251,247,0.5);">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
             </button>
@@ -181,12 +181,12 @@
     <!-- Hero Section -->
     <header class="relative h-[80vh] w-full flex items-center justify-center overflow-hidden bg-charcoal">
         <div class="absolute inset-0 img-texture z-0 hero-img-wrap">
-            <img src="images/hero-bg.png"        class="story-slide" alt="">
-            <img src="images/story-hero-1.jpeg" class="story-slide" alt="">
-            <img src="images/story-hero-2.png"  class="story-slide" alt="">
-            <img src="images/story-hero-3.jpeg" class="story-slide" alt="">
-            <img src="images/story-hero-4.png"  class="story-slide" alt="">
-            <img src="images/story-hero-5.jpeg" class="story-slide" alt="">
+            <img src="images/hero-bg.webp" class="story-slide" alt="" fetchpriority="high" decoding="async">
+            <img src="images/story-hero-1.webp" loading="lazy" decoding="async" class="story-slide" alt="">
+            <img src="images/story-hero-2.webp"  loading="lazy" decoding="async" class="story-slide" alt="">
+            <img src="images/story-hero-3.webp" loading="lazy" decoding="async" class="story-slide" alt="">
+            <img src="images/story-hero-4.webp"  loading="lazy" decoding="async" class="story-slide" alt="">
+            <img src="images/story-hero-5.webp" loading="lazy" decoding="async" class="story-slide" alt="">
             <div class="absolute inset-0" style="background: linear-gradient(to top, rgba(28,28,28,1) 0%, rgba(28,28,28,0.9) 50%, rgba(28,28,28,0.75) 100%); z-index: 1;"></div>
         </div>
 
@@ -226,11 +226,11 @@
             <div class="w-full md:w-7/12 relative h-[500px] md:h-[600px] flex justify-end img-texture">
                 <!-- Back Image -->
                 <div class="w-3/5 h-[80%] absolute left-0 top-0 overflow-hidden shadow-2xl z-10 parallax-img-wrap">
-                    <img src="images/story-beginning-1.png" class="w-full h-[120%] object-cover parallax-img" alt="De'Osa Staff at Event">
+                    <img src="images/story-beginning-1.webp" loading="lazy" decoding="async" class="w-full h-[120%] object-cover parallax-img" alt="De'Osa Staff at Event">
                 </div>
                 <!-- Front Image -->
                 <div class="w-3/5 h-[80%] absolute right-0 bottom-0 z-20 overflow-hidden shadow-2xl border-4 border-cream parallax-img-wrap img-offset">
-                    <img src="images/story-beginning-2.jpeg" class="w-full h-[120%] object-cover parallax-img" alt="De'Osa Staff Serving">
+                    <img src="images/story-beginning-2.webp" loading="lazy" decoding="async" class="w-full h-[120%] object-cover parallax-img" alt="De'Osa Staff Serving">
                 </div>
             </div>
 
@@ -293,7 +293,7 @@
 
             <!-- Left: Image -->
             <div class="w-full md:w-1/2 relative h-[500px] md:h-[700px] overflow-hidden shadow-xl img-texture img-reveal">
-                <img src="https://deosacatering.co.uk/ehusteeg/2024/01/B1B0229D-5AC0-428C-800E-CC02A3BD78E4.jpg" class="w-full h-[120%] object-cover parallax-img" alt="De'Osa culinary team serving guests">
+                <img src="https://deosacatering.co.uk/ehusteeg/2024/01/B1B0229D-5AC0-428C-800E-CC02A3BD78E4.jpg" loading="lazy" decoding="async" class="w-full h-[120%] object-cover parallax-img" alt="De'Osa culinary team serving guests">
             </div>
 
         </div>
@@ -326,7 +326,7 @@
     <!-- Footer -->
     <footer class="bg-charcoal text-cream pb-12 pt-6 border-t border-gold/20">
         <div class="max-w-7xl mx-auto px-6 lg:px-12 text-center flex flex-col items-center">
-            <img src="images/logo-dark-bg.svg" class="h-12 w-auto mb-6" alt="De'Osa">
+            <img decoding="async" src="images/logo-dark-bg.svg" class="h-12 w-auto mb-6" alt="De'Osa">
             <div class="flex gap-6 mb-8 font-sans text-xs uppercase tracking-widest font-bold">
                 <a href="#" class="hover:text-gold transition-colors">Instagram</a>
                 <a href="#" class="hover:text-gold transition-colors">Facebook</a>

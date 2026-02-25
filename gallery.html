@@ -110,8 +110,8 @@
     <!-- Navigation -->
     <nav class="fixed top-0 w-full z-50 transition-all duration-500 py-6 px-8 flex justify-between items-center" id="navbar">
         <a href="index.html" class="flex-shrink-0">
-            <img id="nav-logo-dark" src="images/logo-dark-bg.svg" class="h-9 w-auto" alt="De'Osa">
-            <img id="nav-logo-light" src="images/logo-light.svg" class="h-9 w-auto hidden" alt="De'Osa">
+            <img id="nav-logo-dark" decoding="async" src="images/logo-dark-bg.svg" class="h-9 w-auto" alt="De'Osa">
+            <img id="nav-logo-light" decoding="async" src="images/logo-light.svg" class="h-9 w-auto hidden" alt="De'Osa">
         </a>
         <div id="nav-links" class="hidden md:flex gap-8 font-sans text-sm tracking-widest uppercase text-cream">
             <a href="index.html" class="hover:text-gold transition-colors">Home</a>
@@ -133,7 +133,7 @@
 
         <!-- Header -->
         <div class="relative z-10 flex justify-between items-center px-6 py-6" style="border-bottom:1px solid rgba(253,251,247,0.06);">
-            <a href="index.html"><img src="images/logo-dark-bg.svg" class="h-9 w-auto" alt="De'Osa"></a>
+            <a href="index.html"><img decoding="async" src="images/logo-dark-bg.svg" class="h-9 w-auto" alt="De'Osa"></a>
             <button onclick="toggleMobileMenu()" class="w-10 h-10 flex items-center justify-center rounded-sm transition-colors" style="border:1px solid rgba(253,251,247,0.12);color:rgba(253,251,247,0.5);">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
             </button>
@@ -178,7 +178,7 @@
     <!-- Hero Section -->
     <header class="relative h-[60vh] md:h-[70vh] w-full flex items-center justify-center overflow-hidden bg-charcoal">
         <div class="absolute inset-0 img-texture z-0 hero-img-wrap">
-            <img src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=80&w=2070&auto=format&fit=crop" alt="Luxury Event Setting" class="w-full h-full object-cover hero-img opacity-60 scale-105" />
+            <img src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=80&w=1920&auto=format&fit=crop&fm=webp" alt="Luxury Event Setting" class="w-full h-full object-cover hero-img opacity-60 scale-105" fetchpriority="high" decoding="async" />
             <div class="absolute inset-0 bg-gradient-to-t from-charcoal via-charcoal/40 to-transparent"></div>
         </div>
 
@@ -207,7 +207,7 @@
             <div class="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6" id="gallery-grid">
 
                 <div class="gallery-item relative group overflow-hidden break-inside-avoid cursor-pointer" data-category="weddings venues" onclick="openLightbox(this)">
-                    <img src="images/gallery-1.jpeg" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Luxury Wedding Reception">
+                    <img src="images/gallery-1.webp" loading="lazy" decoding="async" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Luxury Wedding Reception">
                     <div class="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
                         <span class="font-sans text-[10px] font-bold uppercase tracking-widest text-gold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Weddings</span>
                         <h3 class="font-serif text-2xl text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">Luxury Wedding Reception</h3>
@@ -215,7 +215,7 @@
                 </div>
 
                 <div class="gallery-item relative group overflow-hidden break-inside-avoid cursor-pointer" data-category="culinary" onclick="openLightbox(this)">
-                    <img src="images/plated-multi-course.jpeg" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Plated Multi-Course">
+                    <img src="images/plated-multi-course.webp" loading="lazy" decoding="async" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Plated Multi-Course">
                     <div class="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
                         <span class="font-sans text-[10px] font-bold uppercase tracking-widest text-gold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Fine Dining</span>
                         <h3 class="font-serif text-2xl text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">Bespoke Plated Service</h3>
@@ -223,7 +223,7 @@
                 </div>
 
                 <div class="gallery-item relative group overflow-hidden break-inside-avoid cursor-pointer" data-category="culinary" onclick="openLightbox(this)">
-                    <img src="images/food.jpeg" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Authentic Cuisine">
+                    <img src="images/food.webp" loading="lazy" decoding="async" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Authentic Cuisine">
                     <div class="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
                         <span class="font-sans text-[10px] font-bold uppercase tracking-widest text-gold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Heritage</span>
                         <h3 class="font-serif text-2xl text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">Authentic Flavors</h3>
@@ -231,7 +231,7 @@
                 </div>
 
                 <div class="gallery-item relative group overflow-hidden break-inside-avoid cursor-pointer" data-category="culinary" onclick="openLightbox(this)">
-                    <img src="images/food3.jpeg" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Culinary Creation">
+                    <img src="images/food3.webp" loading="lazy" decoding="async" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Culinary Creation">
                     <div class="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
                         <span class="font-sans text-[10px] font-bold uppercase tracking-widest text-gold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Culinary Art</span>
                         <h3 class="font-serif text-2xl text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">Crafted with Passion</h3>
@@ -239,7 +239,7 @@
                 </div>
 
                 <div class="gallery-item relative group overflow-hidden break-inside-avoid cursor-pointer" data-category="venues" onclick="openLightbox(this)">
-                    <img src="images/luxury-buffet-service.jpeg" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Luxury Buffet">
+                    <img src="images/luxury-buffet-service.webp" loading="lazy" decoding="async" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Luxury Buffet">
                     <div class="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
                         <span class="font-sans text-[10px] font-bold uppercase tracking-widest text-gold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Service Styles</span>
                         <h3 class="font-serif text-2xl text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">Luxury Buffet Stations</h3>
@@ -247,7 +247,7 @@
                 </div>
 
                 <div class="gallery-item relative group overflow-hidden break-inside-avoid cursor-pointer" data-category="culinary" onclick="openLightbox(this)">
-                    <img src="images/nigerian-heritage.png" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Nigerian Heritage Cuisine">
+                    <img src="images/nigerian-heritage.webp" loading="lazy" decoding="async" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Nigerian Heritage Cuisine">
                     <div class="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
                         <span class="font-sans text-[10px] font-bold uppercase tracking-widest text-gold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Heritage</span>
                         <h3 class="font-serif text-2xl text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">African & Caribbean Cuisine</h3>
@@ -255,7 +255,7 @@
                 </div>
 
                 <div class="gallery-item relative group overflow-hidden break-inside-avoid cursor-pointer" data-category="venues weddings" onclick="openLightbox(this)">
-                    <img src="images/gallery-2.jpeg" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Event Setup">
+                    <img src="images/gallery-2.webp" loading="lazy" decoding="async" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Event Setup">
                     <div class="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
                         <span class="font-sans text-[10px] font-bold uppercase tracking-widest text-gold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Details</span>
                         <h3 class="font-serif text-2xl text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">Meticulous Styling</h3>
@@ -263,7 +263,7 @@
                 </div>
 
                 <div class="gallery-item relative group overflow-hidden break-inside-avoid cursor-pointer" data-category="culinary" onclick="openLightbox(this)">
-                    <img src="images/starters-sweet-endings.jpeg" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Starters & Sweet Endings">
+                    <img src="images/starters-sweet-endings.webp" loading="lazy" decoding="async" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Starters & Sweet Endings">
                     <div class="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
                         <span class="font-sans text-[10px] font-bold uppercase tracking-widest text-gold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Menu</span>
                         <h3 class="font-serif text-2xl text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">Starters & Sweet Endings</h3>
@@ -271,7 +271,7 @@
                 </div>
 
                 <div class="gallery-item relative group overflow-hidden break-inside-avoid cursor-pointer" data-category="weddings venues" onclick="openLightbox(this)">
-                    <img src="images/gallery-3.png" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Wedding Event">
+                    <img src="images/gallery-3.webp" loading="lazy" decoding="async" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Wedding Event">
                     <div class="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
                         <span class="font-sans text-[10px] font-bold uppercase tracking-widest text-gold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Weddings</span>
                         <h3 class="font-serif text-2xl text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">Intimate Celebrations</h3>
@@ -279,7 +279,7 @@
                 </div>
 
                 <div class="gallery-item relative group overflow-hidden break-inside-avoid cursor-pointer" data-category="culinary" onclick="openLightbox(this)">
-                    <img src="images/ghanaian-traditions.png" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Ghanaian Traditions">
+                    <img src="images/ghanaian-traditions.webp" loading="lazy" decoding="async" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Ghanaian Traditions">
                     <div class="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
                         <span class="font-sans text-[10px] font-bold uppercase tracking-widest text-gold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Heritage</span>
                         <h3 class="font-serif text-2xl text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">Ghanaian Traditions</h3>
@@ -287,7 +287,7 @@
                 </div>
 
                 <div class="gallery-item relative group overflow-hidden break-inside-avoid cursor-pointer" data-category="venues" onclick="openLightbox(this)">
-                    <img src="images/family-style-dining.jpeg" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Family Style Dining">
+                    <img src="images/family-style-dining.webp" loading="lazy" decoding="async" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Family Style Dining">
                     <div class="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
                         <span class="font-sans text-[10px] font-bold uppercase tracking-widest text-gold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Service Styles</span>
                         <h3 class="font-serif text-2xl text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">Family Style Dining</h3>
@@ -295,7 +295,7 @@
                 </div>
 
                 <div class="gallery-item relative group overflow-hidden break-inside-avoid cursor-pointer" data-category="culinary" onclick="openLightbox(this)">
-                    <img src="images/sierra-leone.jpeg" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Sierra Leonean Cuisine">
+                    <img src="images/sierra-leone.webp" loading="lazy" decoding="async" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Sierra Leonean Cuisine">
                     <div class="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
                         <span class="font-sans text-[10px] font-bold uppercase tracking-widest text-gold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Heritage</span>
                         <h3 class="font-serif text-2xl text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">Sierra Leonean Flavors</h3>
@@ -303,7 +303,7 @@
                 </div>
 
                 <div class="gallery-item relative group overflow-hidden break-inside-avoid cursor-pointer" data-category="culinary" onclick="openLightbox(this)">
-                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/image0.jpeg" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Authentic Caribbean Flavours">
+                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/image0.jpeg" loading="lazy" decoding="async" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Authentic Caribbean Flavours">
                     <div class="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
                         <span class="font-sans text-[10px] font-bold uppercase tracking-widest text-gold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Heritage</span>
                         <h3 class="font-serif text-2xl text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">Authentic Caribbean Flavours</h3>
@@ -311,7 +311,7 @@
                 </div>
 
                 <div class="gallery-item relative group overflow-hidden break-inside-avoid cursor-pointer" data-category="culinary" onclick="openLightbox(this)">
-                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/image1.jpeg" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Crafted with Care">
+                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/image1.jpeg" loading="lazy" decoding="async" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Crafted with Care">
                     <div class="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
                         <span class="font-sans text-[10px] font-bold uppercase tracking-widest text-gold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Culinary Art</span>
                         <h3 class="font-serif text-2xl text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">Crafted with Care</h3>
@@ -319,7 +319,7 @@
                 </div>
 
                 <div class="gallery-item relative group overflow-hidden break-inside-avoid cursor-pointer" data-category="venues" onclick="openLightbox(this)">
-                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/image2.jpeg" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Elegant Presentation">
+                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/image2.jpeg" loading="lazy" decoding="async" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Elegant Presentation">
                     <div class="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
                         <span class="font-sans text-[10px] font-bold uppercase tracking-widest text-gold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Service Styles</span>
                         <h3 class="font-serif text-2xl text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">Elegant Presentation</h3>
@@ -327,7 +327,7 @@
                 </div>
 
                 <div class="gallery-item relative group overflow-hidden break-inside-avoid cursor-pointer" data-category="culinary" onclick="openLightbox(this)">
-                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/image3.jpeg" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Bold Spices & Rich Flavours">
+                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/image3.jpeg" loading="lazy" decoding="async" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Bold Spices & Rich Flavours">
                     <div class="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
                         <span class="font-sans text-[10px] font-bold uppercase tracking-widest text-gold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Heritage</span>
                         <h3 class="font-serif text-2xl text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">Bold Spices & Rich Flavours</h3>
@@ -335,7 +335,7 @@
                 </div>
 
                 <div class="gallery-item relative group overflow-hidden break-inside-avoid cursor-pointer" data-category="weddings" onclick="openLightbox(this)">
-                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/image4.jpeg" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="A Night to Remember">
+                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/image4.jpeg" loading="lazy" decoding="async" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="A Night to Remember">
                     <div class="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
                         <span class="font-sans text-[10px] font-bold uppercase tracking-widest text-gold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Weddings</span>
                         <h3 class="font-serif text-2xl text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">A Night to Remember</h3>
@@ -343,7 +343,7 @@
                 </div>
 
                 <div class="gallery-item relative group overflow-hidden break-inside-avoid cursor-pointer" data-category="culinary" onclick="openLightbox(this)">
-                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/image6.jpeg" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="From Our Kitchen to Your Table">
+                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/image6.jpeg" loading="lazy" decoding="async" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="From Our Kitchen to Your Table">
                     <div class="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
                         <span class="font-sans text-[10px] font-bold uppercase tracking-widest text-gold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Culinary Art</span>
                         <h3 class="font-serif text-2xl text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">From Our Kitchen to Your Table</h3>
@@ -351,7 +351,7 @@
                 </div>
 
                 <div class="gallery-item relative group overflow-hidden break-inside-avoid cursor-pointer" data-category="venues" onclick="openLightbox(this)">
-                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/image7.jpeg" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Dressed for the Occasion">
+                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/image7.jpeg" loading="lazy" decoding="async" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Dressed for the Occasion">
                     <div class="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
                         <span class="font-sans text-[10px] font-bold uppercase tracking-widest text-gold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Table & Venues</span>
                         <h3 class="font-serif text-2xl text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">Dressed for the Occasion</h3>
@@ -359,7 +359,7 @@
                 </div>
 
                 <div class="gallery-item relative group overflow-hidden break-inside-avoid cursor-pointer" data-category="culinary" onclick="openLightbox(this)">
-                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/image8.jpeg" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Authentic Roots">
+                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/image8.jpeg" loading="lazy" decoding="async" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Authentic Roots">
                     <div class="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
                         <span class="font-sans text-[10px] font-bold uppercase tracking-widest text-gold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Heritage</span>
                         <h3 class="font-serif text-2xl text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">Authentic Roots</h3>
@@ -367,7 +367,7 @@
                 </div>
 
                 <div class="gallery-item relative group overflow-hidden break-inside-avoid cursor-pointer" data-category="weddings" onclick="openLightbox(this)">
-                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/image9.jpeg" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Bespoke Dining Experience">
+                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/image9.jpeg" loading="lazy" decoding="async" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Bespoke Dining Experience">
                     <div class="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
                         <span class="font-sans text-[10px] font-bold uppercase tracking-widest text-gold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Celebrations</span>
                         <h3 class="font-serif text-2xl text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">Bespoke Dining Experience</h3>
@@ -375,7 +375,7 @@
                 </div>
 
                 <div class="gallery-item relative group overflow-hidden break-inside-avoid cursor-pointer" data-category="culinary" onclick="openLightbox(this)">
-                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/image10.jpeg" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Seasons on a Plate">
+                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/image10.jpeg" loading="lazy" decoding="async" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Seasons on a Plate">
                     <div class="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
                         <span class="font-sans text-[10px] font-bold uppercase tracking-widest text-gold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Culinary Art</span>
                         <h3 class="font-serif text-2xl text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">Seasons on a Plate</h3>
@@ -383,7 +383,7 @@
                 </div>
 
                 <div class="gallery-item relative group overflow-hidden break-inside-avoid cursor-pointer" data-category="venues" onclick="openLightbox(this)">
-                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/image11.jpeg" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Buffet in Style">
+                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/image11.jpeg" loading="lazy" decoding="async" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Buffet in Style">
                     <div class="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
                         <span class="font-sans text-[10px] font-bold uppercase tracking-widest text-gold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Service Styles</span>
                         <h3 class="font-serif text-2xl text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">Buffet in Style</h3>
@@ -391,7 +391,7 @@
                 </div>
 
                 <div class="gallery-item relative group overflow-hidden break-inside-avoid cursor-pointer" data-category="weddings" onclick="openLightbox(this)">
-                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/image12-scaled.jpeg" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Love & Flavour">
+                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/image12-scaled.jpeg" loading="lazy" decoding="async" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Love & Flavour">
                     <div class="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
                         <span class="font-sans text-[10px] font-bold uppercase tracking-widest text-gold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Weddings</span>
                         <h3 class="font-serif text-2xl text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">Love & Flavour</h3>
@@ -399,7 +399,7 @@
                 </div>
 
                 <div class="gallery-item relative group overflow-hidden break-inside-avoid cursor-pointer" data-category="culinary" onclick="openLightbox(this)">
-                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/8cf70dfb-54f5-4ad3-a21e-523586bec539.jpg" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Deep-rooted Traditions">
+                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/8cf70dfb-54f5-4ad3-a21e-523586bec539.jpg" loading="lazy" decoding="async" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Deep-rooted Traditions">
                     <div class="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
                         <span class="font-sans text-[10px] font-bold uppercase tracking-widest text-gold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Heritage</span>
                         <h3 class="font-serif text-2xl text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">Deep-rooted Traditions</h3>
@@ -407,7 +407,7 @@
                 </div>
 
                 <div class="gallery-item relative group overflow-hidden break-inside-avoid cursor-pointer" data-category="culinary" onclick="openLightbox(this)">
-                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/47f68a13-966f-4f58-b2f5-e511c891b2c1.jpg" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Plated Perfection">
+                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/47f68a13-966f-4f58-b2f5-e511c891b2c1.jpg" loading="lazy" decoding="async" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Plated Perfection">
                     <div class="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
                         <span class="font-sans text-[10px] font-bold uppercase tracking-widest text-gold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Fine Dining</span>
                         <h3 class="font-serif text-2xl text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">Plated Perfection</h3>
@@ -415,7 +415,7 @@
                 </div>
 
                 <div class="gallery-item relative group overflow-hidden break-inside-avoid cursor-pointer" data-category="venues" onclick="openLightbox(this)">
-                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/66a7e12b-c33a-4c77-94dd-7a0aa201f406.jpg" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Grand Settings">
+                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/66a7e12b-c33a-4c77-94dd-7a0aa201f406.jpg" loading="lazy" decoding="async" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Grand Settings">
                     <div class="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
                         <span class="font-sans text-[10px] font-bold uppercase tracking-widest text-gold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Table & Venues</span>
                         <h3 class="font-serif text-2xl text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">Grand Settings</h3>
@@ -423,7 +423,7 @@
                 </div>
 
                 <div class="gallery-item relative group overflow-hidden break-inside-avoid cursor-pointer" data-category="culinary" onclick="openLightbox(this)">
-                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/903a814e-b354-498f-a0f0-eb0e7d4d5b91-scaled.jpg" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Artisan Plating">
+                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/903a814e-b354-498f-a0f0-eb0e7d4d5b91-scaled.jpg" loading="lazy" decoding="async" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Artisan Plating">
                     <div class="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
                         <span class="font-sans text-[10px] font-bold uppercase tracking-widest text-gold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Culinary Art</span>
                         <h3 class="font-serif text-2xl text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">Artisan Plating</h3>
@@ -431,7 +431,7 @@
                 </div>
 
                 <div class="gallery-item relative group overflow-hidden break-inside-avoid cursor-pointer" data-category="weddings" onclick="openLightbox(this)">
-                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/09334d04-d42e-4be2-85ab-6ab9c9cb2eb0.jpg" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Celebrations of Love">
+                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/09334d04-d42e-4be2-85ab-6ab9c9cb2eb0.jpg" loading="lazy" decoding="async" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Celebrations of Love">
                     <div class="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
                         <span class="font-sans text-[10px] font-bold uppercase tracking-widest text-gold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Weddings</span>
                         <h3 class="font-serif text-2xl text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">Celebrations of Love</h3>
@@ -439,7 +439,7 @@
                 </div>
 
                 <div class="gallery-item relative group overflow-hidden break-inside-avoid cursor-pointer" data-category="culinary" onclick="openLightbox(this)">
-                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/42792af9-7e44-4cb7-8084-3d527f6bff7f-scaled.jpg" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Flavours of West Africa">
+                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/42792af9-7e44-4cb7-8084-3d527f6bff7f-scaled.jpg" loading="lazy" decoding="async" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Flavours of West Africa">
                     <div class="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
                         <span class="font-sans text-[10px] font-bold uppercase tracking-widest text-gold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Heritage</span>
                         <h3 class="font-serif text-2xl text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">Flavours of West Africa</h3>
@@ -447,7 +447,7 @@
                 </div>
 
                 <div class="gallery-item relative group overflow-hidden break-inside-avoid cursor-pointer" data-category="venues" onclick="openLightbox(this)">
-                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/ca3bc7fb-aba6-489e-bc33-4949733afce5.jpg" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Silver Service">
+                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/ca3bc7fb-aba6-489e-bc33-4949733afce5.jpg" loading="lazy" decoding="async" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Silver Service">
                     <div class="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
                         <span class="font-sans text-[10px] font-bold uppercase tracking-widest text-gold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Service Styles</span>
                         <h3 class="font-serif text-2xl text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">Silver Service</h3>
@@ -455,7 +455,7 @@
                 </div>
 
                 <div class="gallery-item relative group overflow-hidden break-inside-avoid cursor-pointer" data-category="culinary" onclick="openLightbox(this)">
-                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/ce4a0e45-dc83-43b8-9dd8-be9bf7009b2d.jpg" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Crafted with Passion">
+                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/ce4a0e45-dc83-43b8-9dd8-be9bf7009b2d.jpg" loading="lazy" decoding="async" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Crafted with Passion">
                     <div class="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
                         <span class="font-sans text-[10px] font-bold uppercase tracking-widest text-gold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Culinary Art</span>
                         <h3 class="font-serif text-2xl text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">Crafted with Passion</h3>
@@ -463,7 +463,7 @@
                 </div>
 
                 <div class="gallery-item relative group overflow-hidden break-inside-avoid cursor-pointer" data-category="weddings" onclick="openLightbox(this)">
-                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/E62B69FF-A94B-4336-9D1D-206547CFC1E5.jpg" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Timeless Moments">
+                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/E62B69FF-A94B-4336-9D1D-206547CFC1E5.jpg" loading="lazy" decoding="async" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Timeless Moments">
                     <div class="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
                         <span class="font-sans text-[10px] font-bold uppercase tracking-widest text-gold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Weddings</span>
                         <h3 class="font-serif text-2xl text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">Timeless Moments</h3>
@@ -471,7 +471,7 @@
                 </div>
 
                 <div class="gallery-item relative group overflow-hidden break-inside-avoid cursor-pointer" data-category="culinary" onclick="openLightbox(this)">
-                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/e377284b-39ee-406b-a053-03929ab24230.jpg" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Caribbean Inspired">
+                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/e377284b-39ee-406b-a053-03929ab24230.jpg" loading="lazy" decoding="async" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Caribbean Inspired">
                     <div class="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
                         <span class="font-sans text-[10px] font-bold uppercase tracking-widest text-gold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Heritage</span>
                         <h3 class="font-serif text-2xl text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">Caribbean Inspired</h3>
@@ -479,7 +479,7 @@
                 </div>
 
                 <div class="gallery-item relative group overflow-hidden break-inside-avoid cursor-pointer" data-category="venues" onclick="openLightbox(this)">
-                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/f055e508-0bb8-4dc5-9302-bedf4d3abef8.jpg" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="A Table for Every Occasion">
+                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/f055e508-0bb8-4dc5-9302-bedf4d3abef8.jpg" loading="lazy" decoding="async" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="A Table for Every Occasion">
                     <div class="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
                         <span class="font-sans text-[10px] font-bold uppercase tracking-widest text-gold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Table & Venues</span>
                         <h3 class="font-serif text-2xl text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">A Table for Every Occasion</h3>
@@ -487,7 +487,7 @@
                 </div>
 
                 <div class="gallery-item relative group overflow-hidden break-inside-avoid cursor-pointer" data-category="culinary" onclick="openLightbox(this)">
-                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/IMG_0575.jpg" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Fresh & Vibrant">
+                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/IMG_0575.jpg" loading="lazy" decoding="async" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Fresh & Vibrant">
                     <div class="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
                         <span class="font-sans text-[10px] font-bold uppercase tracking-widest text-gold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Culinary Art</span>
                         <h3 class="font-serif text-2xl text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">Fresh & Vibrant</h3>
@@ -495,7 +495,7 @@
                 </div>
 
                 <div class="gallery-item relative group overflow-hidden break-inside-avoid cursor-pointer" data-category="venues" onclick="openLightbox(this)">
-                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/IMG_0576.jpg" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Artful Arrangement">
+                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/IMG_0576.jpg" loading="lazy" decoding="async" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Artful Arrangement">
                     <div class="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
                         <span class="font-sans text-[10px] font-bold uppercase tracking-widest text-gold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Service Styles</span>
                         <h3 class="font-serif text-2xl text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">Artful Arrangement</h3>
@@ -503,7 +503,7 @@
                 </div>
 
                 <div class="gallery-item relative group overflow-hidden break-inside-avoid cursor-pointer" data-category="culinary" onclick="openLightbox(this)">
-                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/IMG_0577.jpg" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Homegrown Recipes">
+                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/IMG_0577.jpg" loading="lazy" decoding="async" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Homegrown Recipes">
                     <div class="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
                         <span class="font-sans text-[10px] font-bold uppercase tracking-widest text-gold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Heritage</span>
                         <h3 class="font-serif text-2xl text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">Homegrown Recipes</h3>
@@ -511,7 +511,7 @@
                 </div>
 
                 <div class="gallery-item relative group overflow-hidden break-inside-avoid cursor-pointer" data-category="weddings" onclick="openLightbox(this)">
-                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/IMG_0578.jpg" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Elegant Receptions">
+                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/IMG_0578.jpg" loading="lazy" decoding="async" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Elegant Receptions">
                     <div class="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
                         <span class="font-sans text-[10px] font-bold uppercase tracking-widest text-gold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Weddings</span>
                         <h3 class="font-serif text-2xl text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">Elegant Receptions</h3>
@@ -519,7 +519,7 @@
                 </div>
 
                 <div class="gallery-item relative group overflow-hidden break-inside-avoid cursor-pointer" data-category="culinary" onclick="openLightbox(this)">
-                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/IMG_7274.jpg" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Meticulous Craftsmanship">
+                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/IMG_7274.jpg" loading="lazy" decoding="async" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Meticulous Craftsmanship">
                     <div class="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
                         <span class="font-sans text-[10px] font-bold uppercase tracking-widest text-gold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Culinary Art</span>
                         <h3 class="font-serif text-2xl text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">Meticulous Craftsmanship</h3>
@@ -527,7 +527,7 @@
                 </div>
 
                 <div class="gallery-item relative group overflow-hidden break-inside-avoid cursor-pointer" data-category="venues" onclick="openLightbox(this)">
-                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/IMG_7659.jpg" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Lavish Tablescapes">
+                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/IMG_7659.jpg" loading="lazy" decoding="async" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Lavish Tablescapes">
                     <div class="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
                         <span class="font-sans text-[10px] font-bold uppercase tracking-widest text-gold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Table & Venues</span>
                         <h3 class="font-serif text-2xl text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">Lavish Tablescapes</h3>
@@ -535,7 +535,7 @@
                 </div>
 
                 <div class="gallery-item relative group overflow-hidden break-inside-avoid cursor-pointer" data-category="culinary" onclick="openLightbox(this)">
-                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/2bcaf191-9416-4642-aa9e-7aba1abdcb5d.jpg" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Soulful Cooking">
+                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/2bcaf191-9416-4642-aa9e-7aba1abdcb5d.jpg" loading="lazy" decoding="async" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Soulful Cooking">
                     <div class="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
                         <span class="font-sans text-[10px] font-bold uppercase tracking-widest text-gold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Heritage</span>
                         <h3 class="font-serif text-2xl text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">Soulful Cooking</h3>
@@ -543,7 +543,7 @@
                 </div>
 
                 <div class="gallery-item relative group overflow-hidden break-inside-avoid cursor-pointer" data-category="venues" onclick="openLightbox(this)">
-                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/3df2ce14-abf0-4df2-95d1-30067c9d280d.jpg" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Warm Hospitality">
+                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/3df2ce14-abf0-4df2-95d1-30067c9d280d.jpg" loading="lazy" decoding="async" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Warm Hospitality">
                     <div class="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
                         <span class="font-sans text-[10px] font-bold uppercase tracking-widest text-gold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Service Styles</span>
                         <h3 class="font-serif text-2xl text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">Warm Hospitality</h3>
@@ -551,7 +551,7 @@
                 </div>
 
                 <div class="gallery-item relative group overflow-hidden break-inside-avoid cursor-pointer" data-category="culinary" onclick="openLightbox(this)">
-                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/3e7f01b3-8fb3-4603-a41a-01172f682cac.jpg" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="A Feast for the Senses">
+                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/3e7f01b3-8fb3-4603-a41a-01172f682cac.jpg" loading="lazy" decoding="async" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="A Feast for the Senses">
                     <div class="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
                         <span class="font-sans text-[10px] font-bold uppercase tracking-widest text-gold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Culinary Art</span>
                         <h3 class="font-serif text-2xl text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">A Feast for the Senses</h3>
@@ -559,7 +559,7 @@
                 </div>
 
                 <div class="gallery-item relative group overflow-hidden break-inside-avoid cursor-pointer" data-category="weddings" onclick="openLightbox(this)">
-                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/035F5FF1-BBA1-440E-AEA7-6D658F414747-scaled.jpg" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Tailored for Your Day">
+                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/035F5FF1-BBA1-440E-AEA7-6D658F414747-scaled.jpg" loading="lazy" decoding="async" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Tailored for Your Day">
                     <div class="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
                         <span class="font-sans text-[10px] font-bold uppercase tracking-widest text-gold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Weddings</span>
                         <h3 class="font-serif text-2xl text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">Tailored for Your Day</h3>
@@ -567,7 +567,7 @@
                 </div>
 
                 <div class="gallery-item relative group overflow-hidden break-inside-avoid cursor-pointer" data-category="culinary" onclick="openLightbox(this)">
-                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/87e9fd67-0561-4dc7-b51c-d99058e33bad.jpg" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Roots & Spices">
+                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/87e9fd67-0561-4dc7-b51c-d99058e33bad.jpg" loading="lazy" decoding="async" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Roots & Spices">
                     <div class="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
                         <span class="font-sans text-[10px] font-bold uppercase tracking-widest text-gold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Heritage</span>
                         <h3 class="font-serif text-2xl text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">Roots & Spices</h3>
@@ -575,7 +575,7 @@
                 </div>
 
                 <div class="gallery-item relative group overflow-hidden break-inside-avoid cursor-pointer" data-category="venues" onclick="openLightbox(this)">
-                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/351f78d1-4eda-46e0-a3b4-11801f7b1c69-scaled.jpg" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Intimate Gatherings">
+                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/351f78d1-4eda-46e0-a3b4-11801f7b1c69-scaled.jpg" loading="lazy" decoding="async" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Intimate Gatherings">
                     <div class="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
                         <span class="font-sans text-[10px] font-bold uppercase tracking-widest text-gold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Table & Venues</span>
                         <h3 class="font-serif text-2xl text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">Intimate Gatherings</h3>
@@ -583,7 +583,7 @@
                 </div>
 
                 <div class="gallery-item relative group overflow-hidden break-inside-avoid cursor-pointer" data-category="culinary" onclick="openLightbox(this)">
-                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/970B10D3-A852-473A-8A0C-6B051CA56371.jpg" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Seasonal Selection">
+                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/970B10D3-A852-473A-8A0C-6B051CA56371.jpg" loading="lazy" decoding="async" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Seasonal Selection">
                     <div class="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
                         <span class="font-sans text-[10px] font-bold uppercase tracking-widest text-gold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Culinary Art</span>
                         <h3 class="font-serif text-2xl text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">Seasonal Selection</h3>
@@ -591,7 +591,7 @@
                 </div>
 
                 <div class="gallery-item relative group overflow-hidden break-inside-avoid cursor-pointer" data-category="weddings" onclick="openLightbox(this)">
-                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/8636e8ca-1010-46f2-bd61-56b9932a1356.jpg" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="A Night to Remember">
+                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/8636e8ca-1010-46f2-bd61-56b9932a1356.jpg" loading="lazy" decoding="async" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="A Night to Remember">
                     <div class="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
                         <span class="font-sans text-[10px] font-bold uppercase tracking-widest text-gold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Celebrations</span>
                         <h3 class="font-serif text-2xl text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">A Night to Remember</h3>
@@ -599,7 +599,7 @@
                 </div>
 
                 <div class="gallery-item relative group overflow-hidden break-inside-avoid cursor-pointer" data-category="culinary" onclick="openLightbox(this)">
-                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/D0B3B299-69EF-49EF-82AB-3B3A4BCE6EB8.jpg" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Bold & Beautiful">
+                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/D0B3B299-69EF-49EF-82AB-3B3A4BCE6EB8.jpg" loading="lazy" decoding="async" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Bold & Beautiful">
                     <div class="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
                         <span class="font-sans text-[10px] font-bold uppercase tracking-widest text-gold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Heritage</span>
                         <h3 class="font-serif text-2xl text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">Bold & Beautiful</h3>
@@ -607,7 +607,7 @@
                 </div>
 
                 <div class="gallery-item relative group overflow-hidden break-inside-avoid cursor-pointer" data-category="venues" onclick="openLightbox(this)">
-                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/DB3C1EEC-A217-4E40-BAEC-0C270BB2F0C3.jpg" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Statement Tablescapes">
+                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/DB3C1EEC-A217-4E40-BAEC-0C270BB2F0C3.jpg" loading="lazy" decoding="async" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Statement Tablescapes">
                     <div class="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
                         <span class="font-sans text-[10px] font-bold uppercase tracking-widest text-gold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Table & Venues</span>
                         <h3 class="font-serif text-2xl text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">Statement Tablescapes</h3>
@@ -615,7 +615,7 @@
                 </div>
 
                 <div class="gallery-item relative group overflow-hidden break-inside-avoid cursor-pointer" data-category="culinary" onclick="openLightbox(this)">
-                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/e7618f9e-2ffa-4c50-8d53-d6850080ef90-scaled.jpg" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="African & Caribbean Fusion">
+                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/e7618f9e-2ffa-4c50-8d53-d6850080ef90-scaled.jpg" loading="lazy" decoding="async" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="African & Caribbean Fusion">
                     <div class="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
                         <span class="font-sans text-[10px] font-bold uppercase tracking-widest text-gold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Heritage</span>
                         <h3 class="font-serif text-2xl text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">African & Caribbean Fusion</h3>
@@ -623,7 +623,7 @@
                 </div>
 
                 <div class="gallery-item relative group overflow-hidden break-inside-avoid cursor-pointer" data-category="weddings" onclick="openLightbox(this)">
-                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/eb4d4af3-c8b8-4a80-be1f-b94105b8340e-scaled.jpg" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Romantic Celebrations">
+                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/eb4d4af3-c8b8-4a80-be1f-b94105b8340e-scaled.jpg" loading="lazy" decoding="async" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Romantic Celebrations">
                     <div class="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
                         <span class="font-sans text-[10px] font-bold uppercase tracking-widest text-gold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Weddings</span>
                         <h3 class="font-serif text-2xl text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">Romantic Celebrations</h3>
@@ -631,7 +631,7 @@
                 </div>
 
                 <div class="gallery-item relative group overflow-hidden break-inside-avoid cursor-pointer" data-category="culinary" onclick="openLightbox(this)">
-                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/efab0d9f-7fff-47c2-8a45-ef6ce4827759-scaled.jpg" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Garden to Table">
+                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/efab0d9f-7fff-47c2-8a45-ef6ce4827759-scaled.jpg" loading="lazy" decoding="async" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Garden to Table">
                     <div class="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
                         <span class="font-sans text-[10px] font-bold uppercase tracking-widest text-gold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Culinary Art</span>
                         <h3 class="font-serif text-2xl text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">Garden to Table</h3>
@@ -639,7 +639,7 @@
                 </div>
 
                 <div class="gallery-item relative group overflow-hidden break-inside-avoid cursor-pointer" data-category="culinary" onclick="openLightbox(this)">
-                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/yam-porridge-12.jpg" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Yam Porridge — A Classic">
+                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/yam-porridge-12.jpg" loading="lazy" decoding="async" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Yam Porridge — A Classic">
                     <div class="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
                         <span class="font-sans text-[10px] font-bold uppercase tracking-widest text-gold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Heritage</span>
                         <h3 class="font-serif text-2xl text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">Yam Porridge — A Classic</h3>
@@ -647,7 +647,7 @@
                 </div>
 
                 <div class="gallery-item relative group overflow-hidden break-inside-avoid cursor-pointer" data-category="weddings" onclick="openLightbox(this)">
-                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/the-beautiful-bride.jpg" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="The Beautiful Bride">
+                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/the-beautiful-bride.jpg" loading="lazy" decoding="async" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="The Beautiful Bride">
                     <div class="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
                         <span class="font-sans text-[10px] font-bold uppercase tracking-widest text-gold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Weddings</span>
                         <h3 class="font-serif text-2xl text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">The Beautiful Bride</h3>
@@ -655,7 +655,7 @@
                 </div>
 
                 <div class="gallery-item relative group overflow-hidden break-inside-avoid cursor-pointer" data-category="venues" onclick="openLightbox(this)">
-                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/B1B0229D-5AC0-428C-800E-CC02A3BD78E4.jpg" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Event Excellence">
+                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/B1B0229D-5AC0-428C-800E-CC02A3BD78E4.jpg" loading="lazy" decoding="async" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Event Excellence">
                     <div class="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
                         <span class="font-sans text-[10px] font-bold uppercase tracking-widest text-gold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Table & Venues</span>
                         <h3 class="font-serif text-2xl text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">Event Excellence</h3>
@@ -663,7 +663,7 @@
                 </div>
 
                 <div class="gallery-item relative group overflow-hidden break-inside-avoid cursor-pointer" data-category="culinary" onclick="openLightbox(this)">
-                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/6994489C-65F5-47E3-9347-8C5A19C27017.jpg" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Vibrant Flavours">
+                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/6994489C-65F5-47E3-9347-8C5A19C27017.jpg" loading="lazy" decoding="async" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Vibrant Flavours">
                     <div class="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
                         <span class="font-sans text-[10px] font-bold uppercase tracking-widest text-gold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Culinary Art</span>
                         <h3 class="font-serif text-2xl text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">Vibrant Flavours</h3>
@@ -671,7 +671,7 @@
                 </div>
 
                 <div class="gallery-item relative group overflow-hidden break-inside-avoid cursor-pointer" data-category="culinary" onclick="openLightbox(this)">
-                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/37_The_Chef_And_I_Catering.jpg" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="The Chef's Touch">
+                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/37_The_Chef_And_I_Catering.jpg" loading="lazy" decoding="async" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="The Chef's Touch">
                     <div class="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
                         <span class="font-sans text-[10px] font-bold uppercase tracking-widest text-gold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Culinary Art</span>
                         <h3 class="font-serif text-2xl text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">The Chef's Touch</h3>
@@ -679,7 +679,7 @@
                 </div>
 
                 <div class="gallery-item relative group overflow-hidden break-inside-avoid cursor-pointer" data-category="weddings" onclick="openLightbox(this)">
-                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/5D4DF312-7C5D-4C38-B354-B89BDD44EC1B.jpg" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Cherished Moments">
+                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/5D4DF312-7C5D-4C38-B354-B89BDD44EC1B.jpg" loading="lazy" decoding="async" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Cherished Moments">
                     <div class="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
                         <span class="font-sans text-[10px] font-bold uppercase tracking-widest text-gold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Weddings</span>
                         <h3 class="font-serif text-2xl text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">Cherished Moments</h3>
@@ -687,7 +687,7 @@
                 </div>
 
                 <div class="gallery-item relative group overflow-hidden break-inside-avoid cursor-pointer" data-category="culinary" onclick="openLightbox(this)">
-                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/5CE8C4F3-FAA8-4AA5-B891-BB136249CBE6.jpg" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Authentic Flavours">
+                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/5CE8C4F3-FAA8-4AA5-B891-BB136249CBE6.jpg" loading="lazy" decoding="async" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Authentic Flavours">
                     <div class="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
                         <span class="font-sans text-[10px] font-bold uppercase tracking-widest text-gold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Heritage</span>
                         <h3 class="font-serif text-2xl text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">Authentic Flavours</h3>
@@ -695,7 +695,7 @@
                 </div>
 
                 <div class="gallery-item relative group overflow-hidden break-inside-avoid cursor-pointer" data-category="venues" onclick="openLightbox(this)">
-                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/04FF7B9A-B05F-4CF0-BBB5-23A47EB71EA7.jpg" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Impeccable Service">
+                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/04FF7B9A-B05F-4CF0-BBB5-23A47EB71EA7.jpg" loading="lazy" decoding="async" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Impeccable Service">
                     <div class="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
                         <span class="font-sans text-[10px] font-bold uppercase tracking-widest text-gold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Service Styles</span>
                         <h3 class="font-serif text-2xl text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">Impeccable Service</h3>
@@ -703,7 +703,7 @@
                 </div>
 
                 <div class="gallery-item relative group overflow-hidden break-inside-avoid cursor-pointer" data-category="culinary" onclick="openLightbox(this)">
-                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/1DE0ED0F-FF26-441C-BB09-94201FA7108E.jpg" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Crafted for You">
+                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/1DE0ED0F-FF26-441C-BB09-94201FA7108E.jpg" loading="lazy" decoding="async" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Crafted for You">
                     <div class="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
                         <span class="font-sans text-[10px] font-bold uppercase tracking-widest text-gold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Culinary Art</span>
                         <h3 class="font-serif text-2xl text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">Crafted for You</h3>
@@ -711,7 +711,7 @@
                 </div>
 
                 <div class="gallery-item relative group overflow-hidden break-inside-avoid cursor-pointer" data-category="venues" onclick="openLightbox(this)">
-                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/0E8E9151-BBE8-4D6C-98D8-89D90EF4CD20.jpg" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="The Perfect Setting">
+                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/0E8E9151-BBE8-4D6C-98D8-89D90EF4CD20.jpg" loading="lazy" decoding="async" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="The Perfect Setting">
                     <div class="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
                         <span class="font-sans text-[10px] font-bold uppercase tracking-widest text-gold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Table & Venues</span>
                         <h3 class="font-serif text-2xl text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">The Perfect Setting</h3>
@@ -719,7 +719,7 @@
                 </div>
 
                 <div class="gallery-item relative group overflow-hidden break-inside-avoid cursor-pointer" data-category="venues" onclick="openLightbox(this)">
-                    <img src="https://deosacatering.co.uk/ehusteeg/2023/12/table-floral-deco-2-e1703736023168.jpeg" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Floral Elegance">
+                    <img src="https://deosacatering.co.uk/ehusteeg/2023/12/table-floral-deco-2-e1703736023168.jpeg" loading="lazy" decoding="async" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" alt="Floral Elegance">
                     <div class="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
                         <span class="font-sans text-[10px] font-bold uppercase tracking-widest text-gold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Table & Venues</span>
                         <h3 class="font-serif text-2xl text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">Floral Elegance</h3>
@@ -745,7 +745,7 @@
     <!-- Footer -->
     <footer class="bg-charcoal text-cream pb-12 pt-6 border-t border-gold/20">
         <div class="max-w-7xl mx-auto px-6 lg:px-12 text-center flex flex-col items-center">
-            <img src="images/logo-dark-bg.svg" class="h-12 w-auto mb-6" alt="De'Osa">
+            <img decoding="async" src="images/logo-dark-bg.svg" class="h-12 w-auto mb-6" alt="De'Osa">
             <div class="flex gap-6 mb-8 font-sans text-xs uppercase tracking-widest font-bold">
                 <a href="#" class="hover:text-gold transition-colors">Instagram</a>
                 <a href="#" class="hover:text-gold transition-colors">Facebook</a>
