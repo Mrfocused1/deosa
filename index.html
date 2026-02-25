@@ -532,41 +532,49 @@
         <!-- Noise texture -->
         <div class="absolute inset-0 img-texture pointer-events-none z-[1]"></div>
 
-        <!-- Content: everything centred -->
-        <div class="relative z-10 h-full flex flex-col items-center justify-center px-6 lg:px-16 py-16 md:py-24 max-w-4xl mx-auto w-full text-center gap-8">
+        <!-- Content: centred on mobile, right-aligned on desktop -->
+        <div class="relative z-10 h-full flex flex-col px-6 lg:px-16 py-16 md:py-24 max-w-7xl mx-auto w-full
+                    items-center justify-center text-center gap-8
+                    md:items-stretch md:text-left md:justify-between md:gap-0">
 
-            <!-- Label + title -->
-            <div class="story-text">
-                <p class="font-sans text-[0.6rem] tracking-[0.3em] uppercase text-gold/70 mb-5">Our Heritage</p>
-                <h2 class="font-serif text-5xl md:text-7xl lg:text-8xl text-cream story-title leading-none">
-                    A Legacy<br>Rooted in<br><span class="italic text-gold">Culture</span>,<br>Served with<br>Excellence
-                </h2>
+            <!-- Label + title — centred mobile, right on desktop -->
+            <div class="story-text md:flex md:justify-end">
+                <div class="md:max-w-xl md:text-right">
+                    <p class="font-sans text-[0.6rem] tracking-[0.3em] uppercase text-gold/70 mb-5">Our Heritage</p>
+                    <h2 class="font-serif text-5xl md:text-7xl lg:text-8xl text-cream story-title leading-none">
+                        A Legacy<br>Rooted in<br><span class="italic text-gold">Culture</span>,<br>Served with<br>Excellence
+                    </h2>
+                </div>
             </div>
 
-            <!-- Divider line -->
-            <svg class="w-20 h-4" viewBox="0 0 100 10">
+            <!-- Divider — centred mobile, right on desktop -->
+            <svg class="w-20 h-4 md:hidden" viewBox="0 0 100 10">
                 <path class="svg-line draw-on-scroll" d="M0,5 L100,5" />
             </svg>
 
-            <!-- Body + link -->
-            <div class="max-w-md story-text">
+            <!-- Body + link — centred mobile, bottom-right on desktop -->
+            <div class="max-w-md md:max-w-sm story-text md:self-end md:text-right">
+                <svg class="w-20 h-4 mb-5 hidden md:block md:ml-auto" viewBox="0 0 100 10">
+                    <path class="svg-line draw-on-scroll" d="M0,5 L100,5" />
+                </svg>
                 <p class="font-sans text-sm text-cream font-light leading-relaxed mb-6 md:text-cream/65">
                     What began as a passionate pursuit of authentic flavour has blossomed into a multi-award-winning business — bringing the vibrant heritage of African and Caribbean cuisine to London's most prestigious luxury weddings.
                 </p>
-                <a href="story.html" class="inline-flex items-center justify-center gap-3 font-sans text-xs tracking-[0.2em] uppercase text-gold/80 hover:text-gold transition-colors duration-300">
+                <a href="story.html" class="inline-flex items-center justify-center gap-3 font-sans text-xs tracking-[0.2em] uppercase text-gold/80 hover:text-gold transition-colors duration-300
+                                            md:justify-end">
                     <span class="w-8 h-px bg-gold/50"></span>
                     <span>Read Our Story</span>
-                    <span class="w-8 h-px bg-gold/50"></span>
+                    <span class="w-8 h-px bg-gold/50 md:hidden"></span>
                 </a>
             </div>
 
-            <!-- Stats -->
-            <div class="flex gap-12 md:gap-20 story-stats pt-4">
-                <div class="border-t border-gold/30 pt-4 text-center">
+            <!-- Stats — centred mobile, bottom-left on desktop -->
+            <div class="flex gap-12 md:gap-16 story-stats md:self-end md:absolute md:bottom-24 md:left-16 lg:left-16">
+                <div class="border-t border-gold/30 pt-4 text-center md:text-left">
                     <span class="block font-serif text-5xl md:text-6xl text-gold leading-none mb-2"><span id="count-clients">0</span>+</span>
                     <span class="font-sans text-[0.65rem] tracking-widest uppercase text-cream/50">Couples Served</span>
                 </div>
-                <div class="border-t border-gold/30 pt-4 text-center">
+                <div class="border-t border-gold/30 pt-4 text-center md:text-left">
                     <span class="block font-serif text-5xl md:text-6xl text-gold leading-none mb-2"><span id="count-guests">0</span>k+</span>
                     <span class="font-sans text-[0.65rem] tracking-widest uppercase text-cream/50">Guests Delighted</span>
                 </div>
