@@ -284,6 +284,7 @@
                 </select>
             </div>
         </div>
+        <div id="filter-bar-spacer" style="height:0;transition:height 0.2s;"></div>
     </header>
 
     <!-- Directory Layout -->
@@ -628,11 +629,11 @@
         }
 
         // --- FILTERING ---
-        function toggleOtherEvent(sel) {
+        window.toggleOtherEvent = function(sel) {
             const other = document.getElementById('event-type-other');
             other.style.display = sel.value === 'Other' ? 'block' : 'none';
             if (sel.value === 'Other') other.focus();
-        }
+        };
 
         function applyFilters() {
             const query = searchInput.value.toLowerCase().trim();
@@ -640,16 +641,24 @@
 
             // Pin filter bar to top while search is active
             const filterBar = document.getElementById('filter-bar');
+            const spacer    = document.getElementById('filter-bar-spacer');
             if (query.length > 0) {
-                filterBar.style.position = 'sticky';
-                filterBar.style.top = '80px';
-                filterBar.style.zIndex = '30';
-                filterBar.style.boxShadow = '0 4px 24px rgba(28,28,28,0.10)';
+                const h = filterBar.offsetHeight;
+                filterBar.style.position  = 'fixed';
+                filterBar.style.top       = '80px';
+                filterBar.style.left      = '0';
+                filterBar.style.right     = '0';
+                filterBar.style.zIndex    = '35';
+                filterBar.style.boxShadow = '0 4px 24px rgba(28,28,28,0.12)';
+                spacer.style.height       = h + 'px';
             } else {
-                filterBar.style.position = '';
-                filterBar.style.top = '';
-                filterBar.style.zIndex = '';
+                filterBar.style.position  = '';
+                filterBar.style.top       = '';
+                filterBar.style.left      = '';
+                filterBar.style.right     = '';
+                filterBar.style.zIndex    = '';
                 filterBar.style.boxShadow = '';
+                spacer.style.height       = '0';
             }
             let totalVisibleItems = 0;
 
