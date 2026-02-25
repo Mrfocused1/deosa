@@ -634,48 +634,53 @@
         </div>
     </section>
 
-    <!-- SECTION 4: SERVICE STYLES (Horizontal Scroll — all screens) -->
-    <section id="styles-container" class="bg-charcoal text-cream overflow-hidden">
-        <div id="styles-pin" class="h-screen flex items-center">
-            <div id="styles-scroll" class="flex w-[400vw] h-full">
+    <!-- SECTION 4: SERVICE STYLES -->
+    <section id="styles-container" class="bg-charcoal text-cream">
+        <!-- Section Header -->
+        <div class="pt-20 md:pt-24 pb-10 px-6 md:px-12 flex flex-col md:flex-row md:items-end md:justify-between">
+            <div>
+                <p class="font-sans tracking-[0.2em] text-gold uppercase text-sm mb-3">Service Styles</p>
+                <h2 class="font-serif text-5xl md:text-6xl">Dining Formats</h2>
+            </div>
+            <p class="font-sans text-sm font-light text-cream/60 mt-4 md:mt-0 md:max-w-xs md:text-right leading-relaxed">Choose a format tailored to the atmosphere of your celebration.</p>
+        </div>
 
-                <!-- Intro Panel -->
-                <div class="w-[100vw] h-full flex flex-col items-center justify-center px-6 md:px-12 shrink-0">
-                    <p class="font-sans tracking-[0.2em] text-gold uppercase text-sm mb-4">Service Styles</p>
-                    <h2 class="font-serif text-5xl md:text-8xl text-center">Dining Formats</h2>
-                    <p class="font-sans text-base md:text-lg font-light mt-6 md:mt-8 max-w-lg text-center text-cream/70">Scroll to explore our beautifully curated service styles, tailored to the atmosphere of your celebration.</p>
+        <!-- Cards Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 md:gap-px">
+            <!-- Card 1: Plated Multi-Course -->
+            <div class="relative overflow-hidden h-[70vh] md:h-[78vh] group">
+                <img src="images/plated-multi-course.webp" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]" alt="Plated Multi-Course" />
+                <div class="absolute inset-0 bg-gradient-to-t from-charcoal via-charcoal/30 to-transparent"></div>
+                <div class="absolute bottom-0 left-0 right-0 p-7 pb-10">
+                    <div class="w-8 h-px bg-gold mb-4"></div>
+                    <h3 class="font-serif text-3xl mb-3 text-cream">Plated Multi-Course</h3>
+                    <p class="font-sans font-light text-sm leading-relaxed text-cream/75 mb-4">The pinnacle of formal dining. Guests enjoy an elegantly paced, multi-course journey with each dish beautifully plated and served to the table.</p>
+                    <p class="font-sans text-xs tracking-widest uppercase text-gold">Ideal for: Black Tie & Formal Weddings</p>
                 </div>
+            </div>
 
-                <!-- Panel 1 -->
-                <div class="w-[100vw] h-full flex items-center justify-center px-6 md:px-12 shrink-0 relative panel">
-                    <img src="images/plated-multi-course.webp" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover opacity-40 img-texture" alt="Plated Multi-Course" />
-                    <div class="relative z-10 flex flex-col items-center text-center max-w-2xl bg-charcoal/80 p-8 md:p-16 border border-gold/30 backdrop-blur-sm">
-                        <h3 class="font-serif text-3xl md:text-5xl mb-4 md:mb-6 text-gold">Plated Multi-Course</h3>
-                        <p class="font-sans font-light text-sm md:text-lg mb-4 md:mb-6 leading-relaxed">The pinnacle of formal dining. Guests are seated to enjoy an elegantly paced, multi-course journey, with each dish beautifully plated and served to the table.</p>
-                        <span class="font-sans text-xs tracking-widest uppercase border-b border-gold pb-1">Ideal for: Black Tie & Formal Weddings</span>
-                    </div>
+            <!-- Card 2: Luxury Buffet Service -->
+            <div class="relative overflow-hidden h-[70vh] md:h-[78vh] group">
+                <img src="images/luxury-buffet-service.webp" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]" alt="Luxury Buffet" />
+                <div class="absolute inset-0 bg-gradient-to-t from-charcoal via-charcoal/30 to-transparent"></div>
+                <div class="absolute bottom-0 left-0 right-0 p-7 pb-10">
+                    <div class="w-8 h-px bg-gold mb-4"></div>
+                    <h3 class="font-serif text-3xl mb-3 text-cream">Luxury Buffet Service</h3>
+                    <p class="font-sans font-light text-sm leading-relaxed text-cream/75 mb-4">A grand, visually stunning spread. Perfect for offering guests a wider variety of rich cultural dishes, presented with opulent, high-end styling stations.</p>
+                    <p class="font-sans text-xs tracking-widest uppercase text-gold">Ideal for: Large Scale & Vibrant Celebrations</p>
                 </div>
+            </div>
 
-                <!-- Panel 2 -->
-                <div class="w-[100vw] h-full flex items-center justify-center px-6 md:px-12 shrink-0 relative panel">
-                    <img src="images/luxury-buffet-service.webp" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover opacity-40 img-texture" alt="Luxury Buffet" />
-                    <div class="relative z-10 flex flex-col items-center text-center max-w-2xl bg-charcoal/80 p-8 md:p-16 border border-gold/30 backdrop-blur-sm">
-                        <h3 class="font-serif text-3xl md:text-5xl mb-4 md:mb-6 text-gold">Luxury Buffet Service</h3>
-                        <p class="font-sans font-light text-sm md:text-lg mb-4 md:mb-6 leading-relaxed">A grand, visually stunning spread. Perfect for offering guests a wider variety of rich cultural dishes, presented with opulent, high-end styling stations.</p>
-                        <span class="font-sans text-xs tracking-widest uppercase border-b border-gold pb-1">Ideal for: Large Scale & Vibrant Celebrations</span>
-                    </div>
+            <!-- Card 3: Family Style Dining -->
+            <div class="relative overflow-hidden h-[70vh] md:h-[78vh] group">
+                <img src="images/family-style-dining.webp" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]" alt="Family Style" />
+                <div class="absolute inset-0 bg-gradient-to-t from-charcoal via-charcoal/30 to-transparent"></div>
+                <div class="absolute bottom-0 left-0 right-0 p-7 pb-10">
+                    <div class="w-8 h-px bg-gold mb-4"></div>
+                    <h3 class="font-serif text-3xl mb-3 text-cream">Family Style Dining</h3>
+                    <p class="font-sans font-light text-sm leading-relaxed text-cream/75 mb-4">Warm, communal, and elegant. Beautiful sharing platters placed at the center of guest tables encourage interaction while maintaining a luxurious feel.</p>
+                    <p class="font-sans text-xs tracking-widest uppercase text-gold">Ideal for: Intimate & Warm Gatherings</p>
                 </div>
-
-                <!-- Panel 3 -->
-                <div class="w-[100vw] h-full flex items-center justify-center px-6 md:px-12 shrink-0 relative panel">
-                    <img src="images/family-style-dining.webp" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover opacity-40 img-texture" alt="Family Style" />
-                    <div class="relative z-10 flex flex-col items-center text-center max-w-2xl bg-charcoal/80 p-8 md:p-16 border border-gold/30 backdrop-blur-sm">
-                        <h3 class="font-serif text-3xl md:text-5xl mb-4 md:mb-6 text-gold">Family Style Dining</h3>
-                        <p class="font-sans font-light text-sm md:text-lg mb-4 md:mb-6 leading-relaxed">Warm, communal, and elegant. Beautiful sharing platters are placed in the center of guest tables, encouraging interaction while maintaining a luxurious feel.</p>
-                        <span class="font-sans text-xs tracking-widest uppercase border-b border-gold pb-1">Ideal for: Intimate & Warm Gatherings</span>
-                    </div>
-                </div>
-
             </div>
         </div>
     </section>
@@ -1116,21 +1121,6 @@
                 storyTl.to('.img-1', { opacity: 0, duration: 1 })
                        .to('.img-2', { opacity: 1, duration: 1 }, "<");
 
-            });
-
-            // --- HORIZONTAL SCROLL (all screen sizes) ---
-            const stylesScroll = document.querySelector("#styles-scroll");
-            gsap.to(stylesScroll, {
-                x: () => -(stylesScroll.offsetWidth - window.innerWidth),
-                ease: "none",
-                scrollTrigger: {
-                    trigger: "#styles-container",
-                    pin: true,
-                    anticipatePin: 1,
-                    scrub: 1,
-                    end: () => "+=" + (stylesScroll.offsetWidth - window.innerWidth),
-                    invalidateOnRefresh: true
-                }
             });
 
             // --- CUISINE HERITAGE (all screen sizes) ---
