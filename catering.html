@@ -881,6 +881,8 @@
             const isOpen = !menu.classList.contains('pointer-events-none');
             menu.classList.toggle('opacity-0', isOpen);
             menu.classList.toggle('pointer-events-none', isOpen);
+            const fab = document.getElementById('ai-voice-btn');
+            if (fab) fab.style.display = isOpen ? '' : 'none';
         }
     </script>
     <script src="js/voice.js"></script>
