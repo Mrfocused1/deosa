@@ -78,6 +78,25 @@
             stroke: var(--gold);
             stroke-width: 1;
         }
+
+        /* Cuisine tabs */
+        .cuisine-tab {
+            font-family: Montserrat, sans-serif;
+            font-size: 0.62rem;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: rgba(28,28,28,0.35);
+            padding: 1rem 1.25rem;
+            border-bottom: 2px solid transparent;
+            white-space: nowrap;
+            background: none;
+            cursor: pointer;
+            transition: color 0.25s, border-color 0.25s;
+        }
+        .cuisine-tab:hover { color: rgba(28,28,28,0.7); }
+        .cuisine-tab.active-tab { color: #1C1C1C; border-bottom-color: #C5A059; }
+        .cuisine-panel { display: none; }
+        .cuisine-panel.active-panel { display: block; }
         .ai-live-glow { animation: pulse-glow 1.5s infinite alternate; }
 
         /* Navbar scrolled state */
@@ -685,77 +704,116 @@
         </div>
     </section>
 
-    <!-- SECTION 5: CUISINE HERITAGE (Pinned Immersive) -->
-    <section id="cuisine" class="relative bg-cream h-[375vh]">
-        <div class="sticky top-0 h-screen w-full flex flex-col md:flex-row items-center overflow-hidden pt-20">
-            <!-- Left Text -->
-            <div class="w-full md:w-1/2 p-8 md:p-20 z-10 flex flex-col justify-center h-auto md:h-full bg-cream relative">
-                <p class="font-sans text-xs tracking-[0.2em] uppercase text-gold mb-4">Our Menus</p>
-                <h2 class="font-serif text-5xl md:text-6xl text-charcoal mb-6 md:mb-12">African & Caribbean Cuisine, Elevated</h2>
+    <!-- SECTION 5: CUISINE HERITAGE -->
+    <section id="cuisine" class="bg-cream text-charcoal">
+        <!-- Header -->
+        <div class="text-center px-6 pt-20 md:pt-28 pb-10 md:pb-12">
+            <p class="font-sans text-xs tracking-[0.2em] uppercase text-gold mb-4">Our Menus</p>
+            <h2 class="font-serif text-5xl md:text-6xl text-charcoal">African & Caribbean Cuisine, Elevated</h2>
+        </div>
 
-                <div class="relative h-48 md:h-64 w-full">
-                    <!-- Nigerian -->
-                    <div class="absolute inset-0 cuisine-text opacity-100 transition-opacity duration-500" id="cuis-1">
-                        <h3 class="font-serif text-3xl text-gold mb-4">Nigerian Heritage</h3>
-                        <svg class="w-16 h-2 mb-6" viewBox="0 0 100 10"><path class="svg-line" d="M0,5 L100,5" /></svg>
-                        <ul class="font-sans font-light text-charcoal/80 space-y-3">
-                            <li>Smoky Party Jollof Rice</li>
-                            <li>Rich Egusi, Okra & Banga Soups</li>
-                            <li>Pounded Yam & Sweet Asaro</li>
-                        </ul>
-                    </div>
-                    <!-- Ghanaian -->
-                    <div class="absolute inset-0 cuisine-text opacity-0 transition-opacity duration-500" id="cuis-2">
-                        <h3 class="font-serif text-3xl text-gold mb-4">Ghanaian Traditions</h3>
-                        <svg class="w-16 h-2 mb-6" viewBox="0 0 100 10"><path class="svg-line" d="M0,5 L100,5" /></svg>
-                        <ul class="font-sans font-light text-charcoal/80 space-y-3">
-                            <li>Traditional Banku & Okro</li>
-                            <li>Aromatic Waakye</li>
-                            <li>Spiced Kelewele</li>
-                        </ul>
-                    </div>
-                    <!-- Sierra Leonean -->
-                    <div class="absolute inset-0 cuisine-text opacity-0 transition-opacity duration-500" id="cuis-3">
-                        <h3 class="font-serif text-3xl text-gold mb-4">Sierra Leonean Flavors</h3>
-                        <svg class="w-16 h-2 mb-6" viewBox="0 0 100 10"><path class="svg-line" d="M0,5 L100,5" /></svg>
-                        <ul class="font-sans font-light text-charcoal/80 space-y-3">
-                            <li>Savory Fried Rice</li>
-                            <li>Hearty Groundnut Stew</li>
-                            <li>Delicate Cassava Leaves</li>
-                        </ul>
-                    </div>
-                    <!-- Caribbean -->
-                    <div class="absolute inset-0 cuisine-text opacity-0 transition-opacity duration-500" id="cuis-4">
-                        <h3 class="font-serif text-3xl text-gold mb-4">Caribbean Cuisine</h3>
-                        <svg class="w-16 h-2 mb-6" viewBox="0 0 100 10"><path class="svg-line" d="M0,5 L100,5" /></svg>
-                        <ul class="font-sans font-light text-charcoal/80 space-y-3">
-                            <li>Slow-cooked Oxtail & Jerk Chicken</li>
-                            <li>Ackee & Saltfish with Rice and Peas</li>
-                            <li>Curry Goat & Stew Shrimp</li>
-                        </ul>
-                    </div>
-                    <!-- Desserts -->
-                    <div class="absolute inset-0 cuisine-text opacity-0 transition-opacity duration-500" id="cuis-5">
-                        <h3 class="font-serif text-3xl text-gold mb-4">Starters & Sweet Endings</h3>
-                        <svg class="w-16 h-2 mb-6" viewBox="0 0 100 10"><path class="svg-line" d="M0,5 L100,5" /></svg>
-                        <ul class="font-sans font-light text-charcoal/80 space-y-3">
-                            <li>Golden Puff Puff & Moyin Moyin</li>
-                            <li>Tropical Fruit Medleys</li>
-                            <li>Warm Banana Cake & Vanilla Bean Ice Cream</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Right Image -->
-            <div class="w-full md:w-1/2 h-[45vh] md:h-full relative img-texture">
-                <img src="images/nigerian-heritage.webp" class="absolute inset-0 w-full h-full object-cover cuisine-img transition-opacity duration-700 opacity-100" id="img-1" alt="Nigerian Dish" />
-                <img src="images/ghanaian-traditions.webp" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover cuisine-img transition-opacity duration-700 opacity-0" id="img-2" alt="Ghanaian Dish" />
-                <img src="images/sierra-leone.webp" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover cuisine-img transition-opacity duration-700 opacity-0" id="img-3" alt="Sierra Leonean Dish" />
-                <img src="https://deosacatering.co.uk/ehusteeg/2024/01/ca3bc7fb-aba6-489e-bc33-4949733afce5.jpg" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover cuisine-img transition-opacity duration-700 opacity-0" id="img-4" alt="Caribbean Cuisine" />
-                <img src="images/starters-sweet-endings.webp" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover cuisine-img transition-opacity duration-700 opacity-0" id="img-5" alt="Desserts" />
+        <!-- Tab Navigation -->
+        <div class="overflow-x-auto">
+            <div class="flex border-b border-charcoal/10 px-6 md:px-12">
+                <button class="cuisine-tab active-tab" data-tab="1">Nigerian Heritage</button>
+                <button class="cuisine-tab" data-tab="2">Ghanaian Traditions</button>
+                <button class="cuisine-tab" data-tab="3">Sierra Leonean Flavors</button>
+                <button class="cuisine-tab" data-tab="4">Caribbean Cuisine</button>
+                <button class="cuisine-tab" data-tab="5">Starters & Sweet Endings</button>
             </div>
         </div>
+
+        <!-- Tab 1: Nigerian Heritage -->
+        <div class="cuisine-panel active-panel" id="tab-1">
+            <div class="flex flex-col md:flex-row">
+                <div class="w-full md:w-[58%] h-[52vh] md:h-[58vh] relative overflow-hidden shrink-0">
+                    <img src="images/nigerian-heritage.webp" class="absolute inset-0 w-full h-full object-cover" alt="Nigerian Heritage" />
+                </div>
+                <div class="flex-1 px-8 md:px-14 py-10 md:py-0 flex flex-col justify-center md:min-h-[58vh]">
+                    <h3 class="font-serif text-4xl md:text-5xl text-charcoal mb-1">Nigerian Heritage</h3>
+                    <svg class="w-12 h-2 my-6" viewBox="0 0 100 10"><path class="svg-line" d="M0,5 L100,5" /></svg>
+                    <ul class="font-sans font-light text-charcoal/70 space-y-4 text-base md:text-lg">
+                        <li>Smoky Party Jollof Rice</li>
+                        <li>Rich Egusi, Okra & Banga Soups</li>
+                        <li>Pounded Yam & Sweet Asaro</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 2: Ghanaian Traditions -->
+        <div class="cuisine-panel" id="tab-2">
+            <div class="flex flex-col md:flex-row">
+                <div class="w-full md:w-[58%] h-[52vh] md:h-[58vh] relative overflow-hidden shrink-0">
+                    <img src="images/ghanaian-traditions.webp" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover" alt="Ghanaian Traditions" />
+                </div>
+                <div class="flex-1 px-8 md:px-14 py-10 md:py-0 flex flex-col justify-center md:min-h-[58vh]">
+                    <h3 class="font-serif text-4xl md:text-5xl text-charcoal mb-1">Ghanaian Traditions</h3>
+                    <svg class="w-12 h-2 my-6" viewBox="0 0 100 10"><path class="svg-line" d="M0,5 L100,5" /></svg>
+                    <ul class="font-sans font-light text-charcoal/70 space-y-4 text-base md:text-lg">
+                        <li>Traditional Banku & Okro</li>
+                        <li>Aromatic Waakye</li>
+                        <li>Spiced Kelewele</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 3: Sierra Leonean Flavors -->
+        <div class="cuisine-panel" id="tab-3">
+            <div class="flex flex-col md:flex-row">
+                <div class="w-full md:w-[58%] h-[52vh] md:h-[58vh] relative overflow-hidden shrink-0">
+                    <img src="images/sierra-leone.webp" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover" alt="Sierra Leonean Flavors" />
+                </div>
+                <div class="flex-1 px-8 md:px-14 py-10 md:py-0 flex flex-col justify-center md:min-h-[58vh]">
+                    <h3 class="font-serif text-4xl md:text-5xl text-charcoal mb-1">Sierra Leonean Flavors</h3>
+                    <svg class="w-12 h-2 my-6" viewBox="0 0 100 10"><path class="svg-line" d="M0,5 L100,5" /></svg>
+                    <ul class="font-sans font-light text-charcoal/70 space-y-4 text-base md:text-lg">
+                        <li>Savory Fried Rice</li>
+                        <li>Hearty Groundnut Stew</li>
+                        <li>Delicate Cassava Leaves</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 4: Caribbean Cuisine -->
+        <div class="cuisine-panel" id="tab-4">
+            <div class="flex flex-col md:flex-row">
+                <div class="w-full md:w-[58%] h-[52vh] md:h-[58vh] relative overflow-hidden shrink-0">
+                    <img src="https://deosacatering.co.uk/ehusteeg/2024/01/ca3bc7fb-aba6-489e-bc33-4949733afce5.jpg" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover" alt="Caribbean Cuisine" />
+                </div>
+                <div class="flex-1 px-8 md:px-14 py-10 md:py-0 flex flex-col justify-center md:min-h-[58vh]">
+                    <h3 class="font-serif text-4xl md:text-5xl text-charcoal mb-1">Caribbean Cuisine</h3>
+                    <svg class="w-12 h-2 my-6" viewBox="0 0 100 10"><path class="svg-line" d="M0,5 L100,5" /></svg>
+                    <ul class="font-sans font-light text-charcoal/70 space-y-4 text-base md:text-lg">
+                        <li>Slow-cooked Oxtail & Jerk Chicken</li>
+                        <li>Ackee & Saltfish with Rice and Peas</li>
+                        <li>Curry Goat & Stew Shrimp</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 5: Starters & Sweet Endings -->
+        <div class="cuisine-panel" id="tab-5">
+            <div class="flex flex-col md:flex-row">
+                <div class="w-full md:w-[58%] h-[52vh] md:h-[58vh] relative overflow-hidden shrink-0">
+                    <img src="images/starters-sweet-endings.webp" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover" alt="Starters & Sweet Endings" />
+                </div>
+                <div class="flex-1 px-8 md:px-14 py-10 md:py-0 flex flex-col justify-center md:min-h-[58vh]">
+                    <h3 class="font-serif text-4xl md:text-5xl text-charcoal mb-1">Starters & Sweet Endings</h3>
+                    <svg class="w-12 h-2 my-6" viewBox="0 0 100 10"><path class="svg-line" d="M0,5 L100,5" /></svg>
+                    <ul class="font-sans font-light text-charcoal/70 space-y-4 text-base md:text-lg">
+                        <li>Golden Puff Puff & Moyin Moyin</li>
+                        <li>Tropical Fruit Medleys</li>
+                        <li>Warm Banana Cake & Vanilla Bean Ice Cream</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="pb-20 md:pb-24"></div>
     </section>
 
     <!-- SECTION 6: VENUES & SCALE -->
@@ -1123,32 +1181,14 @@
 
             });
 
-            // --- CUISINE HERITAGE (all screen sizes) ---
-            const cuisineSections = 5;
-            const cuisineStep = 1 / cuisineSections;
-
-            gsap.to({}, {
-                scrollTrigger: {
-                    trigger: "#cuisine",
-                    start: "top top",
-                    end: "bottom bottom",
-                    scrub: true,
-                    onUpdate: (self) => {
-                        const progress = self.progress;
-                        let currentIndex = Math.floor(progress / cuisineStep);
-                        if (currentIndex >= cuisineSections) currentIndex = cuisineSections - 1;
-
-                        for(let i = 1; i <= cuisineSections; i++) {
-                            const isActive = (i - 1 === currentIndex);
-                            document.getElementById(`cuis-${i}`).style.opacity = isActive ? 1 : 0;
-                            document.getElementById(`img-${i}`).style.opacity = isActive ? 1 : 0;
-
-                            if(isActive) {
-                                document.getElementById(`img-${i}`).style.transform = `scale(${1 + (progress % cuisineStep) * 0.2})`;
-                            }
-                        }
-                    }
-                }
+            // --- CUISINE TABS ---
+            document.querySelectorAll('.cuisine-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('.cuisine-tab').forEach(t => t.classList.remove('active-tab'));
+                    document.querySelectorAll('.cuisine-panel').forEach(p => p.classList.remove('active-panel'));
+                    tab.classList.add('active-tab');
+                    document.getElementById('tab-' + tab.dataset.tab).classList.add('active-panel');
+                });
             });
 
 
