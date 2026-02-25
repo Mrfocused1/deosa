@@ -69,7 +69,7 @@
             width: 100%; height: calc(100vh - 80px);
             position: sticky; top: 80px;
         }
-        #map-mobile { width: 100%; height: 50vh; }
+        #map-mobile { width: 100%; height: calc(100vh - 130px); }
 
 
         /* ── Leaflet overrides ── */
@@ -158,19 +158,38 @@
 </section>
 
 <!-- ══════════════════════════════════════════
-     MOBILE: Map strip + search
+     MOBILE: Tab switcher (List | Map)
 ══════════════════════════════════════════ -->
-<div class="md:hidden relative bg-sand">
+
+<!-- Sticky tab bar -->
+<div class="md:hidden sticky z-30 bg-cream border-b border-charcoal/10" style="top:80px">
+    <!-- Tabs -->
+    <div class="flex">
+        <button id="tab-btn-list" onclick="switchTab('list')"
+            class="flex-1 py-3 font-sans text-[10px] tracking-widest uppercase border-b-2 border-gold text-gold transition-colors">
+            List
+        </button>
+        <button id="tab-btn-map" onclick="switchTab('map')"
+            class="flex-1 py-3 font-sans text-[10px] tracking-widest uppercase border-b-2 border-transparent text-charcoal/35 transition-colors">
+            Map
+        </button>
+    </div>
+    <!-- Search (list tab only) -->
+    <div id="mob-search-wrap" class="px-6 py-4">
+        <input id="search-mob" type="search" placeholder="Search venues…" class="vs-input">
+        <p id="count-mob" class="font-sans text-[9px] uppercase tracking-widest text-charcoal/35 mt-2">45 venues</p>
+    </div>
+</div>
+
+<!-- Mobile list view -->
+<div class="md:hidden" id="mob-list-view">
+    <div id="list-mob"></div>
+</div>
+
+<!-- Mobile map view (hidden by default) -->
+<div class="md:hidden" id="mob-map-view" style="display:none">
     <div id="map-mobile"></div>
 </div>
-
-<div class="md:hidden sticky z-30 bg-cream border-b border-charcoal/8 px-6 py-4" style="top:80px">
-    <input id="search-mob" type="search" placeholder="Search venues…" class="vs-input">
-    <p id="count-mob" class="font-sans text-[9px] uppercase tracking-widest text-charcoal/35 mt-2">45 venues</p>
-</div>
-
-<!-- Mobile list -->
-<div class="md:hidden" id="list-mob"></div>
 
 <!-- ══════════════════════════════════════════
      DESKTOP: Two-column layout
@@ -352,6 +371,8 @@ function activateVenue(idx) {
     }
     if (_markersMob[idx]) {
         _markersMob[idx].setIcon(makeIcon(true));
+        // Switch to map tab on mobile so user can see the pin
+        if (window.innerWidth < 768) switchTab('map');
         _mapMob.setView([v.lat, v.lng], 14);
         _markersMob[idx].openPopup();
     }
@@ -423,6 +444,32 @@ function filterVenues(q) {
     const mob = document.getElementById('count-mob');
     if (dsk) dsk.textContent = txt;
     if (mob) mob.textContent = txt;
+}
+
+// ── Mobile tab switcher ───────────────────────────────────────────────────
+function switchTab(tab) {
+    const listView   = document.getElementById('mob-list-view');
+    const mapView    = document.getElementById('mob-map-view');
+    const searchWrap = document.getElementById('mob-search-wrap');
+    const btnList    = document.getElementById('tab-btn-list');
+    const btnMap     = document.getElementById('tab-btn-map');
+
+    const isMap = tab === 'map';
+    listView.style.display   = isMap ? 'none' : '';
+    mapView.style.display    = isMap ? '' : 'none';
+    searchWrap.style.display = isMap ? 'none' : '';
+
+    btnList.classList.toggle('border-gold',         !isMap);
+    btnList.classList.toggle('text-gold',           !isMap);
+    btnList.classList.toggle('border-transparent',   isMap);
+    btnList.classList.toggle('text-charcoal/35',     isMap);
+
+    btnMap.classList.toggle('border-gold',           isMap);
+    btnMap.classList.toggle('text-gold',             isMap);
+    btnMap.classList.toggle('border-transparent',   !isMap);
+    btnMap.classList.toggle('text-charcoal/35',     !isMap);
+
+    if (isMap && _mapMob) _mapMob.invalidateSize();
 }
 
 // ── Mobile menu ───────────────────────────────────────────────────────────
