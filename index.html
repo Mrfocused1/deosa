@@ -948,11 +948,8 @@
             }
 
             // --- WELCOME OVERLAY ---
-            const welcomeSeen = sessionStorage.getItem('deosa_welcome_seen');
             const welcomeOverlay = document.getElementById('welcome-overlay');
-            if (welcomeSeen) {
-                if (welcomeOverlay) { welcomeOverlay.remove(); document.body.style.overflow = ''; }
-            } else if (welcomeOverlay) {
+            if (welcomeOverlay) {
                 document.body.style.overflow = 'hidden';
                 document.querySelectorAll('.wl-draw-path').forEach(path => {
                     const length = path.getTotalLength();
